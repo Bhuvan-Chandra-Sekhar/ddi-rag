@@ -1,0 +1,4 @@
+Drug: bupivacaine_hydrochloride_injection,_solution
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Local Anesthetics The toxic effects of local anesthetics are additive. If coadministration of other local anesthetics with bupivacaine hydrochloride cannot be avoided, monitor patients for neurologic and cardiovascular effects related to local anesthetic systemic toxicity [see DOSAGE AND ADMINISTRATION , WARNINGS AND PRECAUTIONS ]. 7.5 Drugs Associated with Methemoglobinemia Patients who are administered bupivacaine hydrochloride are at increased risk of developing methemoglobinemia when concurrently exposed to following drugs, which could include other local anesthetics [see WARNINGS AND PRECAUTIONS ]. DRUG INTERACTION TABLE

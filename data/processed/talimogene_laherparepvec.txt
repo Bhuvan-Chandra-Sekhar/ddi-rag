@@ -1,0 +1,4 @@
+Drug: talimogene_laherparepvec
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS IMLYGIC is sensitive to acyclovir. Acyclovir or other antiherpetic viral agents may interfere with the effectiveness of IMLYGIC. No drug interaction studies have been conducted with IMLYGIC.

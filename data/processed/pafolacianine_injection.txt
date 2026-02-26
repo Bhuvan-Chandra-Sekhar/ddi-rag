@@ -1,0 +1,4 @@
+Drug: pafolacianine_injection
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Use of folate, folic acid, or folate-containing supplements may reduce binding of pafolacianine to folate receptors and could reduce the detection of lesions with CYTALUX. Avoid administration of folate, folic acid, or folate-containing supplements within 48 hours before administration of CYTALUX [see Dosage and Administration (2.1) and Clinical Pharmacology (12.1) ]. Folate Supplements: Avoid folate, folic acid, or folate-containing supplements within 48 hours before administration of CYTALUX. (7) See 17 for PATIENT COUNSELING INFORMATION.

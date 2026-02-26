@@ -1,0 +1,4 @@
+Drug: fosfomycin_disodium
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Avoid co-administration of CONTEPO with drugs known to prolong the QT interval. ( 5.2 , 7.1 ) 7.1 Drugs that prolong QT interval Co-administration of CONTEPO with other drugs known to prolong the QT interval may increase the risk for ventricular arrhythmia. Avoid co-administration of CONTEPO with drugs known to prolong the QT interval, such as class IA or class III antiarrhythmic medications, tricyclic antidepressants, macrolides, and antipsychotics [see Warnings and Precautions ( 5.2 )] .

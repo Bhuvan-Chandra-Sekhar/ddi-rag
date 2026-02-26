@@ -1,0 +1,4 @@
+Drug: aminolevulinic_acid_hydrochloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Phototoxic Drugs Patients exposed to a photosensitizing agent may experience a phototoxic skin reaction (severe sunburn). Due to the risk of possible phototoxic reactions, avoid administering phototoxic drugs such as St. John's wort, griseofulvin, thiazide diuretics, sulfonylureas, phenothiazines, sulphonamides, quinolones and tetracyclines, and topical preparations containing ALA for 24 hours before and after administration of Gleolan.

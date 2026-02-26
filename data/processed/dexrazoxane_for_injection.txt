@@ -1,0 +1,4 @@
+Drug: dexrazoxane_for_injection
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No drug interactions have been identified [see Clinical Pharmacology ( 12.3 )] .

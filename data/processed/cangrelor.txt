@@ -1,0 +1,4 @@
+Drug: cangrelor
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS • Clopidogrel: Do not administer during cangrelor infusion. ( 7.1 ) • Prasugrel: Do not administer during cangrelor infusion. ( 7.1 ) 7.1 Thienopyridines Clopidogrel or prasugrel administered during cangrelor infusion will have no antiplatelet effect until the next dose is administered. Therefore, administer Clopidogrel or prasugrel after cangrelor infusion is discontinued [see Dosage and Administration (2.2) and Clinical Pharmacology (12.3) ].

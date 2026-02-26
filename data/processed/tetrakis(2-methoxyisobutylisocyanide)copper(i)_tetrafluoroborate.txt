@@ -1,0 +1,4 @@
+Drug: tetrakis(2-methoxyisobutylisocyanide)copper(i)_tetrafluoroborate
+
+=== Drug Interactions ===
+7. DRUG INTERACTIONS Specific drug-drug interactions have not been studied. Specific drug-drug interactions have not been studied.

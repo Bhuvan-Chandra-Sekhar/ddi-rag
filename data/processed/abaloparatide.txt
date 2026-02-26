@@ -1,0 +1,4 @@
+Drug: abaloparatide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No specific drug-drug interaction studies have been performed [see Clinical Pharmacology ( 12.3 )] .

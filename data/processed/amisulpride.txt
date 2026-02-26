@@ -1,0 +1,4 @@
+Drug: amisulpride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Dopamine Agonists Reciprocal antagonism of effects occurs between dopamine agonists (e.g., levodopa) and BARHEMSYS. Avoid using levodopa with BARHEMSYS. 7.2 Drugs Prolonging the QT Interval BARHEMSYS causes dose- and concentration-dependent QT prolongation [see Clinical Pharmacology (12.2) ] . To avoid potential additive effects, avoid use of BARHEMSYS in patients taking droperidol. ECG monitoring is recommended in patients taking other drugs known to prolong the QT interval (e.g., ondansetron) [see Warnings and Precautions (5.1) ] .

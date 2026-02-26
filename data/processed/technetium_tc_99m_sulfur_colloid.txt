@@ -1,0 +1,4 @@
+Drug: technetium_tc_99m_sulfur_colloid
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Specific drug-drug interactions have not been studied.

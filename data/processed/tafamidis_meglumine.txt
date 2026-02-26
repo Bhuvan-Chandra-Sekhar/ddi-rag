@@ -1,0 +1,4 @@
+Drug: tafamidis_meglumine
+
+=== Drug Interactions ===
+7. DRUG INTERACTIONS 7.1 BCRP Substrates Tafamidis inhibits breast cancer resistant protein (BCRP) in humans [see Clinical Pharmacology (12.3) ] . Coadministration of tafamidis and drugs that are BCRP substrates may increase the exposure of substrates of this transporter (e.g., methotrexate, rosuvastatin, imatinib) and the risk of the substrate-related toxicities. Monitor for signs of BCRP substrate-related toxicities and modify dosage of the substrate if appropriate.

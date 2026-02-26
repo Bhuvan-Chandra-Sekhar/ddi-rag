@@ -1,0 +1,4 @@
+Drug: dinoprostone
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Oxytocic Agents : May augment the activity of oxytocic agents; concomitant use of intravenous oxytocic agents is contraindicated ( 4 , 7.1 ). Remove vaginal insert at least 30 minutes before administering an oxytocic agent. ( 7.1 ) 7.1 Oxytocic Agents CERVIDIL is contraindicated in patients receiving intravenous oxytocic agents because CERVIDIL may augment the activity of oxytocic agents. A dosing interval of at least 30 minutes is recommended for the sequential use of an oxytocic agent following the removal of CERVIDIL.

@@ -1,0 +1,4 @@
+Drug: 6%_hetastarch_in_0.9%_sodium_chloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 6% Hetastarch in 0.9% Sodium Chloride Injection should be used with caution in patients who have been anticoagulated with other drugs that negatively influence the coagulation system. • The safety and compatibility of other additives have not been established.

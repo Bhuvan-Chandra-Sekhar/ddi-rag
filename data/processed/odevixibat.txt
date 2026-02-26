@@ -1,0 +1,4 @@
+Drug: odevixibat
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Bile Acid Binding Resins Administer bile acid binding resins (e.g., cholestyramine, colesevelam, or colestipol) at least 4 hours before or 4 hours after administration of BYLVAY [see Dosage and Administration (2.3) ] . Bile acid binding resins may bind odevixibat in the gut, which may reduce BYLVAY efficacy.

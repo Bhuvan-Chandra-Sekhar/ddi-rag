@@ -1,0 +1,4 @@
+Drug: anti-thymocyte_globulin_(rabbit)
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No drug interaction studies have been performed. THYMOGLOBULIN can stimulate the production of antibodies that cross-react with rabbit immune globulins [see Clinical Pharmacology (12.3) ] .

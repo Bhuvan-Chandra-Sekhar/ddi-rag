@@ -1,0 +1,4 @@
+Drug: acetylcysteine
+
+=== Drug Interactions ===
+Drug Interactions Drug stability and safety of acetylcysteine when mixed with other drugs in a nebulizer have not been established.

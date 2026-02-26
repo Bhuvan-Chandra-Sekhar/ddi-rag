@@ -1,0 +1,4 @@
+Drug: flucytosine
+
+=== Drug Interactions ===
+Drug Interactions Cytosine arabinoside, a cytostatic agent, has been reported to inactivate the antifungal activity of ANCOBON by competitive inhibition. Drugs which impair glomerular filtration may prolong the biological half-life of flucytosine.

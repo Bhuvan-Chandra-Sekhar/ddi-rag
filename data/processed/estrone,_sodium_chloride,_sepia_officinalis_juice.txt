@@ -1,0 +1,4 @@
+Drug: estrone,_sodium_chloride,_sepia_officinalis_juice
+
+=== Drug Interactions ===
+Safe - no side effects - no drug interactions - works naturally with your body

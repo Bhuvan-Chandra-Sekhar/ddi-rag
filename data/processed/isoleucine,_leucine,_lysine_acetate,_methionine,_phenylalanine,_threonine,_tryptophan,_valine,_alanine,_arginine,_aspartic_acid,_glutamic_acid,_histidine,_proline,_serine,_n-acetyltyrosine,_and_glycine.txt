@@ -1,0 +1,4 @@
+Drug: isoleucine,_leucine,_lysine_acetate,_methionine,_phenylalanine,_threonine,_tryptophan,_valine,_alanine,_arginine,_aspartic_acid,_glutamic_acid,_histidine,_proline,_serine,_n-acetyltyrosine,_and_glycine
+
+=== Drug Interactions ===
+Drug Interactions Because of its antianabolic activity, concurrent administration of tetracycline may reduce the potential effects of amino acids infused with dextrose as part of a parenteral feeding regimen.

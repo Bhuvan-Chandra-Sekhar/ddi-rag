@@ -1,0 +1,4 @@
+Drug: clindamycin_phosphate_and_tretinoin_gel_1.2%_0.025%
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Clindamycin phosphate and tretinoin gel should not be used in combination with erythromycin-containing products because of its clindamycin component. (7.1) 7.1 Erythromycin Clindamycin phosphate and tretinoin gel should not be used in combination with erythromycin-containing products due to possible antagonism to the clindamycin component. In-vitro studies have shown antagonism between these 2 antimicrobials. The clinical significance of this in-vitro antagonism is not known. 7.2 Neuromuscular Blocking Agents Clindamycin has been shown to have neuromuscular blocking properties that may enhance the action of other neuromuscular blocking agents. Therefore, clindamycin phosphate and tretinoin gel should be used with caution in patients receiving such agents.

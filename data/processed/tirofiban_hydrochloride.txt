@@ -1,0 +1,4 @@
+Drug: tirofiban_hydrochloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Concomitant use of fibrinolytics, anticoagulants and antiplatelet drugs increases the risk of bleeding. Coadministration of fibrinolytics, anticoagulants and antiplatelet agents, increases the risk of bleeding. ( 7 )

@@ -1,0 +1,4 @@
+Drug: pegulicianine
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Blue dyes used for SLN mapping procedures generate a fluorescent signal that interferes with the signal from LUMISIGHT when injected into the breast prior to imaging with LUMISIGHT. The potential of other dyes to interfere with LUMISIGHT imaging has not been evaluated. Avoid administration of dyes used for SLN mapping procedure before imaging the lumpectomy cavity in patients receiving LUMISIGHT.

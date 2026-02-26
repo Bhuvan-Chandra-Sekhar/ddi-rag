@@ -1,0 +1,4 @@
+Drug: crotamiton
+
+=== Drug Interactions ===
+Drug Interactions: None known.

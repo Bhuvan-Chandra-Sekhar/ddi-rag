@@ -1,0 +1,4 @@
+Drug: diroximel_fumarate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Concomitant Dimethyl Fumarate VUMERITY is contraindicated in patients currently taking dimethyl fumarate, which is also metabolized to monomethyl fumarate. VUMERITY may be initiated the day following discontinuation of dimethyl fumarate [see Contraindications ( 4 )] .

@@ -1,0 +1,4 @@
+Drug: ibritumomab_tiuxetan
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Patients receiving medications that interfere with platelet function or coagulation should have more frequent laboratory monitoring for thrombocytopenia. No formal drug interaction studies have been performed with Zevalin. Monitor patients receiving medications that interfere with platelet function or coagulation more frequently for thrombocytopenia. ( 7 )

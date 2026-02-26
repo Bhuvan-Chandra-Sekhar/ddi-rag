@@ -1,0 +1,4 @@
+Drug: econazole_nitrate
+
+=== Drug Interactions ===
+Drug Interactions Warfarin Concomitant administration of econazole and warfarin has resulted in enhancement of anticoagulation effect. Most cases reported product application with use under occlusion, genital application, or application to large body surface area which may increase the systemic absorption of econazole nitrate. Monitoring of International Normalized Ratio (INR) and/or prothrombin time may be indicated especially for patients who apply econazole to large body surface areas, in the genital area, or under occlusion.

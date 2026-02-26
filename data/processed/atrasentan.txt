@@ -1,0 +1,4 @@
+Drug: atrasentan
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Strong or moderate CYP3A inducers: Avoid concomitant use. ( 7.1 ) OATP1B1/1B3 inhibitors: Avoid concomitant use. ( 7.1 ) 7.1 Effect of Other Drugs on VANRAFIA Strong or Moderate CYP3A Inducers Avoid concomitant use with a strong or moderate CYP3A inducer. Atrasentan is a CYP3A substrate [see Clinical Pharmacology (12.3)] . Concomitant use with a strong and moderate CYP3A inducer is expected to decrease atrasentan exposure [see Clinical Pharmacology (12.3)] , which may reduce VANRAFIA efficacy. OATP1B1/1B3 Inhibitors Avoid concomitant use with organic anion transporting polypeptides 1B1/1B3 (OATP1B1/1B3) inhibitors. Atrasentan is a OATP1B1/1B3 substrate [see Clinical Pharmacology (12.3)] . Concomitant use with a OATP1B1/1B3 inhibitor increases atrasentan exposure [see Clinical Pharmacology (12.3)] , which may increase the risk of VANRAFIA adverse reactions.

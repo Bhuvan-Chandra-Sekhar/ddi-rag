@@ -1,0 +1,4 @@
+Drug: secnidazole
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Oral Contraceptives There was no clinically significant drug interaction between secnidazole and the combination oral contraceptive, ethinyl estradiol plus norethindrone [see Clinical Pharmacology (12.3) ] . SOLOSEC can be co-administered with combination oral contraceptives (e.g., ethinyl estradiol plus norethindrone). 7.2 Alcohol Alcoholic beverages and preparations containing ethanol or propylene glycol should be avoided during SOLOSEC therapy and for 2 days after treatment is stopped. Nausea, vomiting, diarrhea, abdominal pain, dizziness, and headache have been reported when SOLOSEC was taken concomitantly with alcohol [see Dosage and Administration (2.3) , Adverse Reactions (6.2) and Clinical Pharmacology (12.3) ] .

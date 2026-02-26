@@ -1,0 +1,4 @@
+Drug: afamitresgene_autoleucel
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS None

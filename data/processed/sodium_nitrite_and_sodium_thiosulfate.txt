@@ -1,0 +1,4 @@
+Drug: sodium_nitrite_and_sodium_thiosulfate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Formal drug interaction studies have not been conducted with NITHIODOTE.

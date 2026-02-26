@@ -1,0 +1,4 @@
+Drug: melphalan_hcl
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Effect of Other Drugs on IVRA Cisplatin Concomitant use with cisplatin may alter melphalan clearance by inducing renal dysfunction. Consider intravenous IVRA dosage reduction in patients with renal insufficiency following concomitant use with cisplatin [see Dosage and Administration ( 2.2 )] . 7.2 Effect of IVRA on Other Drugs BCNU Concomitant use with BCNU may reduce the threshold for lung toxicity. Monitor for increased lung toxicity. 7.3 Cyclosporine Concomitant use with cyclosporine may increase the risk of developing severe renal failure [see Clinical Pharmacology ( 12.3 ) ]. Consider intravenous IVRA dosage reduction in patients with renal insufficiency following concomitant use with cyclosporine [see Dosage and Administration ( 2.2 )] .

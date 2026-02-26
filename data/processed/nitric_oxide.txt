@@ -1,0 +1,4 @@
+Drug: nitric_oxide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Nitric oxide donor compounds may increase the risk of developing methemoglobinemia ( 7 ). 7.1 Nitric Oxide Donor Agents Nitric oxide donor agents such as prilocaine, sodium nitroprusside and nitroglycerine may increase the risk of developing methemoglobinemia.

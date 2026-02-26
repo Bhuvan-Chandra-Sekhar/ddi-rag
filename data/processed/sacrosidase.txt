@@ -1,0 +1,4 @@
+Drug: sacrosidase
+
+=== Drug Interactions ===
+Drug Interactions Fruit Juice The acidity in fruit juice may reduce the enzyme activity in Sucraid. Administration of Sucraid with liquids other than water, milk, or infant formula has not been studied and is not recommended (see DOSAGE AND ADMINISTRATION, Administration Instructions).

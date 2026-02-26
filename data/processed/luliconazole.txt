@@ -1,0 +1,4 @@
+Drug: luliconazole
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS An in vivo study in adult subjects with moderate to severe interdigital tinea pedis and tinea cruris showed that Luliconazole Cream, 1% is mostly a weak inhibitor of CYP2C19. In a separate trial in adolescent subjects with tinea cruris, in vivo blood levels of Luliconazole Cream, 1%, were seen to approach those levels sufficient to show moderate inhibition of CYP2C19 [see Clinical Pharmacology ( 12.3 )] .

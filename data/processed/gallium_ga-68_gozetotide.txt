@@ -1,0 +1,4 @@
+Drug: gallium_ga-68_gozetotide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Androgen deprivation therapy and other therapies targeting the androgen pathway Androgen deprivation therapy (ADT) and other therapies targeting the androgen pathway, such as androgen receptor antagonists, can result in changes in uptake of gallium Ga 68 gozetotide in prostate cancer. The effect of these therapies on performance of gallium Ga 68 gozetotide PET has not been established.

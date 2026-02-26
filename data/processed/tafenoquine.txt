@@ -1,0 +1,4 @@
+Drug: tafenoquine
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Avoid co-administration with drugs that are substrates of organic cation transporter-2 (OCT2) or multidrug and toxin extrusion (MATE) transporters ( 7.1 ) 7.1 Effect of ARAKODA on Organic Cation Transporter-2 (OCT2) and Multidrug and Toxin Extrusion (MATE) Substrates The effect of coadministration of tafenoquine on the pharmacokinetics of OCT2 and MATE substrates in humans is unknown. However, in vitro observations suggest the potential for increased concentrations of these substrates [see Clinical Pharmacology ( 12.3 )] which may increase the risk of toxicity of these drugs. Avoid coadministration of ARAKODA with OCT2 and MATE substrates (e.g., dofetilide, metformin). If coadministration cannot be avoided, monitor for drug-related toxicities and consider dosage reduction if needed based on approved product labeling of the coadministered drug.

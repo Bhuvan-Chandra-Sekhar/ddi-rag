@@ -1,0 +1,4 @@
+Drug: metyrapone
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Anticonvulsants, psychotropic, hormone preparations, corticosteroids, antithyroid agents, cyproheptadine: may affect the results of the metyrapone test. ( 7.1 ) Acetaminophen: Avoid concomitant use with Metopirone. ( 7.2 ) 7.1 Effect of Other Drugs on Metopirone Anticonvulsants, psychotropic drugs, hormone preparations, corticosteroids, antithyroid agents and cyproheptadine may affect the results of the Metopirone test. If these drugs cannot be withdrawn, the necessity of carrying out the Metopirone test should be reviewed. 7.2 Effect of Metopirone on Other Drugs Acetaminophen Metopirone inhibits the glucuronidation of acetaminophen, which may decrease elimination of acetaminophen and lead to increased risk of adverse reactions related to acetaminophen. Avoid concomitant use of Metopirone with acetaminophen.

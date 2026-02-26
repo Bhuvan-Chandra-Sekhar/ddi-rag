@@ -1,0 +1,5 @@
+Drug: oxiconazole_nitrate
+
+=== Drug Interactions ===
+Drug Interactions: Potential drug interactions between oxiconazole nitrate and other drugs have not been systematically evaluated.
+Drug Interactions: Potential drug interactions between oxiconazole nitrate and other drugs have not been systematically evaluated.

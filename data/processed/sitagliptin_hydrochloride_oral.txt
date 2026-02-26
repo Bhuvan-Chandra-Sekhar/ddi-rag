@@ -1,0 +1,4 @@
+Drug: sitagliptin_hydrochloride_oral
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Concomitant Use with Insulin or Insulin Secretagogues BRYNOVIN lowers blood glucose in patients with type 2 diabetes mellitus. Coadministration of BRYNOVIN with insulin or an insulin secretagogue (e.g., sulfonylurea) or insulin may require lower dosages of the insulin secretagogue or insulin to reduce the risk of hypoglycemia. [See Warnings and Precautions ( 5.4 )].

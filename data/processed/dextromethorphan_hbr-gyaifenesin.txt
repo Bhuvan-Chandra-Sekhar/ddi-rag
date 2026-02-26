@@ -1,0 +1,4 @@
+Drug: dextromethorphan_hbr-gyaifenesin
+
+=== Drug Interactions ===
+Drug Interactions Section Do not use if you are now taking a prescription monoamine oxidase inhibitor (MAOI), (certain drugs for depression, psychiatric or emotional conditions or Parkinsons disease), or 2 weeks after stopping the MAOI drug. Id you are uncertain ehether your prescription drug contains an MAOI, consult a health professional before taking this product

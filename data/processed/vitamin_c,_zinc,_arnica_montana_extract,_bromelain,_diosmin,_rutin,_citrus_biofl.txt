@@ -1,0 +1,4 @@
+Drug: vitamin_c,_zinc,_arnica_montana_extract,_bromelain,_diosmin,_rutin,_citrus_biofl
+
+=== Drug Interactions ===
+Drug Interactions: The use of anticoagulants, such as warfarin or aspirin, may increase the risk of bleeding when combined with Bromelain. High doses of zinc can interfere with the absorption of iron when taken alongside iron supplements. Additionally, citrus bioflavonoids have the potential to enhance the effects of blood pressure-lowering medications.

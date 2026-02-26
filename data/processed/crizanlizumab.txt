@@ -1,0 +1,4 @@
+Drug: crizanlizumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Laboratory Test Interference Platelet Tests ADAKVEO interferes with automated platelet counts (platelet clumping) in particular when blood samples are collected in tubes containing EDTA, which may lead to unevaluable or falsely decreased platelet counts. Run blood samples within 4 hours of blood collection or collect blood samples in tubes containing citrate. When needed, estimate platelet count via peripheral blood smear.

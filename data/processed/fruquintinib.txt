@@ -1,0 +1,4 @@
+Drug: fruquintinib
+
+=== Drug Interactions ===
+7. DRUG INTERACTIONS Strong or Moderate CYP3A Inducers: Avoid concomitant use. ( 7.1 ) 7.1. Effects of Other Drugs on FRUZAQLA Strong CYP3A Inducers Avoid concomitant use of drugs that are strong CYP3A inducers with FRUZAQLA. Concomitant use with a strong CYP3A inducer may decrease fruquintinib C max and AUC [see Clinical Pharmacology (12.3) ] , which may reduce the efficacy of FRUZAQLA. Moderate CYP3A Inducers If possible, avoid concomitant use of drugs that are moderate CYP3A inducers with FRUZAQLA. If it is not possible to avoid concomitant use of a moderate CYP3A inducer and fruquintinib, continue to administer FRUZAQLA at the recommended dosage. Concomitant use with a moderate CYP3A inducer may decrease fruquintinib C max and AUC [see Clinical Pharmacology (12.3) ] , which may reduce the efficacy of FRUZAQLA.

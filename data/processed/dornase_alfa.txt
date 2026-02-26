@@ -1,0 +1,4 @@
+Drug: dornase_alfa
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Available data indicate there are no clinically important drug-drug interactions with PULMOZYME.

@@ -1,0 +1,4 @@
+Drug: vilobelimab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No drug interaction studies have been conducted with GOHIBIC.

@@ -1,0 +1,4 @@
+Drug: brodalumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS CYP450 Substrates The formation of CYP450 enzymes can be altered by increased levels of certain cytokines (e.g., IL-1, IL-6, IL-10, TNFα, IFN) during chronic inflammation. Treatment with SILIQ may modulate serum levels of some cytokines. Therefore, upon initiation or discontinuation of SILIQ in patients who are receiving concomitant drugs which are CYP450 substrates, particularly those with a narrow therapeutic index, consider monitoring for effect (e.g., for warfarin) or drug concentration (e.g., for cyclosporine) and consider dosage modification of the CYP450 substrate [see Clinical Pharmacology ( 12.3 )].

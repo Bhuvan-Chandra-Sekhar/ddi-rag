@@ -1,0 +1,4 @@
+Drug: fitusiran
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Hypercoagulability with Concomitant Use of CFC or BPA QFITLIA prophylaxis leads to increased thrombin generation with additive increase in peak thrombin when used concomitantly with CFC or BPA [see Boxed Warning , Dosage and Administration (2.3) and Warnings and Precautions (5.1) ] .

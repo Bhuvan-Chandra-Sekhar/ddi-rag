@@ -1,0 +1,4 @@
+Drug: vibegron
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Concomitant use of GEMTESA increases digoxin maximal concentrations (C max ) and systemic exposure as assessed by area under the concentration-time curve (AUC) [see Clinical Pharmacology ( 12.3 )] . Serum digoxin concentrations should be monitored before initiating and during therapy with GEMTESA and used for titration of the digoxin dose to obtain the desired clinical effect. Continue monitoring digoxin concentrations upon discontinuation of GEMTESA and adjust digoxin dose as needed. Digoxin : Measure serum digoxin concentrations before initiating GEMTESA. Monitor serum digoxin concentrations to titrate digoxin dose to desired clinical effect. ( 7 )

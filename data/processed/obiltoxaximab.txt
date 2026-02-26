@@ -1,0 +1,4 @@
+Drug: obiltoxaximab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Ciprofloxacin Co-administration of 16 mg/kg ANTHIM intravenously with intravenous or oral ciprofloxacin in human subjects did not alter the PK of either ciprofloxacin or obiltoxaximab [see Clinical Pharmacology ( 12.3 )] .

@@ -1,0 +1,4 @@
+Drug: lactic_acid,_salicylic_acid
+
+=== Drug Interactions ===
+Drug Interactions No interaction betyween Lactic acid and Salicylic acid and other drugs or substances are known or suspected.

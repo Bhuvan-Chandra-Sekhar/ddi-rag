@@ -1,0 +1,4 @@
+Drug: lidocaine
+
+=== Drug Interactions ===
+Drug Interactions Patients who are administered local anesthetics are at increased risk of developing methemoglobinemia when concurrently exposed to the following drugs, which could include other local anesthetics: Examples of Drugs Associated with Methemoglobinemia: Class Examples Nitrates/Nitrites nitric oxide, nitroglycerin, nitroprusside, nitrous oxide Local anesthetics articaine, benzocaine, bupivacaine, lidocaine, mepivacaine, prilocaine, procaine, ropivacaine, tetracaine Antineoplastic Agents cyclophosphamide, flutamide, hydroxyurea, ifosfamide, rasburicase Antibiotics dapsone, nitrofurantoin, para-aminosalicylic acid, sulfonamides Antimalarials chloroquine, primaquine Anticonvulsants Phenobarbital, phenytoin, sodium valproate Other drugs acetaminophen, metoclopramide, quinine, sulfasalazine

@@ -1,0 +1,4 @@
+Drug: epcoritamab-bysp
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS For certain CYP substrates, minimal changes in the concentration may lead to serious adverse reactions. Monitor for toxicity or drug concentrations of such CYP substrates when co-administered with EPKINLY. Epcoritamab-bysp causes release of cytokines [see Clinical Pharmacology (12.2) ] that may suppress activity of CYP enzymes, resulting in increased exposure of CYP substrates. Increased exposure of CYP substrates is more likely to occur after the first dose of EPKINLY and up to 14 days after the first 48 mg dose, and during and after CRS [see Warnings and Precautions (5.1) ] .

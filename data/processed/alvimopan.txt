@@ -1,0 +1,4 @@
+Drug: alvimopan
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Effects of Alvimopan on Intravenous Morphine Coadministration of alvimopan does not appear to alter the pharmacokinetics of morphine and its metabolite, morphine-6-glucuronide, to a clinically significant degree when morphine is administered intravenously. Dosage adjustment for intravenously administered morphine is not necessary when it is coadministered with alvimopan. 7.2 Effects of Concomitant Acid Blockers or Antibiotics A population pharmacokinetic analysis suggests that the pharmacokinetics of alvimopan were not affected by concomitant administration of acid blockers (proton pump inhibitors (PPIs), histamine-2 (H 2 ) receptor antagonists) or antibiotics. No dosage adjustments are necessary in patients taking acid blockers or antibiotics with alvimopan.

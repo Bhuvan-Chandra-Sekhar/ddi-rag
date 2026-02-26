@@ -1,0 +1,4 @@
+Drug: fecal_microbiota_spores,_live-brpk
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS VOWST contains bacterial spores; therefore, antibacterials should not be administered concurrently with VOWST. Antibacterials should not be administered concurrently with VOWST. ( 7 )

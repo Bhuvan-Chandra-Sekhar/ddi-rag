@@ -1,0 +1,4 @@
+Drug: tivozanib
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS CYP3A Inducers: Avoid concomitant use of strong CYP3A inducers. ( 7.1 ) 7.1 Effect of Other Drugs on FOTIVDA Strong CYP3A Inducers Concomitant use of FOTIVDA with a strong CYP3A inducer decreases tivozanib exposure [see CLINICAL PHARMACOLOGY (12.3) ], which may reduce FOTIVDA anti-tumor activity. Avoid concomitant use of strong CYP3A inducers with FOTIVDA.

@@ -1,0 +1,4 @@
+Drug: sulfacetamide_sodium_and_prednisolone_sodium_phosphate
+
+=== Drug Interactions ===
+Drug Interactions Sulfacetamide Sodium and Prednisolone Sodium Phosphate Ophthalmic Solution is incompatible with silver preparations. Local anesthetics related to p-aminobenzoic acid may antagonize the action of the sulfonamides.

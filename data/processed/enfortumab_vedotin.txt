@@ -1,0 +1,4 @@
+Drug: enfortumab_vedotin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Concomitant use of dual P-gp and strong CYP3A4 inhibitors with PADCEV may increase the exposure to monomethyl auristatin E (MMAE). ( 7.1 ) 7.1 Effects of Other Drugs on PADCEV Dual P-gp and Strong CYP3A4 Inhibitors Concomitant use with dual P-gp and strong CYP3A4 inhibitors may increase unconjugated MMAE exposure [see Clinical Pharmacology ( 12.3 )] , which may increase the incidence or severity of PADCEV toxicities. Closely monitor patients for signs of toxicity when PADCEV is given concomitantly with dual P-gp and strong CYP3A4 inhibitors.

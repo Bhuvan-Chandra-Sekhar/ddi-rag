@@ -1,0 +1,4 @@
+Drug: clomiphene_citrtae
+
+=== Drug Interactions ===
+DRUG INTERACTIONS Drug Interactions Drug interactions with clomiphene citrate have not been documented. Carcinogenesis, Mutagenesis, Impairment of Fertility Long-term toxicity studies in animals have not been performed to evaluate the carcinogenic or mutagenic potential of clomiphene citrate. Oral administration of clomiphene citrate to male rats at doses of 0.3 or 1 mg/kg/day caused decreased fertility, while higher doses caused temporary infertility. Oral doses of 0.1 mg/kg/day in female rats temporarily interrupted the normal cyclic vaginal smear pattern and prevented conception. Doses of 0.3 mg/kg/day slightly reduced the number of ovulated ova and corpora lutea, while 3 mg/kg/day inhibited ovulation.

@@ -1,0 +1,4 @@
+Drug: solifenacin_succiate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS CYP3A4 Inhibitors : Do not exceed the 5 mg dose of Solifenacin Succinate Tablets with concomitant use of strong CYP3A4 inhibitors. ( 7.1 ) 7.1 Strong CYP3A4 Inhibitors Solifenacin is a substrate of CYP3A4. Concomitant use of ketoconazole, a strong CYP3A4 inhibitor, significantly increased the exposure of solifenacin [see Clinical Pharmacology (12.3) ] . The dosage of Solifenacin Succinate Tablets greater than 5 mg once daily is not recommended when concomitantly used with strong CYP3A4 inhibitors [see Dosage and Administration (2.4) ] .

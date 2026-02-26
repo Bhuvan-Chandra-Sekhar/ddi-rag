@@ -1,0 +1,4 @@
+Drug: romiplostim
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Nplate may be used with other medical ITP therapies, such as corticosteroids, danazol, azathioprine, intravenous immunoglobulin (IVIG), and anti-D immunoglobulin [see Clinical Studies ( 14.1 )] .

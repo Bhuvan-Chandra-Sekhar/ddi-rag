@@ -1,0 +1,4 @@
+Drug: triheptanoin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Pancreatic Lipase Inhibitors : Avoid co-administration due to potential for reduced clinical effect of DOJOLVI. ( 7.1 ) 7.1 Pancreatic Lipase Inhibitors Co-administration of triheptanoin with a pancreatic lipase inhibitor (e.g., orlistat) may reduce exposure to the triheptanoin metabolite, heptanoate, and reduce the clinical effect of triheptanoin [see Clinical Pharmacology (12.3) ] . Avoid co-administration of DOJOLVI with pancreatic lipase inhibitors.

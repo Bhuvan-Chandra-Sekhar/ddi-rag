@@ -1,0 +1,4 @@
+Drug: sofpironium_bromide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Anticholinergics: Coadministration of SOFDRA with anticholinergic medications may result in additive interaction leading to an increase in anticholinergic adverse effects. Avoid coadministration of SOFDRA with other anticholinergic-containing drugs ( 7.1 ). Strong Inhibitors of CYP2D6: Avoid co-administration of SOFDRA with drugs that are strong inhibitors of CYP2D6 ( 7.2 ). 7.1 Anticholinergics Coadministration of SOFDRA with anticholinergic medications may result in additive interaction leading to an increase in anticholinergic adverse effects [See Warnings and Precautions (5.2) and Adverse Reactions (6.1) ] . Avoid coadministration of SOFDRA with other anticholinergic-containing drugs. 7.2 Strong Inhibitors of CYP2D6 Avoid co-administration of SOFDRA with drugs that are strong inhibitors of CYP2D6.

@@ -1,0 +1,4 @@
+Drug: diazoxide
+
+=== Drug Interactions ===
+Drug Interactions Since diazoxide is highly bound to serum proteins, it may displace other substances which are also bound to protein, such as bilirubin or coumarin and its derivatives, resulting in higher blood levels of these substances. Concomitant administration of PROGLYCEM and diphenylhydantoin may result in a loss of seizure control. Consider these potential interactions when administering PROGLYCEM. The concomitant administration of thiazides or other diuretics may potentiate the hyperglycemic and hyperuricemic effects of PROGLYCEM.

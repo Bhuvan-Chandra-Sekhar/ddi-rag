@@ -1,0 +1,4 @@
+Drug: auranofin
+
+=== Drug Interactions ===
+Drug Interactions: In a single patient-report, there is the suggestion that concurrent administration of Auranofin Capsules and phenytoin may have increased phenytoin blood levels.

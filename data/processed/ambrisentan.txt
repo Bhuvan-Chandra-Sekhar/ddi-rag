@@ -1,0 +1,4 @@
+Drug: ambrisentan
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Multiple dose coadministration of ambrisentan and cyclosporine resulted in an approximately 2 fold increase in ambrisentan exposure in healthy volunteers; therefore, limit the dose of ambrisentan to 5 mg once daily when coadministered with cyclosporine [see Clinical Pharmacology (12.3) ] . Cyclosporine increases ambrisentan exposure; limit ambrisentan dose to 5 mg once daily ( 7 ).

@@ -1,0 +1,4 @@
+Drug: sulfacetamide_sodium_and_sulfur
+
+=== Drug Interactions ===
+Drug Interactions This product is incompatible with silver preparations.

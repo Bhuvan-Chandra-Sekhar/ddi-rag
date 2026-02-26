@@ -1,0 +1,4 @@
+Drug: bezlotoxumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Since ZINPLAVA is eliminated by catabolism, no metabolic drug-drug interactions are expected [see Clinical Pharmacology (12.3) ] .

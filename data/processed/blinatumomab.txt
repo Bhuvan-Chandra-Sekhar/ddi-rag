@@ -1,0 +1,4 @@
+Drug: blinatumomab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No formal drug interaction studies have been conducted with BLINCYTO. Initiation of BLINCYTO treatment causes transient release of cytokines that may suppress CYP450 enzymes. The highest drug-drug interaction risk is during the first 9 days of the first cycle and the first 2 days of the second cycle in patients who are receiving concomitant CYP450 substrates, particularly those with a narrow therapeutic index. In these patients, monitor for toxicity (e.g., warfarin) or drug concentrations (e.g., cyclosporine). Adjust the dose of the concomitant drug as needed [see Clinical Pharmacology (12.2 , 12.3) ] .

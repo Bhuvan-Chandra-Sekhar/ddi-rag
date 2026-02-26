@@ -1,0 +1,4 @@
+Drug: migalastat_hydrochloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS See Full Prescribing Information for clinically significant drug interactions. (7.1) 7.1 Effect of Other Drugs on GALAFOLD Co-administration of GALAFOLD with caffeine decreases migalastat AUC and C max [see Clinical Pharmacology (12.3) ] which may reduce GALAFOLD efficacy. Avoid co-administration of GALAFOLD with caffeine at least 2 hours before and 2 hours after taking GALAFOLD [see Dosage and Administration (2.2) ] .

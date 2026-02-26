@@ -1,0 +1,4 @@
+Drug: molnupiravir
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No drug interactions have been identified based on the limited available data on the emergency use of LAGEVRIO authorized under this EUA. No clinical drug-drug interaction trials of LAGEVRIO with concomitant medications, including other treatments for mild-to-moderate COVID-19, have been conducted [see Clinical Pharmacology (12.3) ].

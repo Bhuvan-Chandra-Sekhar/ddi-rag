@@ -1,0 +1,4 @@
+Drug: flutamide
+
+=== Drug Interactions ===
+Drug Interactions Increases in prothrombin time have been noted in patients receiving long-term warfarin therapy after Eulexin ® was initiated. Therefore close monitoring of prothrombin time is recommended and adjustment of the anticoagulant dose may be necessary when Eulexin ® capsules are administered concomitantly with warfarin.

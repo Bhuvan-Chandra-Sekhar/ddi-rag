@@ -1,0 +1,4 @@
+Drug: fluoroestradiol_f_18
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Drugs that bind to the estrogen receptor (ER) may compete with the binding of fluoroestradiol F 18 and may reduce the detection of ER-positive lesions with CERIANNA. Before administering CERIANNA, discontinue drugs that bind to the ER, such as SERMs and SERDs, for at least 5 biological half-lives (e.g., elacestrant for 11 days, tamoxifen for 8 weeks, and fulvestrant for 28 weeks) [see Dosage and Administration (2.3) ] . Before administering CERIANNA, discontinue drugs that bind to the ER, such as SERMs and SERDs, for at least 5 biological half-lives (e.g., elacestrant for 11 days, tamoxifen for 8 weeks, and fulvestrant for 28 weeks). ( 2.3 , 7 )

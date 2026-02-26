@@ -1,0 +1,4 @@
+Drug: sodium_chloride,_sodium_citrate
+
+=== Drug Interactions ===
+DRUG INTERACTIONS Overview The blood concentration of filterable/dialyzable drugs may be reduced during treatment due to their removal by the extracorporeal filter. Corresponding corrective therapy should be instituted if necessary to establish the desired blood concentrations for drugs removed during treatment. Patient monitoring at an appropriate frequency is required. When prescribing REGIOCIT, the physician needs to consider the use of other anticoagulants along with other buffer-containing and electrolyte solutions (including CRRT replacement fluid and dialysate). Drug-Drug Interactions The drugs listed in this table are based on either drug interaction case studies or clinical trials, or potential interactions due to the expected magnitude and seriousness of the interaction (i.e., those identified as contraindicated). Table 3 - Established or Potential Drug-Drug Interactions EUA IFU Table 3

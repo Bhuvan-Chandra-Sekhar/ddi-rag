@@ -1,0 +1,4 @@
+Drug: thiamine_hydrochloride
+
+=== Drug Interactions ===
+Information for Patients The patient should be advised as to proper dietary habits during treatment so that relapses will be less likely to occur with reduction in dosage or cessation of injection therapy.

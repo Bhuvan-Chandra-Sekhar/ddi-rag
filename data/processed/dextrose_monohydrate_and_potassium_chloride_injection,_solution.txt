@@ -1,0 +1,4 @@
+Drug: dextrose_monohydrate_and_potassium_chloride_injection,_solution
+
+=== Drug Interactions ===
+Drug Interactions Additives may be incompatible. Consult with pharmacist, if available. When introducing additives, use aseptic technique, mix thoroughly and do not store.

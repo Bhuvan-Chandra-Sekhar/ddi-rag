@@ -1,0 +1,4 @@
+Drug: monomethyl_fumarate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Concomitant Dimethyl Fumarate or Diroximel Fumarates Both dimethyl fumarate and diroximel fumarate are metabolized to monomethyl fumarate. Therefore, BAFIERTAM is contraindicated in patients currently taking dimethyl fumarate or diroximel fumarate. BAFIERTAM may be initiated the day following discontinuation of either of these drugs.

@@ -1,0 +1,4 @@
+Drug: baclofen
+
+=== Drug Interactions ===
+DRUG INTERACTIONS There is inadequate systematic experience with the use of Baclofen Injection in combination with other medications to predict specific drug-drug interactions. Interactions attributed to the combined use of Baclofen Injection and epidural morphine include hypotension and dyspnea.

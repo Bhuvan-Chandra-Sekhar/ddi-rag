@@ -1,0 +1,4 @@
+Drug: rozanolixizumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Closely monitor for reduced effectiveness of medications that bind to the human neonatal Fc receptor. When concomitant long-term use of such medications is essential for patient care, consider discontinuing RYSTIGGO and using alternate therapies. ( 7.1 ) 7.1 Effect of RYSTIGGO on Other Drugs Concomitant use of RYSTIGGO with medications that bind to the human neonatal Fc receptor (FcRn) (e.g., immunoglobulin products, monoclonal antibodies, or antibody derivatives containing the human Fc domain of the IgG subclass) may lower systemic exposures and reduce effectiveness of such medications. Closely monitor for reduced effectiveness of medications that bind to the human neonatal Fc receptor. When concomitant long-term use of such medications is essential for patient care, consider discontinuing RYSTIGGO and using alternative therapies.

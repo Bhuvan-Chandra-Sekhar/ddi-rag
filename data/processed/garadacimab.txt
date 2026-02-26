@@ -1,0 +1,4 @@
+Drug: garadacimab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Drug Interference with Laboratory Test: ANDEMBRY can prolong activated partial thromboplastin time (aPTT) due to an interaction of garadacimab-gxii with the aPTT assay. ( 7.1 ) 7.1 Drug Interference with Laboratory Test Coagulation Tests ANDEMBRY can prolong activated partial thromboplastin time (aPTT) due to an interaction of garadacimab-gxii with the aPTT assay. The reagents used in the aPTT laboratory test initiate intrinsic coagulation through the activation of FXII in the contact system, therefore inhibition of plasma FXIIa by ANDEMBRY can prolong aPTT in this assay [see Adverse Reactions (6.1) ] .

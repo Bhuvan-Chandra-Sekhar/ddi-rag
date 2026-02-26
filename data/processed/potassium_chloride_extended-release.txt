@@ -1,0 +1,4 @@
+Drug: potassium_chloride_extended-release
+
+=== Drug Interactions ===
+Drug Interactions Potassium-sparing diuretics, angiotensin-converting enzyme inhibitors (see WARNINGS ).

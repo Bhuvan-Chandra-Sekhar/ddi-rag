@@ -1,0 +1,4 @@
+Drug: fish_oil
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Antiplatelet Agents and Anticoagulants : Prolonged bleeding time has been reported in patients taking antiplatelet agents or anticoagulants and oral omega-3 fatty acids. Periodically monitor bleeding time in patients receiving Omegaven and concomitant antiplatelet agents or anticoagulants. ( 7.1 ) 7.1 Antiplatelet Agents and Anticoagulants Some published studies have demonstrated prolongation of bleeding time in patients taking antiplatelet agents or anticoagulants and oral omega-3 fatty acids. The prolongation of bleeding times reported in those studies did not exceed normal limits and there were no clinically significant bleeding episodes. Nonetheless, it is recommended to periodically monitor bleeding time in patients receiving Omegaven and concomitant antiplatelet agents or anticoagulants.

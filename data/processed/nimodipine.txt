@@ -1,0 +1,4 @@
+Drug: nimodipine
+
+=== Drug Interactions ===
+Drug Interactions Nimodipine is metabolized via the cytochrome P450 3A4 system located both in the intestinal mucosa and in the liver. Drugs that are known to either inhibit or to induce this enzyme system may therefore alter the first pass or the clearance of nimodipine. In addition, the blood pressure lowering effects of antihypertensives could be enhanced when taken concomitantly with nimodipine.

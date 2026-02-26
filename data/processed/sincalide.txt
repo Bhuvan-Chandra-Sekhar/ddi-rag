@@ -1,0 +1,4 @@
+Drug: sincalide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Drugs that Affect Gallbladder Motility or Contractile Response : May interfere with response to sincalide. Consider discontinuing these drugs prior to administration of Sincalide for Injection, when used to stimulate contraction of the gallbladder. ( 7.1 ) 7.1 Drugs that Affect Gallbladder Motility or Contractile Response Drugs that may stimulate or inhibit gallbladder motility or contractile response may interfere with the response to sincalide. Consider discontinuing these drugs prior to administration of Sincalide for Injection, when used to stimulate contraction of the gallbladder.

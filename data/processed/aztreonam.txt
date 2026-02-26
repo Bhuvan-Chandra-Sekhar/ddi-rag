@@ -1,0 +1,4 @@
+Drug: aztreonam
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No formal clinical studies of drug interactions with CAYSTON have been conducted.

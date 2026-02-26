@@ -1,0 +1,4 @@
+Drug: kit_for_the_preparation_of_technetium_tc99m_sestamibi
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Specific drug-drug interactions have not been studied. • Specific drug-drug interactions have not been studied ( 7 ).

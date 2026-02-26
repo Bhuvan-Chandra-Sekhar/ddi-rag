@@ -1,0 +1,4 @@
+Drug: clesrovimab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Interference with Rapid Antigen Detection RSV Diagnostic Assays Clesrovimab-cfor may interfere with some immunologically-based RSV diagnostic assays (i.e., rapid antigen tests) as observed in laboratory studies. Confirmation using an RT-PCR assay is recommended when rapid antigen RSV diagnostic assay results are negative and clinical observations are consistent with RSV infection. Clesrovimab-cfor does not interfere with RT-PCR diagnostic assays [see Warnings and Precautions (5.2) ] .

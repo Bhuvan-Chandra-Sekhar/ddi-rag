@@ -1,0 +1,4 @@
+Drug: alogliptin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Insulin Secretagogues and Insulin Insulin and insulin secretagogues are known to cause hypoglycemia. Coadministration of alogliptin tablets with an insulin secretagogue (e.g., sulfonylurea) or insulin may require lower dosages of the insulin secretagogue and insulin to reduce the risk of hypoglycemia [see Warnings and Precautions (5.5) ] .

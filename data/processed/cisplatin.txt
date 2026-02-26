@@ -1,0 +1,4 @@
+Drug: cisplatin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS The following drug interactions are described in other sections: Nephrotoxic drugs [see Warnings and Precautions ( 5.1 )] Ototoxic drugs [see Warnings and Precautions ( 5.6 )]

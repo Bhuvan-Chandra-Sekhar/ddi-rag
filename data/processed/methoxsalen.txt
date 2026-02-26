@@ -1,0 +1,4 @@
+Drug: methoxsalen
+
+=== Drug Interactions ===
+Drug Interactions See Warnings Section.

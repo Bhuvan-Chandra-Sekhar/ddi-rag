@@ -1,0 +1,4 @@
+Drug: cedazuridine_and_decitabine
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Drugs Metabolized by Cytidine Deaminase : Avoid coadministration with INQOVI. ( 7 ) 7.1 Effects of INQOVI on Other Drugs Drugs Metabolized by Cytidine Deaminase Cedazuridine is an inhibitor of the cytidine deaminase (CDA) enzyme. Coadministration of INQOVI with drugs that are metabolized by CDA may result in increased systemic exposure with potential for increased toxicity of these drugs [see Clinical Pharmacology (12.3) ] . Avoid coadministration of INQOVI with drugs that are metabolized by CDA.

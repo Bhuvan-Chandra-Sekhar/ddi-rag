@@ -1,0 +1,4 @@
+Drug: lutetium_lu_177_dotatate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Somatostatin Analogs : Discontinue long-acting analogs at least 4 weeks and short-acting octreotide at least 24 hours prior to each LUTATHERA dose. ( 2.3 , 7.1 ) 7.1 Somatostatin Analogs Somatostatin and its analogs competitively bind to somatostatin receptors and may interfere with the efficacy of LUTATHERA. Discontinue long-acting somatostatin analogs at least 4 weeks and short-acting octreotide at least 24 hours prior to each LUTATHERA dose. Administer short- and long-acting octreotide during LUTATHERA treatment as recommended [see Dosage and Administration ( 2.3 )] . 7.2 Glucocorticoids Glucocorticoids can induce down-regulation of subtype 2 somatostatin receptors (SSTR2). Avoid repeated administration of high doses of glucocorticoids during treatment with LUTATHERA.

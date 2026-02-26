@@ -1,0 +1,4 @@
+Drug: guselkumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 CYP450 Substrates The formation of CYP450 enzymes can be altered by increased levels of certain cytokines (e.g., IL-1, IL-6, IL-10, TNFα, interferon) during chronic inflammation. Results from an exploratory drug-drug interaction trial in subjects with moderate-to-severe plaque psoriasis suggested a low potential for clinically relevant drug interactions for drugs metabolized by CYP3A4, CYP2C9, CYP2C19 and CYP1A2 but the interaction potential cannot be ruled out for drugs metabolized by CYP2D6. However, the results were highly variable because of the limited number of subjects in the trial. Upon initiation of TREMFYA in patients who are receiving concomitant CYP450 substrates, particularly those with a narrow therapeutic index, consider monitoring for therapeutic effect or drug concentration and consider dosage adjustment as needed [see Clinical Pharmacology (12.3) ] .

@@ -1,0 +1,4 @@
+Drug: magnesium_sulfate_heptahydrate
+
+=== Drug Interactions ===
+Drug-Drug Interactions: Drug induced renal losses of magnesium occur with the following drugs or drug classes: Aminoglycosides Cyclosporine Digitalis Alcohol Amphotericin B Diuretics Cisplatin

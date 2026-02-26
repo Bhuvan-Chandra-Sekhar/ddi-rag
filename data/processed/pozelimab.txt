@@ -1,0 +1,4 @@
+Drug: pozelimab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Intravenous Immunoglobulin : May decrease pozelimab concentrations; avoid concomitant use. If concomitant use cannot be avoided, monitor patients for worsening of clinical signs and symptoms of disease. ( 7.1 ) 7.1 Intravenous Immunoglobulin VEOPOZ has not been studied in combination with intravenous immunoglobulin. Intravenous immunoglobulin may interfere with the endosomal neonatal Fc receptor (FcRn) recycling mechanism of monoclonal antibodies such as pozelimab thereby decreasing serum pozelimab concentrations. Avoid concomitant use of intravenous immunoglobulin with VEOPOZ. If concomitant use cannot be avoided, monitor patients for worsening of clinical signs and symptoms of CD55-deficient PLE [see Clinical Pharmacology (12.3) ] .

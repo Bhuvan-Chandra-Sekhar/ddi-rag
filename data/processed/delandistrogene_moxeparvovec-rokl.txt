@@ -1,0 +1,4 @@
+Drug: delandistrogene_moxeparvovec-rokl
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Prior to initiating the corticosteroid regimen required before ELEVIDYS administration, consider the patient's vaccination status. Patients should, if possible, be brought up to date with all immunizations in agreement with current immunization guidelines. Vaccinations should be completed at least 4 weeks prior to initiation of the corticosteroid regimen.

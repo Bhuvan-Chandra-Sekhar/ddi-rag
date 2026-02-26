@@ -1,0 +1,4 @@
+Drug: lisocabtagene_maraleucel
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Drug-Laboratory Test Interactions HIV and the lentivirus used to make BREYANZI have limited, short spans of identical genetic material (RNA). Therefore, some commercial HIV nucleic acid tests may yield false-positive results in patients who have received BREYANZI.

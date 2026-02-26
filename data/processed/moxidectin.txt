@@ -1,0 +1,4 @@
+Drug: moxidectin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Midazolam (CYP3A4 substrate) In healthy subjects, concomitant administration of a single 8 mg oral dose of Moxidectin Tablets did not have an effect on the pharmacokinetics of midazolam [ see Clinical Pharmacology ( 12.3 ) ]. Moxidectin can be co-administered with CYP3A4 substrates.

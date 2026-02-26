@@ -1,0 +1,4 @@
+Drug: ixazomib
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Strong CYP3A inducers : Avoid concomitant use with NINLARO. ( 7.1 , 12.3 ) 7.1 Strong CYP3A Inducers Avoid concomitant administration of NINLARO with strong CYP3A inducers (such as rifampin, phenytoin, carbamazepine, and St. John's Wort) [see Clinical Pharmacology (12.3) ] .

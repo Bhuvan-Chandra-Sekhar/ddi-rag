@@ -1,0 +1,4 @@
+Drug: hydroxocobalamin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Formal drug interaction studies have not been conducted with CYANOKIT. Interference with Laboratory Tests Because of its deep red color, hydroxocobalamin has been found to interfere with colorimetric determination of certain laboratory parameters (e.g., clinical chemistry, hematology, coagulation, and urine parameters). Be aware of this when reporting and interpreting laboratory results [see Warnings and Precautions ( 5.5 )].

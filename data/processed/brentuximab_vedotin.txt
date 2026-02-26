@@ -1,0 +1,4 @@
+Drug: brentuximab_vedotin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Concomitant use of strong CYP3A4 inhibitors or inducers has the potential to affect the exposure to monomethyl auristatin E (MMAE) ( 7.1 ). 7.1 Effect of Other Drugs on ADCETRIS CYP3A4 Inhibitors: Co-administration of ADCETRIS with ketoconazole, a potent CYP3A4 inhibitor, increased exposure to MMAE [see Clinical Pharmacology (12.3) ], which may increase the risk of adverse reaction. Closely monitor adverse reactions when ADCETRIS is given concomitantly with strong CYP3A4 inhibitors.

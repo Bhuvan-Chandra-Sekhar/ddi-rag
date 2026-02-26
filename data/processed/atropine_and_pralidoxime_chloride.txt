@@ -1,0 +1,4 @@
+Drug: atropine_and_pralidoxime_chloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Succinylcholine and Mivacurium: Accelerated reversal of neuromuscular blocking effects may occur; monitor with concomitant administration. ( 7.1 ) 7.1 Succinylcholine and Mivacurium Since pralidoxime in DuoDote reactivates cholinesterases and succinylcholine and mivacurium are metabolized by cholinesterases, patients with organophosphorus nerve agent or organophosphorus insecticide poisoning who have received DuoDote may exhibit accelerated reversal of the neuromuscular blocking effects of succinylcholine and mivacurium (relative to poisoned patients who have not received pralidoxime). Monitor for neuromuscular effects with concomitant administration.

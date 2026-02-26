@@ -1,0 +1,4 @@
+Drug: vamorolone
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Strong CYP3A4 inhibitors: The maximum recommended daily dose is 4 mg/kg up to a maximum daily dosage of 200 mg for patients weighing more than 50 kg. ( 2.6 , 7.1 ) 7.1 Effect of Other Drugs on Vamorolone Co-administration of AGAMREE with itraconazole, a strong CYP3A4 inhibitor, increases vamorolone exposure [see Clinical Pharmacology ( 12.3 )] . Reduce the dosage of AGAMREE in patients when strong CYP3A4 inhibitors are used concomitantly [see Dosage and Administration ( 2.6 )] . No dosage adjustments are required when AGAMREE is concomitantly administered with moderate or weak CYP3A4 inhibitors.

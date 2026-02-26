@@ -1,0 +1,4 @@
+Drug: ivermectin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS In vitro studies have shown that ivermectin cream, at therapeutic concentrations, neither inhibits nor induces cytochrome P450 (CYP450) enzymes.

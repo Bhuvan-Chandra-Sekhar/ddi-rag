@@ -1,0 +1,4 @@
+Drug: progesterone
+
+=== Drug Interactions ===
+C. Drug–Laboratory Test Interactions The following laboratory results may be altered by the use of estrogen plus progestin therapy: Increased sulfobromophthalein retention and other hepatic function tests. Coagulation tests: increase in prothrombin factors VII, VIII, IX and X. Pregnanediol determination. Thyroid function: increase in PBI, and butanol extractable protein bound iodine and decrease in T3 uptake values.

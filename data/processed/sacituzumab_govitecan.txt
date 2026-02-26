@@ -1,0 +1,4 @@
+Drug: sacituzumab_govitecan
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS UGT1A1 inhibitors or inducers: Avoid concomitant use. ( 7 ) 7.1 Effect of Other Drugs on TRODELVY UGT1A1 Inhibitors Concomitant administration of TRODELVY with inhibitors of UGT1A1 may increase the incidence of adverse reactions due to potential increase in systemic exposure to SN-38 [see Warning and Precaution (5.5) and Clinical Pharmacology (12.3 , 12.5) ] . Avoid administering UGT1A1 inhibitors with TRODELVY. UGT1A1 Inducers Exposure to SN-38 may be reduced in patients concomitantly receiving UGT1A1 enzyme inducers [see Warning and Precaution (5.5) and Clinical Pharmacology (12.3 , 12.5) ] . Avoid administering UGT1A1 inducers with TRODELVY.

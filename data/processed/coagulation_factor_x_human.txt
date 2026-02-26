@@ -1,0 +1,4 @@
+Drug: coagulation_factor_x_human
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Drug interaction studies have not been performed. Use with caution in patients who are receiving other plasma products that may contain Factor X (e.g. fresh frozen plasma, prothrombin complex concentrates). Based on the mechanism of action, COAGADEX is likely to be counteracted by direct and indirect Factor Xa inhibitors [ see Clinical Pharmacology (12.1) ].

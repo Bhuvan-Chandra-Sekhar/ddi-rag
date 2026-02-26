@@ -1,0 +1,4 @@
+Drug: tropicamide
+
+=== Drug Interactions ===
+Drug Interactions Tropicamide may interfere with the antihypertensive action of carbachol, pilocarpine, or ophthalmic cholinesterase inhibitors.

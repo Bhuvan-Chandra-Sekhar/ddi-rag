@@ -1,0 +1,4 @@
+Drug: methenamine_mandelate
+
+=== Drug Interactions ===
+DRUG INTERACTIONS Formaldehyde and sulfamethizole form an insoluble precipitate in acid urine; therefore, methenamine mandelate, USP should not be administered concurrently with sulfamethizole.

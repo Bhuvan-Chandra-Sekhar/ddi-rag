@@ -1,0 +1,4 @@
+Drug: rituximab_and_hyaluronidase
+
+=== Drug Interactions ===
+Renal toxicity when used in combination with cisplatin. ( 5.8 )

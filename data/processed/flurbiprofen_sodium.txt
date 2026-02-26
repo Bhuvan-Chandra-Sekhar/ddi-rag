@@ -1,0 +1,4 @@
+Drug: flurbiprofen_sodium
+
+=== Drug Interactions ===
+Drug Interactions: Interaction of Flurbiprofen Sodium Ophthalmic Solution with other topical ophthalmic medications has not been fully investigated. Although clinical studies with acetylcholine chloride and animal studies with acetylcholine chloride or carbachol revealed no interference, and there is no known pharmacological basis for an interaction, there have been reports that acetylcholine chloride and carbachol have been ineffective when used in patients treated with Flurbiprofen Sodium Ophthalmic Solution.

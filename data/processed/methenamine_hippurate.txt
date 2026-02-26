@@ -1,0 +1,4 @@
+Drug: methenamine_hippurate
+
+=== Drug Interactions ===
+Drug Interactions: The concomitant administration of methenamine hippurate and sulfamethizole or sulfathiazole is liable to result in the formation of a precipitate in the urine.

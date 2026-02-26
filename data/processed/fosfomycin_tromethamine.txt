@@ -1,0 +1,4 @@
+Drug: fosfomycin_tromethamine
+
+=== Drug Interactions ===
+DRUG INTERACTIONS Metoclopramide: When coadministered with fosfomycin tromethamine, metoclopramide, a drug which increases gastrointestinal motility, lowers the serum concentration and urinary excretion of fosfomycin. Other drugs that increase gastrointestinal motility may produce similar effects. Cimetidine: Cimetidine does not affect the pharmacokinetics of fosfomycin when coadministered with fosfomycin tromethamine.

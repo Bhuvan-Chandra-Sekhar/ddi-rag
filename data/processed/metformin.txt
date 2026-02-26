@@ -1,0 +1,4 @@
+Drug: metformin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Carbonic anhydrase inhibitors may increase risk of lactic acidosis. Consider more frequent monitoring ( 7 ) Drugs that reduce metformin clearance (such as ranolazine, vandetanib, dolutegravir, and cimetidine) may increase the accumulation of metformin. Consider the benefits and risks of concomitant use ( 7 ) Alcohol can potentiate the effect of metformin on lactate metabolism. Warn patients against excessive alcohol intake ( 7 ) Table 2 presents clinically significant drug interactions with metformin hydrochloride extended-release tablets.

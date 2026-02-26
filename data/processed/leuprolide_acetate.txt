@@ -1,0 +1,4 @@
+Drug: leuprolide_acetate
+
+=== Drug Interactions ===
+Drug Interactions See CLINICAL PHARMACOLOGY , Pharmacokinetics section.

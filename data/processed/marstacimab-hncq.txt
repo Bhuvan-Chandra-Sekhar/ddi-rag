@@ -1,0 +1,4 @@
+Drug: marstacimab-hncq
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Partial Thromboplastin Time (aPTT) and Prothrombin Time (PT) No clinically significant differences in standard measures of coagulation including activated partial thromboplastin time (aPTT) and prothrombin time (PT) were observed following marstacimab‑hncq therapy.

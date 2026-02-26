@@ -1,0 +1,4 @@
+Drug: baricitinib
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS In patients taking strong Organic Anion Transporter 3 (OAT3) inhibitors (e.g., probenecid) the recommended dosage should be reduced. ( 2.7 , 7.1 ) 7.1 Strong OAT3 Inhibitors Baricitinib exposure is increased when OLUMIANT is co-administered with strong OAT3 inhibitors (such as probenecid), hence the dosage of baricitinib should be reduced by half the recommended dose [see Dosage and Administration ( 2.2 , 2.3 ) and Clinical Pharmacology ( 12.3 )] . 7.2 Other JAK Inhibitors or Biologic DMARDs OLUMIANT has not been studied in combination with other JAK inhibitors or with biologic DMARDs [see Indications and Usage ( 1.1 , 1.2 )] .

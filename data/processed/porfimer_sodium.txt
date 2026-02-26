@@ -1,0 +1,4 @@
+Drug: porfimer_sodium
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Other Photosensitizing Agents : May increase the risk of photosensitivity reaction ( 7.1 ) 7.1 Use with Other Photosensitizing Agents PHOTOFRIN can cause photosensitivity. The concomitant use of PHOTOFRIN with other photosensitizing agents (e.g., tetracyclines, sulfonamides, phenothiazines, sulfonylurea hypoglycemic agents, thiazide diuretics, griseofulvin, and fluoroquinolones) may increase the risk of a photosensitivity reaction. Avoid the concomitant use of PHOTOFRIN with other products known to cause photosensitivity.

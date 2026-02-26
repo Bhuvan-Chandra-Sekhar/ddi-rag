@@ -1,0 +1,4 @@
+Drug: margetuximab-cmkb
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Anthracyclines Patients who receive anthracyclines less than 4 months after stopping MARGENZA [see Clinical Pharmacology (12.3) ] may be at increased risk of cardiac dysfunction. While this interaction has not been studied with MARGENZA, clinical data from other HER2-directed antibodies warrants consideration. Avoid anthracycline-based therapy for up to 4 months after stopping MARGENZA. If concomitant use is unavoidable, closely monitor patient's cardiac function.

@@ -1,0 +1,4 @@
+Drug: inebilizumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Immunosuppressive or Immune-Modulating Therapies Concomitant usage of UPLIZNA with immunosuppressant drugs, including systemic corticosteroids, may increase the risk of infection. Consider the risk of additive immune system effects when co-administering immunosuppressive therapies with UPLIZNA.

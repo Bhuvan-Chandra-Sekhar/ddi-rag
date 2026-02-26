@@ -1,0 +1,4 @@
+Drug: apremilast
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Strong CYP450 Inducers Co-administration with strong CYP450 inducers (such as rifampin) decreases apremilast exposure and may result in loss of efficacy of OTEZLA/OTEZLA XR [see Warnings and Precautions (5.5) and Clinical Pharmacology (12.3) ] .

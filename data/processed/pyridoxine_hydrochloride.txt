@@ -1,0 +1,4 @@
+Drug: pyridoxine_hydrochloride
+
+=== Drug Interactions ===
+Drug Interactions Pyridoxine supplements should not be given to patients receiving levodopa, because the action of the latter drug is antagonized by pyridoxine. However, this vitamin may be used concurrently in patients receiving a preparation containing both carbidopa and levodopa.

@@ -1,0 +1,4 @@
+Drug: iron,_folate
+
+=== Drug Interactions ===
+Drug Interactions: Davimet™ with Iron Multivitamin Chewable Tablets are not recommended and should not be given to patients receiving levodopa because the action oflevodopa is antagonized by pyridoxine. There is a possibility of increased bleeding due to pyridoxine interaction with anticoagulants (e.g., Aspirin, Heparin orClopidogrel).

@@ -1,0 +1,4 @@
+Drug: dalteparin_sodium
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS The use of FRAGMIN in patients receiving oral anticoagulants, platelet inhibitors, and thrombolytic agents may increase the risk of bleeding [see Warnings and Precautions (5) ] . The use of FRAGMIN in patients receiving oral anticoagulants, platelet inhibitors, and thrombolytic agents may increase the risk of bleeding ( 7 )

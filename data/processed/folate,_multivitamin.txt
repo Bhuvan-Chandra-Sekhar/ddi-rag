@@ -1,0 +1,4 @@
+Drug: folate,_multivitamin
+
+=== Drug Interactions ===
+Drug Interactions: Consult with a licensed healthcare practitioner before use if taking prescription medications, especially those affecting bone health or hormonal therapies.

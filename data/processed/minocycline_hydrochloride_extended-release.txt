@@ -1,0 +1,4 @@
+Drug: minocycline_hydrochloride_extended-release
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Patients who are on anticoagulant therapy may require downward adjustment of their anticoagulant dosage. ( 7.1 ) 7.1 Anticoagulants Because tetracyclines have been shown to decrease plasma prothrombin activity, patients who are on anticoagulant therapy may require downward adjustment of their anticoagulant dosage. 7.2 Penicillin Because bacteriostatic drugs may interfere with the bactericidal action of penicillin, avoid giving EMROSI in conjunction with penicillin. 7.3 Antacids and Iron Preparations Absorption of tetracyclines is impaired by antacids containing aluminum, calcium or magnesium and iron-containing preparations. 7.4 Drug/Laboratory Test Interactions False elevations of urinary catecholamine levels may occur due to interference with the fluorescence test.

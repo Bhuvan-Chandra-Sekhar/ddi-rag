@@ -1,0 +1,4 @@
+Drug: mosunetuzumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Effect of LUNSUMIO VELO on CYP450 Substrates LUNSUMIO VELO causes release of cytokines [see Clinical Pharmacology (12.2) ] that may suppress activity of CYP450 enzymes, resulting in increased exposure of CYP450 substrates. Increased exposure of CYP450 substrates is more likely to occur after the first dose of LUNSUMIO VELO on Cycle 1 Day 1 and up to 14 days after the 45 mg dose on Cycle 1 Day 8 and during and after CRS [see Warnings and Precautions (5.1) ] . Monitor for toxicity or concentrations of drugs that are CYP450 substrates where minimal concentration changes may lead to serious adverse reactions. Consult the concomitant CYP450 substrate drug prescribing information for recommended dosage modification.

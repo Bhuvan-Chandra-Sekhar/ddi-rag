@@ -1,0 +1,4 @@
+Drug: phenoxybenzamine_hydrochloride
+
+=== Drug Interactions ===
+Drug Interactions 2 – Phenoxybenzamine hydrochloride may interact with compounds that stimulate both alpha- and beta- adrenergic receptors (i.e. epinephrine) to produce an exaggerated hypotensive response and tachycardia (see WARNING ). Phenoxybenzamine hydrochloride blocks hyperthermia production by levarterenol, and blocks hypothermia production by reserpine.

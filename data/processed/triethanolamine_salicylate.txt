@@ -1,0 +1,4 @@
+Drug: triethanolamine_salicylate
+
+=== Drug Interactions ===
+Drugs That May Cause Methemoglobinemia When Used with Salicor™ Patients who are administered local anesthetics are at increased risk of developing methemoglobinemia when concurrently exposed to the following drugs, which could include other local anesthetics: Examples of Drugs Associated with Methemoglobinemia Class: Nitrates/Nitrites: Local anesthetics: Antineoplastic agents: Antibiotics: Antimalarials: Anticonvulsants: Other drugs: Examples: nitric oxide, nitroglycerin, nitroprusside, nitrous oxide articaine, benzocaine, bupivacaine, lidocaine, mepivacaine, prilocaine, procaine, ropivacaine, tetracaine cyclophosphamide, flutamide, hydroxyurea, ifosfamide, rasburicase dapsone, nitrofurantoin, para-aminosalicylic acid, sulfonamides chloroquine, primaquine phenobarbital, phenytoin, sodium valproate acetaminophen, metoclopramide, quinine, sulfasalazine carcinogenesis, mutagenesis

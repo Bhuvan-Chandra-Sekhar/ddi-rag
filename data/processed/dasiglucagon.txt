@@ -1,0 +1,4 @@
+Drug: dasiglucagon
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Table 3. Clinically Significant Drug Interactions with ZEGALOGUE Beta-Blockers Clinical Impact: Patients taking beta-blockers may have a transient increase in pulse and blood pressure when given ZEGALOGUE. Indomethacin Clinical Impact: In patients taking indomethacin, ZEGALOGUE may lose its ability to raise blood glucose or may even produce hypoglycemia. Warfarin Clinical Impact: ZEGALOGUE may increase the anticoagulant effect of warfarin. • Beta-blockers: Patients taking beta-blockers may have a transient increase in pulse and blood pressure. ( 7 ) • Indomethacin: In patients taking indomethacin, ZEGALOGUE may lose its ability to raise blood glucose or may produce hypoglycemia. ( 7 ) • Warfarin: ZEGALOGUE may increase the anticoagulant effect of warfarin. ( 7 )

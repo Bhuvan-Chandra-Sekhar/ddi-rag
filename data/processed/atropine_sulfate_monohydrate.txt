@@ -1,0 +1,4 @@
+Drug: atropine_sulfate_monohydrate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS The use of atropine and monoamine oxidase inhibitors (MAOI) is generally not recommended because of the potential to precipitate hypertensive crisis. (7) See 17 for PATIENT COUNSELING INFORMATION. 7.1 Monoamine Oxidase Inhibitors The use of atropine and monoamine oxidase inhibitors (MAOI) is generally not recommended because of the potential to precipitate hypertensive crisis.

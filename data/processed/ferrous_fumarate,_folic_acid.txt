@@ -1,0 +1,4 @@
+Drug: ferrous_fumarate,_folic_acid
+
+=== Drug Interactions ===
+Drug Interactions: Folitin-Z TM is not recommended for and should not be given to patients receiving levodopa because the action of levodopa is antagonized by pyridoxine. There is a possibility of increased bleeding due to pyridoxine interaction with anticoagulants (e.g., Aspirin, Heparin, or Clopidogrel).

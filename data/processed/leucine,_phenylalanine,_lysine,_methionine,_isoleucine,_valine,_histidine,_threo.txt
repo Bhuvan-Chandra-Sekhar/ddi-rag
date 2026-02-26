@@ -1,0 +1,4 @@
+Drug: leucine,_phenylalanine,_lysine,_methionine,_isoleucine,_valine,_histidine,_threo
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Drugs that Can Cause Hyperkalemia Because of its potassium content, CLINIMIX E should be administered with caution in patients treated with agents or products that can cause hyperkalemia or increase the risk of hyperkalemia, such as potassium sparing diuretics (amiloride, spironolactone, triamterene), with ACE inhibitors, angiotensin II receptor antagonists, or the immunosuppressants tacrolimus and cyclosporine.

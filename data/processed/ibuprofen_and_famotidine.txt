@@ -1,0 +1,4 @@
+Drug: ibuprofen_and_famotidine
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS See Table 3 for clinically significant drug interactions with ibuprofen. Table 3: Clinically Significant Drug Interactions with Ibuprofen and Famotidine See full prescribing information for a list of clinically important drug interactions. (7) table 3.1 table 3.2 table 3.3

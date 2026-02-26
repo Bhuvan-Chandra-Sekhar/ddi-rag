@@ -1,0 +1,4 @@
+Drug: piflufolastat_f-18
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Androgen deprivation therapy and other therapies targeting the androgen pathway Androgen deprivation therapy (ADT) and other therapies targeting the androgen pathway, such as androgen receptor antagonists, may result in changes in uptake of PYLARIFY in prostate cancer. The effect of these therapies on performance of PYLARIFY PET has not been established.

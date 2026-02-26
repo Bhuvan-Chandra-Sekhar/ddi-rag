@@ -1,0 +1,4 @@
+Drug: lidothol_patch
+
+=== Drug Interactions ===
+Patients that are administered local anesthetics may be at increased risk of developing methemoglobinemia when concurrently exposed to the following oxidizing agents Class Nitrates/Nitrites Local Anesthetics Antineoplastic agents Antibiotics Antimalarials Anticonvulsants Other drugs Examples nitroglycerin, nitroprusside, nitric oxide, nitrous oxide benzocaine, lidocaine, bupivacaine, mepivacaine, tetracaine, prilocaine, procaine, articaine, ropivacaine cyclophosphamide, flutamide, rasburicase, ifosfamide, hydroxyurea dapsone, sulfonamides, nitrofurantoin, para-aminosalicyclic acid chloroquine, primaquine phenytoin, sodium valproate, phenobarbital acetaminophen, metoclopramide, sulfa drugs (i.e., sulfasalazine), quinine

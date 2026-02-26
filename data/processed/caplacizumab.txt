@@ -1,0 +1,4 @@
+Drug: caplacizumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Concomitant use of anticoagulants or antiplatelet agents with CABLIVI may increase the risk of bleeding. Monitor closely for bleeding with concomitant use. ( 7 ) Concomitant Use of Anticoagulants, Thrombolytic Drugs, Heparin or Antiplatelet Agents Concomitant use of CABLIVI with any anticoagulant, thrombolytic drugs, heparin or antiplatelet agent may increase the risk of bleeding. Avoid concomitant use when possible. Assess and monitor closely for bleeding with concomitant use [see Warnings and Precautions (5.1) and Clinical Pharmacology (12.3) ] .

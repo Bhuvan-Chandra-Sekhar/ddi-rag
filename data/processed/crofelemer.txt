@@ -1,0 +1,4 @@
+Drug: crofelemer
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Nelfinavir, Zidovudine, and Lamivudine MYTESI administration did not have a clinically relevant interaction with nelfinavir, zidovudine, or lamivudine in a drug-drug interaction trial [see Clinical Pharmacology ( 12.3 )] .

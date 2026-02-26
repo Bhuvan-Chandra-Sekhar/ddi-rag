@@ -1,0 +1,4 @@
+Drug: linvoseltamab-gcpt
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Effects of LYNOZYFIC on Other Drugs Certain CYP substrates Monitor for toxicity unless otherwise recommended in the Prescribing Information of certain CYP substrates where minimal changes in the concentration may lead to serious adverse reactions when used concomitantly with LYNOZYFIC. Linvoseltamab-gcpt causes the release of cytokines [see Clinical Pharmacology (12.2) ] that may suppress cytochrome P450 (CYP) enzyme activity . Concomitant use with LYNOZYFIC increases CYP substrate exposure which may increase the risk of adverse reactions related to these substrates. Increased CYP substrate exposure is more likely to occur from initiation of the LYNOZYFIC step-up dosing schedule up to 14 days after the first 200 mg dose, and during and after CRS [see Warnings and Precautions (5.1) ] .

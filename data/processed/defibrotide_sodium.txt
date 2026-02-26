@@ -1,0 +1,4 @@
+Drug: defibrotide_sodium
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Antithrombotic Agents DEFITELIO may enhance the pharmacodynamic activity of antithrombotic/fibrinolytic drugs such as heparin or alteplase. Concomitant use of DEFITELIO with antithrombotic or fibrinolytic drugs is contraindicated because of an increased risk of hemorrhage [see Contraindications (4) ] . • DEFITELIO may enhance the activity of antithrombotic/fibrinolytic drugs. ( 7 )

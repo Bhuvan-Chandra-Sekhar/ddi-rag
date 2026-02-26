@@ -1,0 +1,6 @@
+Drug: methylnaltrexone_bromide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Other Opioid Antagonists : Potential for additive effect and increased risk of opioid withdrawal; avoid concomitant use. ( 7.1 ) 7.1 Other Opioid Antagonists Avoid concomitant use of RELISTOR with other opioid antagonists because of the potential for additive effects of opioid receptor antagonism and increased risk of opioid withdrawal. 7.2 Drugs Metabolized by Cytochrome P450 Isozymes In healthy subjects, a subcutaneous dose of 0.3 mg/kg of RELISTOR did not significantly affect the metabolism of dextromethorphan, a CYP2D6 substrate.
+7.1 Other Opioid Antagonists Avoid concomitant use of RELISTOR with other opioid antagonists because of the potential for additive effects of opioid receptor antagonism and increased risk of opioid withdrawal.
+7.2 Drugs Metabolized by Cytochrome P450 Isozymes In healthy subjects, a subcutaneous dose of 0.3 mg/kg of RELISTOR did not significantly affect the metabolism of dextromethorphan, a CYP2D6 substrate.

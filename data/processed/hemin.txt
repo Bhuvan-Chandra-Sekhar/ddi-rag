@@ -1,0 +1,4 @@
+Drug: hemin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS PANHEMATIN therapy is intended to limit the rate of porphyria/heme biosynthesis possibly by inhibiting the enzyme δ-aminolevulinic acid synthetase 1 (ALAS1) [See Clinical Pharmacology ( 12.1 )] . Most of the heme synthesized in liver is used for the production of cytochrome P450 (CYP) enzymes. Therefore, avoid CYP inducing drugs (such as estrogens, barbituric acid derivatives and steroid metabolites) while on PANHEMATIN therapy, because these drugs increase the activity of ALAS leading to induction of ALAS1 through a feedback mechanism. Avoid CYP inducing drugs such as estrogens, barbituric acid derivatives and steroid metabolites which induce δ-aminolevulinic acid synthetase 1 (ALAS1) through a feedback mechanism. ( 7 )

@@ -1,0 +1,4 @@
+Drug: carbinoxamine_maleate
+
+=== Drug Interactions ===
+Drug Interactions Monoamine oxidase inhibitors prolong and intensify the anticholinergic (drying) effects of antihistamines. Carbinoxamine maleate has additive effects with alcohol and other CNS depressants (hypnotics sedatives, tranquilizers, etc.).

@@ -1,0 +1,4 @@
+Drug: benztropine_mesylate
+
+=== Drug Interactions ===
+Drug Interactions Antipsychotic drugs such as phenothiazines or haloperidol; tricyclic antidepressants (see WARNINGS ).

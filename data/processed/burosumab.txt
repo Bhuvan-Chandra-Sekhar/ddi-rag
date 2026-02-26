@@ -1,0 +1,4 @@
+Drug: burosumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Oral Phosphate and Active Vitamin D Analogs Concomitant use of CRYSVITA with oral phosphate and/or active vitamin D analogs will increase phosphate concentrations greater than expected with CRYSVITA alone. This increase may result in hyperphosphatemia which can induce nephrocalcinosis. Concomitant use of CRYSVITA with oral phosphate and/or active vitamin D analogs is contraindicated.

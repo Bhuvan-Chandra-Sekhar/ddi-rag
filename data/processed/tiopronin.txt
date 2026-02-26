@@ -1,0 +1,4 @@
+Drug: tiopronin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Alcohol Tiopronin is released faster from tiopronin delayed-release tablets in the presence of alcohol and the risk for adverse events associated with tiopronin delayed-release tablets when taken with alcohol is unknown. Avoid alcohol consumption 2 hours before and 3 hours after taking tiopronin delayed-release tablets [see Clinical Pharmacology ( 12.3 )] .

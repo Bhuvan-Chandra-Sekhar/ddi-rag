@@ -1,0 +1,4 @@
+Drug: bleomycin
+
+=== Drug Interactions ===
+Drug Interactions Drugs that Can Affect Renal Clearance Because bleomycin is eliminated predominantly through renal excretion, the administration of nephrotoxic drugs with bleomycin may affect its renal clearance. Specifically, in one report of 2 children receiving concomitant cisplatin with bleomycin, total body clearance of bleomycin decreased from 39 to 18 mL/min/m 2 as the cumulative dose of cisplatin exceeded 300 mg/m 2 . Terminal half-life of bleomycin also increased from 4.4 to 6 hours. Fatal bleomycin pulmonary toxicity has been reported in a patient with unrecognized cisplatin-induced oliguric renal failure.

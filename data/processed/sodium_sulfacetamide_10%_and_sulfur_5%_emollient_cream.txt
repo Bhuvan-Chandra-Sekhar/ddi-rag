@@ -1,0 +1,4 @@
+Drug: sodium_sulfacetamide_10%_and_sulfur_5%_emollient_cream
+
+=== Drug Interactions ===
+Drug Interactions: This product is incompatible with silver preparations.

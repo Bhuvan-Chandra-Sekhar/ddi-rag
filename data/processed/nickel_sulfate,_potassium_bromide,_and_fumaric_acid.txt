@@ -1,0 +1,4 @@
+Drug: nickel_sulfate,_potassium_bromide,_and_fumaric_acid
+
+=== Drug Interactions ===
+Drug Interactions There are no known drug interactions.

@@ -1,0 +1,4 @@
+Drug: edotreotide_gallium_ga-68
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Non-radioactive somatostatin analogs bind to the same somatostatin receptors as Ga 68 DOTATOC Injection. Image patients with Ga 68 DOTATOC Injection just prior to dosing with long-acting analogs of somatostatin. Short-acting analogs of somatostatin can be used up to 24 hours before imaging with Ga 68 DOTATOC Injection [see Dosage and Administration (2.3) ] . Somatostatin Analogs: Somatostatin analogs competitively bind to the same somatostatin receptors as Ga 68 DOTATOC Injection and may affect imaging –Discontinue short-acting somatostatin analogs 24 hours before imaging with Ga 68 DOTATOC and image just prior to dosing with long-acting somatostatin analogs ( 2.3 , 7 )

@@ -1,0 +1,4 @@
+Drug: ravulizumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Plasma Exchange, Plasmapheresis, or Intravenous Immunoglobulins: concomitant use requires supplemental dose of ULTOMIRIS. ( 7.1 ) Neonatal Fc Receptor Blockers (FcRn): Closely monitor for reduced effectiveness of ULTOMIRIS. ( 7.2 ) 7.1 Plasma Exchange, Plasmapheresis, and Intravenous Immunoglobulins Concomitant use of ULTOMIRIS with plasma exchange (PE), plasmapheresis (PP), or intravenous immunoglobulin (IVIg) treatment can reduce serum ravulizumab concentrations and requires a supplemental dose of ULTOMIRIS [see Dosage and Administration (2.5) ]. 7.2 Neonatal Fc Receptor Blockers Concomitant use of ULTOMIRIS with neonatal Fc receptor (FcRn) blockers (e.g., efgartigimod) may lower systemic exposures and reduce effectiveness of ULTOMIRIS. Closely monitor for reduced effectiveness of ULTOMIRIS.

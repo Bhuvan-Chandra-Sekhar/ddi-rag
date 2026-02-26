@@ -1,0 +1,4 @@
+Drug: ruxolitinib
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Drug interaction studies with OPZELURA have not been conducted. Ruxolitinib is known to be a substrate for cytochrome P450 3A4 (CYP3A4). Inhibitors of CYP3A4 may increase ruxolitinib systemic concentrations whereas inducers of CYP3A4 may decrease ruxolitinib systemic concentrations [see Clinical Pharmacology ( 12.3 )] . Strong Inhibitors of CYP3A4 Avoid concomitant use of OPZELURA with strong inhibitors of CYP3A4 as there is a potential to increase the systemic exposure of ruxolitinib and could increase the risk of OPZELURA adverse reactions [see Clinical Pharmacology ( 12.3 )] .

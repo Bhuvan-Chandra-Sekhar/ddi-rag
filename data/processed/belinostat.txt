@@ -1,0 +1,5 @@
+Drug: belinostat
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS UGT1A1 Inhibitors: Avoid use or modify dosage if use is unavoidable. ( 2.6 , 7.1 ) 7.1 UGT1A1 Inhibitors Avoid concomitant administration of Beleodaq with UGT1A1inhibitors. If concomitant use of a UGT1A1 inhibitor is unavoidable, modify the Beleodaq dose [see Dosage and Administration ( 2.6 )] . Belinostat is primarily metabolized by UGT1A1. Concomitant use with a UGT1A1 inhibitor increases belinostat exposure [see Clinical Pharmacology ( 12.3 )] , which may increase the risk of Beleodaq adverse reactions.
+7.1 UGT1A1 Inhibitors Avoid concomitant administration of Beleodaq with UGT1A1inhibitors. If concomitant use of a UGT1A1 inhibitor is unavoidable, modify the Beleodaq dose [see Dosage and Administration ( 2.6 )] . Belinostat is primarily metabolized by UGT1A1. Concomitant use with a UGT1A1 inhibitor increases belinostat exposure [see Clinical Pharmacology ( 12.3 )] , which may increase the risk of Beleodaq adverse reactions.

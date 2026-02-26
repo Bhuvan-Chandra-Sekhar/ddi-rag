@@ -1,0 +1,4 @@
+Drug: omalizumab-igec
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No formal drug interaction studies have been performed with omalizumab products. In patients with asthma, CRSwNP, and IgE-mediated food allergy the concomitant use of omalizumab products and allergen immunotherapy has not been evaluated . In patients with CSU, the use of omalizumab products in combination with immunosuppressive therapies has not been studied. No formal drug interaction studies have been performed. ( 7 )

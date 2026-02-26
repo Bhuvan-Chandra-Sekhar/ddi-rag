@@ -1,0 +1,4 @@
+Drug: vericiguat
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS PDE-5 Inhibitors: Concomitant use is not recommended. ( 7.2 ) 7.1 Other Soluble Guanylate Cyclase Stimulators VERQUVO is contraindicated in patients with concomitant use of other soluble guanylate cyclase (sGC) stimulators [see Contraindications (4) ] . 7.2 PDE-5 Inhibitors Concomitant use of VERQUVO with PDE-5 inhibitors is not recommended because of the potential for hypotension [see Clinical Pharmacology (12.2) ] .

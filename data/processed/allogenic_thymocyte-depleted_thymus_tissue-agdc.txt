@@ -1,0 +1,4 @@
+Drug: allogenic_thymocyte-depleted_thymus_tissue-agdc
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No drug interaction studies have been conducted with RETHYMIC. If possible, prolonged use of immunosuppressive therapies, including high-dose corticosteroids, should be avoided.

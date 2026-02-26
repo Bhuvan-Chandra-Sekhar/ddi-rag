@@ -1,0 +1,4 @@
+Drug: emapalumab-lzsg
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Effect of GAMIFANT on Cytochrome P450 Substrates The formation of CYP450 enzymes may be suppressed by increased levels of cytokines (such as IFNγ) during chronic inflammation. By neutralizing IFNγ, use of GAMIFANT may normalize CYP450 activities which may reduce the efficacy of drugs that are CYP450 substrates due to increased metabolism. Upon initiation or discontinuation of concomitant GAMIFANT, monitor for reduced efficacy and adjust dosage of CYP450 substrate drugs as appropriate.

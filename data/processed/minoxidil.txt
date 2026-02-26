@@ -1,0 +1,4 @@
+Drug: minoxidil
+
+=== Drug Interactions ===
+4. Drug Interactions See “Interaction with Guanethidine” under WARNINGS .

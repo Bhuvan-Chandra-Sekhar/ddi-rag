@@ -1,0 +1,4 @@
+Drug: physostigmine_salicylate
+
+=== Drug Interactions ===
+Interactions: Tell your doctor or pharmacist if you are taking/ using, have recently taken/used or intend to take/ use any other medicines. In case of simultaneous administration of other cholinesterase inhibitors (e.g. medicines for the treatment of dementia), caution should be exercised because of the potentiating effect. In intoxication with depolarizing muscle relaxants of the suxamethonium type, ANTICHOLIUM ® is contraindicated!

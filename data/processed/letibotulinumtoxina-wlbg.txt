@@ -1,0 +1,4 @@
+Drug: letibotulinumtoxina-wlbg
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No drug interaction studies have been conducted with LETYBO. Certain drugs may potentiate the effects of LETYBO which may result in excessive neuromuscular weakness and heighten systemic anticholinergic effects. Use caution with concurrent use of LETYBO with the following products and monitor closely for excessive neuromuscular weakness: Aminoglycosides or other agents interfering with neuromuscular transmission Anticholinergic drugs Botulinum neurotoxin products administered as the same time or within several months of LETYBO Muscle relaxants administered before or after administration of LETYBO Aminoglycoside antibiotics, anticholinergic agents, or any other agents that interfere with neuromuscular transmission may potentiate the effect of LETYBO; co-administer only with caution and close observation. ( 7 )

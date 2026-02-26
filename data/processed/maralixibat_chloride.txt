@@ -1,0 +1,4 @@
+Drug: maralixibat_chloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS • Bile Acid Sequestrants: Modify LIVMARLI administration schedule. ( 7.1 ) 7.1 Effects of Other Drugs on LIVMARLI Bile Acid Binding Resins Bile acid binding resins may bind to maralixibat in the gut. Administer LIVMARLI at least 4 hours before or 4 hours after administration of bile acid binding resins (e.g., cholestyramine, colesevelam, or colestipol). 7.2 Effects of LIVMARLI on Other Drugs OATP2B1 substrates Maralixibat is an OATP2B1 inhibitor based on in vitro studies. A decrease in the oral absorption of OATP2B1 substrates (e.g., statins) due to OATP2B1 inhibition in the GI tract cannot be ruled out. Consider monitoring the drug effects of OATP2B1 substrates (e.g. statins) as needed [see Clinical Pharmacology (12.3) ] .

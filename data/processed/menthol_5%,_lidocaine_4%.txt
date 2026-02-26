@@ -1,0 +1,4 @@
+Drug: menthol_5%,_lidocaine_4%
+
+=== Drug Interactions ===
+DRUG INTERACTIONS Antiarrhythmic Drugs Lidothol® ES should be used with caution in patients receiving Class 1 antiarrhythmic drugs (such as tocainide and mexiletine) since the toxic effects are additive and potentially synergistic. Local Anesthetics When Lidothol® ES is used concurrently with other products containing local anesthetic agents, the amount absorbed from all formulations must be considered. Methemoglobinemia Patients that are administered local anesthetics may be at increased risk of developing methemoglobinemia when concurrently exposed to the following oxidizing agents: a di table

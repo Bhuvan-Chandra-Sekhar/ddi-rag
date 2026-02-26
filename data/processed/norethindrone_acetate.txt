@@ -1,0 +1,4 @@
+Drug: norethindrone_acetate
+
+=== Drug Interactions ===
+Drug Interactions No pharmacokinetic drug interaction studies investigating any drug-drug interactions with norethindrone acetate tablets have been conducted.

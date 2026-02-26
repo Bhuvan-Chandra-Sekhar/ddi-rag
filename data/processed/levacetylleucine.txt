@@ -1,0 +1,4 @@
+Drug: levacetylleucine
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS • N-acetyl-DL-leucine or N-acetyl-D-leucine : Avoid concomitant use with AQNEURSA. ( 7.1 ) • P-glycoprotein (P-gp) Transporter Substrates : Monitor for adverse reactions if used with AQNEURSA. ( 7.2 ) 7.1 Effect of Other Drugs on AQNEURSA N-acetyl-DL-leucine and N-acetyl-D-leucine Avoid concomitant use of AQNEURSA with N-acetyl-DL-leucine and N-acetyl-D-leucine. The D-enantiomer, N-acetyl-D-leucine, competes with levacetylleucine for monocarboxylate transporter uptake, which may reduce the levacetylleucine efficacy. 7.2 Effect of AQNEURSA on Other Drugs P-glycoprotein (P-gp) Transporter Substrates Monitor more frequently for P-gp substrate related adverse reactions when used concomitantly with AQNEURSA. Levacetylleucine inhibits P-gp [see Clinical Pharmacology ( 12.3 )] . However, the clinical significance of this finding has not been fully characterized.

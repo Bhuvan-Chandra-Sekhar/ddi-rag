@@ -1,0 +1,4 @@
+Drug: lubiprostone
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Methadone Diphenylheptane opioids (e.g., methadone) have been shown in nonclinical studies to dose-dependently reduce the activation of ClC-2 by lubiprostone in the gastrointestinal tract. There is a possibility of a dose-dependent decrease in the efficacy of lubiprostone in patients using diphenylheptane opioids. No in vivo interaction studies have been conducted. The effectiveness of lubiprostone in the treatment of OIC in patients taking diphenylheptane opioids (e.g., methadone) has not been established [see Indications and Usage (1.2) ].

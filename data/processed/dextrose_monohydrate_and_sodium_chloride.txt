@@ -1,0 +1,4 @@
+Drug: dextrose_monohydrate_and_sodium_chloride
+
+=== Drug Interactions ===
+Drug Interactions Additives may be incompatible. Consult with pharmacist, if available. When introducing additives, use aseptic technique, mix thoroughly and do not store.

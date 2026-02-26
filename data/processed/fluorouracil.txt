@@ -1,0 +1,4 @@
+Drug: fluorouracil
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Anticoagulants and CYP 2C9 Substrates Elevated coagulation times have been reported in patients taking fluorouracil concomitantly with warfarin. While pharmacokinetic data are not available to assess the effect of fluorouracil administration on warfarin pharmacokinetics, the elevation of coagulation times that occurs with the fluorouracil prodrug capecitabine is accompanied by an increase in warfarin concentrations. Thus, the interaction may be due to inhibition of cytochrome P450 2C9 by fluorouracil or its metabolites.

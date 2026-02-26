@@ -1,0 +1,4 @@
+Drug: lenvatinib
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Drugs That Prolong the QT Interval LENVIMA has been reported to prolong the QT/QTc interval. Avoid coadministration of LENVIMA with medicinal products with a known potential to prolong the QT/QTc interval [ see Warnings and Precaution s ( 5.9 ) ] .

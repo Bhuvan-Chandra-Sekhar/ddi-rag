@@ -1,0 +1,4 @@
+Drug: remdesivir
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Effects of Other Drugs on VEKLURY Due to potential antagonism based on data from cell culture experiments, concomitant use of VEKLURY with chloroquine phosphate or hydroxychloroquine sulfate is not recommended [see Warnings and Precautions (5.3) and Microbiology (12.4) ]. Based on drug interaction studies conducted with VEKLURY, no clinically significant drug interactions are expected with inducers of cytochrome P450 (CYP) 3A4 or inhibitors of Organic Anion Transporting Polypeptides (OATP) 1B1/1B3 and, P-glycoprotein (P-gp) [see Clinical Pharmacology (12.3) ]. 7.2 Effects of VEKLURY on Other Drugs Based on drug interaction studies conducted with VEKLURY, it is a weak inhibitor of CYP3A and does not inhibit OATP1B1/1B3 [see Clinical Pharmacology (12.3) ].

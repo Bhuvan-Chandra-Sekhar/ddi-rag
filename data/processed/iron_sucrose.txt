@@ -1,0 +1,4 @@
+Drug: iron_sucrose
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Iron sucrose may reduce the absorption of concomitantly administered oral iron preparations.

@@ -1,0 +1,4 @@
+Drug: flotufolastat_f-18
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Androgen deprivation therapy (ADT) and other therapies targeting the androgen pathway, such as androgen receptor antagonists, can result in changes in uptake of flotufolastat F 18 in prostate cancer. The effect of these therapies on performance of POSLUMA PET has not been established.

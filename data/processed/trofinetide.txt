@@ -1,0 +1,4 @@
+Drug: trofinetide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Orally administered CYP3A and/or P-gp sensitive substrates for which a small change in substrate plasma concentration may lead to serious adverse reactions: closely monitor for adverse reactions with concomitant use. ( 7.1 ) 7.1 Effect of DAYBUE and DAYBUE STIX on Other Drugs CYP3A and/or P-gp Substrates Closely monitor patients when DAYBUE or DAYBUE STIX is administered concomitantly with sensitive CYP3A and/or P-gp substrates where minimal increases in the plasma concentration of these substrates may lead to serious adverse reactions. Trofinetide, a weak inhibitor of CYP3A and an inhibitor of P-gp, increased the plasma concentrations of CYP3A and/or P-gp substrates [see Clinical Pharmacology (12.3) ] , which may increase the risk of adverse reactions associated with these substrates.

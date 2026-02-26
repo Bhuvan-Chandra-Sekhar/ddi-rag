@@ -1,0 +1,4 @@
+Drug: benzocaine,_butamben,_and_tetracaine_hydrochloride
+
+=== Drug Interactions ===
+DRUG INTERACTIONS Patients that are administered local anesthetics may be at increased risk of developing methemoglobinemia when concurrently exposed to the following oxidizing agents: Class Examples Nitrates/Nitrites nitroglycerin, nitroprusside, nitric oxide, nitrous oxide Local anesthetics benzocaine, lidocaine, bupivacaine, mepivacaine, tetracaine, prilocaine, procaine, articaine, ropivacaine Antineoplastic agents cyclophosphamide, flutamide, rasburicase, ifosfamide, hydroxyurea Antibiotics dapsone, sulfonamides, nitrofurantoin, para-aminosalicylic acid Antimalarials chloroquine, primaquine Anticonvulsants phenytoin, sodium valproate, phenobarbital Other drugs acetaminophen, metoclopramide, sulfa drugs (i.e., sulfasalazine), quinine

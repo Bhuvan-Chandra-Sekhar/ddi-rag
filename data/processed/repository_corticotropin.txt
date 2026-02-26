@@ -1,0 +1,4 @@
+Drug: repository_corticotropin
+
+=== Drug Interactions ===
+Drug Interactions Aspirin should be used cautiously in conjunction with corticotropin in hypoprothrombinemia.

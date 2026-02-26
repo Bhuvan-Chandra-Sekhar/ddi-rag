@@ -1,0 +1,4 @@
+Drug: testosterone_booster_oral_dissolving_film
+
+=== Drug Interactions ===
+Drug Interactions Avoid use with: Nitrates, α-adrenergic blockers (e.g., tamsulosin), strong CYP3A4 inhibitors (e.g., ketoconazole, ritonavir, which may increase vardenafil plasma concentration). Use with caution with: Antihypertensive drugs, alcohol (may enhance hypotensive effects).

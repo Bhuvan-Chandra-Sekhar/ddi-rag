@@ -1,0 +1,4 @@
+Drug: adapalene_and_benzoyl_peroxide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Concomitant topical acne therapy should be used with caution because a possible cumulative irritancy effect may occur, especially with the use of peeling, desquamating, or abrasive agents. No formal drugdrug interaction studies were conducted with adapalene and benzoyl peroxide.

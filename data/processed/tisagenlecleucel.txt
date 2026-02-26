@@ -1,0 +1,4 @@
+Drug: tisagenlecleucel
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS HIV and the lentivirus used to make KYMRIAH have limited, short spans of identical genetic material (RNA). Therefore, some commercial HIV nucleic acid tests (NATs) may yield false-positive results in patients who have received KYMRIAH.

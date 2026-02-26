@@ -1,0 +1,4 @@
+Drug: sodium_fluoride
+
+=== Drug Interactions ===
+Drug Interactions: Do not eat or drink dairy products within one hour of fluoride administration. Incompatibility of fluoride with dairy foods has been reported due to formation of calcium fluoride which is poorly absorbed.

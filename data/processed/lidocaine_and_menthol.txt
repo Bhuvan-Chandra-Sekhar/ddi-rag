@@ -1,0 +1,4 @@
+Drug: lidocaine_and_menthol
+
+=== Drug Interactions ===
+DRUG INTERACTIONS Antiarrhythmic Drugs: LM Plus Relief Patch ® should be used with caution in patients receiving Class 1 antiarrhythmic drugs (such as tocainide and mexiletine) since the toxic effects are additive and potentially synergistic. Local Anesthetics: When LM Plus Relief Patch ® is used concurrently with other products containing local anesthetic agents the amount absorbed from all formulations must be considered.

@@ -1,0 +1,4 @@
+Drug: aztreonam_and_avibactam
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 OAT 1 and 3 Transport Inhibitors Concomitant use of organic anion transporter (OAT) 1 and OAT 3 transporter inhibitors (e.g., probenecid) with EMBLAVEO is not recommended. There is insufficient information to characterize the effect of concomitant use of OAT 1/3 transport inhibitors with EMBLAVEO [see Clinical Pharmacology ( 12.3 )].

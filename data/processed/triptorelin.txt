@@ -1,0 +1,4 @@
+Drug: triptorelin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Drug-Drug Interactions Results of in vitro studies show that drug-drug interactions with triptorelin are unlikely [see Clinical Pharmacology (12.3)] . However, in the absence of relevant data and as a precaution, hyperprolactinemic drugs should not be used concomitantly with triptorelin since hyperprolactinemia reduces the number of pituitary GnRH receptors. 7.2 Drug-Laboratory Test Interactions Administration of TRIPTODUR results in suppression of the pituitary-gonadal system. The effect of TRIPTODUR on pituitary and gonadal function is expected to disappear within six to twelve months after treatment discontinuation. Therefore, diagnostic tests of pituitary gonadotropic and gonadal functions conducted during treatment or after discontinuation of treatment may be affected.

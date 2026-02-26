@@ -1,0 +1,4 @@
+Drug: pegaspargase
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Glucocorticoids Pegaspargase may increase the risk of glucocorticoid-induced toxicities, including osteonecrosis through a potential increase in exposure of dexamethasone [see Adverse Reactions (6.3) ] .

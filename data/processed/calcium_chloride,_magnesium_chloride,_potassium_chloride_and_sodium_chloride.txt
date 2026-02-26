@@ -1,0 +1,4 @@
+Drug: calcium_chloride,_magnesium_chloride,_potassium_chloride_and_sodium_chloride
+
+=== Drug Interactions ===
+Drug Interactions Additives may be incompatible. Consult with pharmacist, if available. When introducing additives, use aseptic technique, mix thoroughly and do not store (See INSTRUCTIONS FOR USE ). Pregnancy: Animal reproduction studies have not been conducted with Cardioplegic Solution. It is also not known whether this solution can cause fetal harm when administered to a pregnant woman or can affect reproduction capacity. Cardioplegic Solution should be given to a pregnant woman only if clearly needed.

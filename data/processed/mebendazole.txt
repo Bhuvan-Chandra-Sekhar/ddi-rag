@@ -1,0 +1,4 @@
+Drug: mebendazole
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Concomitant use of mebendazole and metronidazole should be avoided [see Warnings and Precautions (5.3) ] .

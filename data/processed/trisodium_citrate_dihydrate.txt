@@ -1,0 +1,4 @@
+Drug: trisodium_citrate_dihydrate
+
+=== Drug Interactions ===
+Drug Interactions There are no adverse reactions for the addition of the product to the rouleaux agent.

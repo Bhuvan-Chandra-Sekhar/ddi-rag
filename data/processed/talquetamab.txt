@@ -1,0 +1,4 @@
+Drug: talquetamab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS For certain cytochrome P450 (CYP) substrates, minimal changes in the substrate concentration may lead to serious adverse reactions. Monitor for toxicity or drug concentrations of such CYP substrates when co-administered with TALVEY. Talquetamab-tgvs causes release of cytokines [see Clinical Pharmacology (12.2) ] that may suppress activity of CYP enzymes, resulting in increased exposure of CYP substrates. Increased exposure of CYP substrates is more likely to occur from initiation of the TALVEY step-up dosing schedule up to 14 days after the first treatment dose and during and after CRS [see Warnings and Precautions (5.1) ] .

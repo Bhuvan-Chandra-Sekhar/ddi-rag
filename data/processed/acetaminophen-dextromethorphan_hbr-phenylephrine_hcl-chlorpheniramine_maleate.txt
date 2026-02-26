@@ -1,0 +1,4 @@
+Drug: acetaminophen-dextromethorphan_hbr-phenylephrine_hcl-chlorpheniramine_maleate
+
+=== Drug Interactions ===
+Drug Interactions Do not use if you are taking a prescription monoamine oxidase inhibitor (MAOI), (Certain drugs for depression, psychiatric or emotional conditions, or Parkinsons disease) or for 2 weeks after stopping that MAOI drug, if you are uncertain whether your prescription drug contains an MAOI, consult a health professional before taking this product

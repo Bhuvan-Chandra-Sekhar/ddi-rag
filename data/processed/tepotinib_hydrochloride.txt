@@ -1,0 +1,4 @@
+Drug: tepotinib_hydrochloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Certain P-gp substrates : Avoid coadministration of TEPMETKO with P-gp substrates where minimal concentration changes may lead to serious or life-threatening toxicities. ( 7.1 ) 7.1 Effects of TEPMETKO on Other Drugs Certain P-gp Substrates Tepotinib is a P-gp inhibitor. Concomitant use of TEPMETKO increases the concentration of P-gp substrates [see Clinical Pharmacology (12.3) ], which may increase the incidence and severity of adverse reactions of these substrates. Avoid concomitant use of TEPMETKO with certain P-gp substrates where minimal concentration changes may lead to serious or life-threatening toxicities. If concomitant use is unavoidable, reduce the P-gp substrate dosage if recommended in its approved product labeling.

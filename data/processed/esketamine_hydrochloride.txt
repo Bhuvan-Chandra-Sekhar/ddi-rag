@@ -1,0 +1,4 @@
+Drug: esketamine_hydrochloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Central Nervous System Depressants Concomitant use with CNS depressants (e.g., benzodiazepines, opioids, alcohol) may increase sedation [see Warnings and Precautions (5.1) ] . Closely monitor for sedation with concomitant use of SPRAVATO with CNS depressants. 7.2 Psychostimulants Concomitant use with psychostimulants (e.g., amphetamines, methylphenidate, modafinil, armodafinil) may increase blood pressure [see Warnings and Precautions (5.7) ] . Closely monitor blood pressure with concomitant use of SPRAVATO with psychostimulants. 7.3 Monoamine Oxidase Inhibitors (MAOIs) Concomitant use with monoamine oxidase inhibitors (MAOIs) may increase blood pressure [see Warnings and Precautions (5.7) ] . Closely monitor blood pressure with concomitant use of SPRAVATO with MAOIs.

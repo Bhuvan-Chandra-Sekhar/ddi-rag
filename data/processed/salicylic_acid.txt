@@ -1,0 +1,4 @@
+Drug: salicylic_acid
+
+=== Drug Interactions ===
+Sunburn Alert: This product contains an alpha-hydroxy acid (AHA) that may increase skin's sensitivity to the sun and particularly thepossibility of sunburn. Use a sunscreen, wear protective clothing, and limit sun exposure while using this product and for two weeks afterwards.

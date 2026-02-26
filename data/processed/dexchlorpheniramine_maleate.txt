@@ -1,0 +1,4 @@
+Drug: dexchlorpheniramine_maleate
+
+=== Drug Interactions ===
+Drug Interaction MAO inhibitors prolong and intensify the anticholinergic (drying) effects of antihistamines.

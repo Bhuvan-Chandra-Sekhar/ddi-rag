@@ -1,0 +1,4 @@
+Drug: succimer
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS CHEMET may interfere with serum and urinary laboratory test. ( 7.1 ) 7.1 Laboratory Test Interference CHEMET may interfere with serum and urinary laboratory tests. In vitro studies have shown CHEMET to cause false positive results for ketones in urine using nitroprusside reagents and falsely decreased measurements of serum uric acid and creatinine phosphokinase (CPK). 7.2 Use with Other Chelation Therapies Concomitant administration of CHEMET with other chelation therapy, such as CaNa 2 EDTA is not recommended.

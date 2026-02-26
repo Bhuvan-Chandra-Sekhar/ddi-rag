@@ -1,0 +1,4 @@
+Drug: chloramphenicol_sodium_succinate
+
+=== Drug Interactions ===
+Drug Interactions Concurrent therapy with other drugs that may cause bone marrow depression should be avoided.

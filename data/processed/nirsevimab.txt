@@ -1,0 +1,4 @@
+Drug: nirsevimab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Interference with RT-PCR or Rapid Antigen Detection RSV Diagnostic Assays Nirsevimab-alip does not interfere with reverse transcriptase polymerase chain reaction (RT-PCR) or rapid antigen detection RSV diagnostic assays that employ commercially available antibodies targeting antigenic site I, II, or IV on the RSV fusion (F) protein. For immunological assay results which are negative when clinical observations are consistent with RSV infection, it is recommended to confirm using an RT-PCR-based assay.

@@ -1,0 +1,4 @@
+Drug: gadodiamide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Specific drug interaction studies have not been conducted.

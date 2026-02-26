@@ -1,0 +1,4 @@
+Drug: ofatumumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Immunosuppressive or Immune-Modulating Therapies Concomitant usage of KESIMPTA with immunosuppressant drugs, including systemic corticosteroids, may increase the risk of infection. Consider the risk of additive immune system effects when coadministering immunosuppressive therapies with KESIMPTA. When switching from therapies with immune effects, the duration and mechanism of action of these therapies should be taken into account because of potential additive immunosuppressive effects when initiating KESIMPTA.

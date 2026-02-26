@@ -1,0 +1,4 @@
+Drug: iptacopan
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS CYP2C8 inducers (e.g., rifampin): May decrease iptacopan exposure. Monitor for loss of efficacy. ( 7.1 ) Strong CYP2C8 inhibitors (e.g., gemfibrozil): May increase iptacopan exposure. Coadministration not recommended. ( 7.2 ) 7.1 CYP2C8 Inducers Concomitant use of CYP2C8 inducers (e.g., rifampin) may decrease iptacopan exposure, which may result in loss of or reduced efficacy of FABHALTA. Monitor the clinical response and discontinue use of the CYP2C8 inducer if loss of efficacy of FABHALTA is evident. 7.2 Strong CYP2C8 Inhibitors Concomitant use of strong CYP2C8 inhibitors (e.g., gemfibrozil) may increase iptacopan exposure, which may result in an increased risk for adverse reactions with FABHALTA. Coadministration with a strong CYP2C8 inhibitor is not recommended.

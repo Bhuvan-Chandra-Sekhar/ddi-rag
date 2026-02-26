@@ -1,0 +1,4 @@
+Drug: technetium_tc_99m_medronate
+
+=== Drug Interactions ===
+Drug Interactions The biodistribution of technetium Tc 99m medronate may be altered in the presence of high levels of certain cations (iron, calcium, and aluminum). This may result in reduced uptake of radionuclide in the skeleton and increased extraosseal uptake, which may potentially degrade imaging quality. In patients with high levels of these cations caused by concomitant medications, particularly patients receiving iron infusions, consider performing an imaging study with technetium Tc 99m medronate injection once the cation levels have normalized (e.g., after 3 to 5 half-lives of the cation). (See WARNINGS .)

@@ -1,0 +1,4 @@
+Drug: pemetrexed_dipotassium
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Effects of Ibuprofen on Pemetrexed Ibuprofen increases exposure (AUC) of pemetrexed [see Clinical Pharmacology ( 12.3 )] . In patients with creatinine clearance between 45 mL/min and 79 mL/min: Avoid administration of ibuprofen for 2 days before, the day of, and 2 days following administration of Pemetrexed for Injection [see Dosage and Administration ( 2.5 )] . Monitor patients more frequently for myelosuppression, renal, and gastrointestinal toxicity, if concomitant administration of ibuprofen cannot be avoided. Ibuprofen increased risk of pemetrexed toxicity in patients with mild to moderate renal impairment. Modify the ibuprofen dosage as recommended for patients with a creatinine clearance between 45 mL/min and 79 mL/min. ( 2.5 , 5.6 , 7 )

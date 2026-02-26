@@ -1,0 +1,4 @@
+Drug: melphalan
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No formal drug interaction studies have been conducted. The development of severe renal impairment has been reported in patients treated with a single dose of intravenous melphalan 140-250 mg/m 2 followed by standard oral doses of cyclosporine. Intravenous melphalan may also reduce the threshold for BCNU lung toxicity.

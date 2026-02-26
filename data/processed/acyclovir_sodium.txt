@@ -1,0 +1,4 @@
+Drug: acyclovir_sodium
+
+=== Drug Interactions ===
+Drug Interactions See CLINICAL PHARMACOLOGY, Pharmacokinetics .

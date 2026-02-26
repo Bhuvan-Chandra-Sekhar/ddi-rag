@@ -1,0 +1,4 @@
+Drug: oxymorphone_hydrochloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Table 2 includes clinically significant drug interactions with oxymorphone hydrochloride tablets. Table 2: Clinically Significant Drug Interactions with Oxymorphone Hydrochloride Tablets Serotonergic Drugs : Concomitant use may result in serotonin syndrome. Discontinue oxymorphone hydrochloride tablets if serotonin syndrome is suspected. (7) Mixed Agonist/Antagonist and Partial Agonist Opioid Analgesics : Avoid use with oxymorphone hydrochloride tablets because they may reduce analgesic effect of oxymorphone hydrochloride tablets or precipitate withdrawal symptoms. (7) Monoamine oxidase inhibitors (MAOIs): Can potentiate the effects of oxymorphone. Avoid concomitant use in patients receiving MAOIs or within 14 days of stopping such treatment with an MAOI. (7)

@@ -1,0 +1,4 @@
+Drug: angiotensin_ii
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS • Angiotensin converting enzyme (ACE) inhibitors ACE inhibitors may increase response to Angiotensin II. ( 7.1 ) • Angiotensin II Receptor Blockers (ARB) ARBs may reduce response to Angiotensin II. ( 7.2 ) 7.1. Angiotensin Converting Enzyme (ACE) Inhibitors Concomitant use of angiotensin converting enzyme (ACE) inhibitors may increase the response to Angiotensin II. 7.2. Angiotensin II Receptor Blockers (ARB) Concomitant use of angiotensin II blockers (ARBs) may decrease the response to Angiotensin II.

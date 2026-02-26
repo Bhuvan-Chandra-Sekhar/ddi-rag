@@ -1,0 +1,4 @@
+Drug: chlorambucil
+
+=== Drug Interactions ===
+Drug Interactions There are no known drug/drug interactions with chlorambucil.

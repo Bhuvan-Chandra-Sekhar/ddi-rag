@@ -1,0 +1,4 @@
+Drug: (daunorubicin_and_cytarabine)_liposome
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS • Monitor cardiac function more frequently when coadministered with cardiotoxic agents. ( 7.1 ) • Monitor hepatic function more frequently when coadministered with hepatotoxic agents. ( 7.2 ) 7.1 Cardiotoxic Agents Concomitant use of cardiotoxic agents may increase the risk of cardiotoxicity. Assess cardiac function more frequently when VYXEOS is coadministered with cardiotoxic agents [see Warnings and Precautions ( 5.3 )]. 7.2 Hepatotoxic Agents Concomitant use with hepatotoxic agents may impair liver function and increase the toxicity of VYXEOS. Monitor hepatic function more frequently when VYXEOS is coadministered with hepatotoxic agents.

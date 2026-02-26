@@ -1,0 +1,4 @@
+Drug: sodium_chloride,_sodium_lactate,_calcium_chloride,_magnesium_chloride_and_dextrose
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS As with other dialysis solutions, blood concentrations of dialyzable drugs may be reduced by dialysis. Dosage adjustment of concomitant medications may be necessary. Diabetic patients may require dosage adjustments of insulin or other treatments for hyperglycemia [see Warnings and Precautions (5.5) ].

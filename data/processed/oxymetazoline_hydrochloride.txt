@@ -1,0 +1,4 @@
+Drug: oxymetazoline_hydrochloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Anti-hypertensives/Cardiac Glycosides Alpha-adrenergic agonists, as a class, may impact blood pressure. Caution in using drugs such as beta-blockers, anti-hypertensives and/or cardiac glycosides is advised. Caution should also be exercised in patients receiving alpha 1 adrenergic receptor antagonists such as in the treatment of cardiovascular disease, benign prostatic hypertrophy, or Raynaud's disease. 7.2 Monoamine Oxidase Inhibitors Caution is advised in patients taking MAO inhibitors which can affect the metabolism and uptake of circulating amines.

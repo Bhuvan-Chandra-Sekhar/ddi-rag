@@ -1,0 +1,4 @@
+Drug: indocyanine_green_and_water
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Preparations containing sodium bisulfite including some heparin products reduce the absorption peak of Indocyanine Green for Injection USP in blood and, therefore, should not be used as an anticoagulant for the collection of samples for analysis. Products containing sodium bisulfite reduce the absorption peak of Indocyanine Green for Injection USP in blood. ( 7 )

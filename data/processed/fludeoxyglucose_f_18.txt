@@ -1,0 +1,4 @@
+Drug: fludeoxyglucose_f_18
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS The interaction of Fludeoxyglucose F18 Injection with other drugs taken by patients undergoing PET imaging has not been studied.

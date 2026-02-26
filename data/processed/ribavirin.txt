@@ -1,0 +1,4 @@
+Drug: ribavirin
+
+=== Drug Interactions ===
+Drug Interactions Clinical studies of interactions of Ribavirin for Inhalation Solution, USP with other drugs commonly used to treat infants with RSV infections, such as digoxin, bronchodilators, other antiviral agents, antibiotics or anti-metabolites, have not been conducted. Interference by Ribavirin for Inhalation Solution, USP with laboratory tests has not been evaluated.

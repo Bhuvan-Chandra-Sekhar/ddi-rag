@@ -1,0 +1,4 @@
+Drug: raxibacumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Ciprofloxacin Co-administration of 40 mg/kg raxibacumab intravenously with intravenous or oral ciprofloxacin in human subjects did not alter the PK of either ciprofloxacin or raxibacumab [see Clinical Pharmacology ( 12.3 )] . 7.2 Anthrax Vaccine Adsorbed (AVA) Co-administration of 40 mg/kg raxibacumab intravenously (Day 1) with a SC AVA regimen (Days 1, 15, and 29) did not affect the immunogenicity of AVA [see Clinical Pharmacology ( 12.3 )].

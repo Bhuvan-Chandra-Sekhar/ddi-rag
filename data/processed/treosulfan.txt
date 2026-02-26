@@ -1,0 +1,4 @@
+Drug: treosulfan
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Certain CYP2C19 and CYP3A4 Substrates: Monitor for adverse reactions of these substrates where minimal concentration changes may lead to serious or life-threatening toxicities. ( 7.1 ) 7.1 Effect of GRAFAPEX on Other Drugs Certain CYP2C19 and CYP3A4 Substrates Monitor for adverse reactions of certain CYP2C19 or CYP3A4 substrates where minimal concentration changes may lead to serious or life-threatening toxicities, and reduce the dosage, as needed, if recommended in the prescribing information of these substrates. Treosulfan is a CYP2C19 and CYP3A4 inhibitor [see Clinical Pharmacology ( 12 )] . Concomitant use of GRAFAPEX is predicted to increase the exposure of CYP2C19 and CYP3A4 substrates based on a mechanistic understanding of treosulfan metabolism, which may increase the risk of their adverse reactions.

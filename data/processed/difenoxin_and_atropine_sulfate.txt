@@ -1,0 +1,4 @@
+Drug: difenoxin_and_atropine_sulfate
+
+=== Drug Interactions ===
+Drug Interactions Since the chemical structure of difenoxin hydrochloride is similar to meperidine hydrochloride, the concurrent use of MOTOFEN® with monoamine oxidase inhibitors may, in theory, precipitate a hypertensive crisis. MOTOFEN® may potentiate the action of barbiturates, tranquilizers, narcotics, and alcohol. When these medications are used concomitantly with MOTOFEN®, the patient should be closely monitored. Diphenoxylate hydrochloride, from which the principal active metabolite difenoxin is derived, was found to inhibit the hepatic microsomal enzyme system at a dose of 2 mg/kg/day in studies conducted with male rats. Therefore, difenoxin has the potential to prolong the biological half-lives of drugs for which the rate of elimination is dependent on the microsomal drug metabolizing enzyme system.

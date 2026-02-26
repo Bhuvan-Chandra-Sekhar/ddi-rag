@@ -1,0 +1,4 @@
+Drug: 3%_sodium_chloride
+
+=== Drug Interactions ===
+Drug Interactions Caution must be exercised in the administration of 3% Sodium Chloride Injection to patients treated with drugs that may increase the risk of sodium and fluid retention, such as corticosteroids. Caution is advised in patients treated with lithium. Renal sodium and lithium clearance may be increased during the administration of 3% Sodium Chloride Injection. Administration of 3% Sodium Chloride Injection may, therefore, result in decreased lithium levels.

@@ -1,0 +1,4 @@
+Drug: glipizide_and_metformin_hydrochloride
+
+=== Drug Interactions ===
+Drug Interactions:

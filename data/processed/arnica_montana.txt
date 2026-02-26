@@ -1,0 +1,4 @@
+Drug: arnica_montana
+
+=== Drug Interactions ===
+

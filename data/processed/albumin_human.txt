@@ -1,0 +1,4 @@
+Drug: albumin_human
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Do not mix ALBUMINEX 25% with blood, blood components, protein hydrolysates, alcoholic solutions or other medicinal products except 0.9% saline or 5% dextrose. However, it can be administered, via a separate IV line, concomitantly with other parenterals.

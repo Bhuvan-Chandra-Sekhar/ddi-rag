@@ -1,0 +1,4 @@
+Drug: apraclonidine_hydrochloride_ophthalmic_solution
+
+=== Drug Interactions ===
+Interactions with other agents have not been investigated.

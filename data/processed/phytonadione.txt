@@ -1,0 +1,4 @@
+Drug: phytonadione
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Anticoagulants Phytonadione may induce temporary resistance to prothrombin-depressing anticoagulants, especially when larger doses of phytonadione are used. Should this occur, higher doses of anticoagulant therapy may be needed when resuming anticoagulant therapy, or a change in therapy to a different class of anticoagulant may be necessary (i.e., heparin sodium). Phytonadione does not affect the anticoagulant action of heparin. Anticoagulants: May induce temporary resistance to prothrombin depressing anticoagulants. ( 7 )

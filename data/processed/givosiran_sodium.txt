@@ -1,0 +1,4 @@
+Drug: givosiran_sodium
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Sensitive CYP1A2 and CYP2D6 Substrates: Avoid concomitant use with CYP1A2 and CYP2D6 substrates for which minimal concentration changes may lead to serious or life-threatening toxicities. ( 7.1 ) 7.1 Effect of GIVLAARI on Other Drugs Sensitive CYP1A2 and CYP2D6 Substrates Concomitant use of GIVLAARI increases the concentration of CYP1A2 or CYP2D6 substrates [see Clinical Pharmacology (12.3) ] , which may increase adverse reactions of these substrates. Avoid concomitant use of GIVLAARI with CYP1A2 or CYP2D6 substrates, for which minimal concentration changes may lead to serious or life-threatening toxicities. If concomitant use is unavoidable, decrease the CYP1A2 or CYP2D6 substrate dosage in accordance with approved product labeling.

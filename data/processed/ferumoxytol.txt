@@ -1,0 +1,4 @@
+Drug: ferumoxytol
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Drug-drug interaction studies with Feraheme were not conducted. Feraheme may reduce the absorption of concomitantly administered oral iron preparations.

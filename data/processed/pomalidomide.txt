@@ -1,0 +1,4 @@
+Drug: pomalidomide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Strong CYP1A2 Inhibitors: Avoid concomitant use of strong CYP1A2 inhibitors. If concomitant use of a strong CYP1A2 inhibitor is unavoidable, reduce pomalidomide capsules dose to 2 mg ( 2.6 , 7.1 , 12.3 ). 7.1 Drugs That Affect Pomalidomide Plasma Concentrations CYP1A2 inhibitors: In healthy subjects, co-administration of fluvoxamine, a strong CYP1A2 inhibitor, increased C max and AUC of pomalidomide by 24% and 125% respectively [see Clinical Pharmacology (12.3 )]. Increased pomalidomide exposure may increase the risk of exposure related toxicities. Avoid co-administration of strong CYP1A2 inhibitors (e.g. ciprofloxacin and fluvoxamine). If co-administration is unavoidable, reduce the pomalidomide capsules dose [see Dosage and Administration (2.6 )].

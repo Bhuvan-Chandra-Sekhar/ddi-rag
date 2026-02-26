@@ -1,0 +1,4 @@
+Drug: i.v._fat_emulsion
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Soybean oil in Intralipid contains vitamin K 1 which may counteract the anticoagulant activity of vitamin K antagonists such as warfarin. In patients who receive concomitant Intralipid and warfarin, increase monitoring of laboratory parameters for anticoagulant activity. Vitamin K Antagonists (e.g., warfarin) : Anticoagulant activity may be counteracted; increase monitoring of coagulation parameters. ( 7 )

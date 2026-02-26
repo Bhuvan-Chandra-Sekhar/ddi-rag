@@ -1,0 +1,4 @@
+Drug: ublituximab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Immunosuppressive or Immune-Modulating Therapies The concomitant usage of BRIUMVI with other immune-modulating or immunosuppressant drugs, including immunosuppressant doses of corticosteroids, may increase the risk of infection. Consider the risk of additive immune system effects when co-administering immunosuppressive therapies with BRIUMVI. When switching from therapies with immune effects, the duration and mechanism of action of these therapies should be taken into account because of potential additive immunosuppressive effects when initiating BRIUMVI.

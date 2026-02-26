@@ -1,0 +1,4 @@
+Drug: doxorubicin_hydrochloride_liposome
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No formal drug interaction studies have been conducted with doxorubicin hydrochloride liposome injection.

@@ -1,0 +1,4 @@
+Drug: nifurtimox
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Concomitant use of LAMPIT with alcohol may increase the incidence and severity of undesirable effects similar to other nitrofurans and nitroheterocyclic compounds. LAMPIT is contraindicated in patients who consume alcohol during treatment [see Dosage and Administration ( 2.2 ) Contraindications ( 4 )].

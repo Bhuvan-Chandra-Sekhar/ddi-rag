@@ -1,0 +1,4 @@
+Drug: purixan
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Allopurinol : Reduce the dose of PURIXAN when co-administered with allopurinol. ( 2.4 , 7.1 ) Warfarin : PURIXAN may decrease the anticoagulant effect. ( 7.2 ) See FDA approved patient labeling and

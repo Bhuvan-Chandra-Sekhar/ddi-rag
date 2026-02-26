@@ -1,0 +1,4 @@
+Drug: penciclovir
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No drug interaction studies have been performed with penciclovir. Due to minimal systemic absorption of penciclovir, systemic drug interactions are unlikely.

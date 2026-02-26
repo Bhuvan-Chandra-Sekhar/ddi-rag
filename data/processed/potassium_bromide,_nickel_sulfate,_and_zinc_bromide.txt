@@ -1,0 +1,4 @@
+Drug: potassium_bromide,_nickel_sulfate,_and_zinc_bromide
+
+=== Drug Interactions ===
+Drug interactions There are no known drug interactions.

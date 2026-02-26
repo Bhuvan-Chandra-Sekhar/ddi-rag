@@ -1,0 +1,4 @@
+Drug: pentamidine_isethionate
+
+=== Drug Interactions ===
+Drug Interactions While specific studies on drug interactions with pentamidine isethionate have not been conducted, the majority of patients in clinical trials received concomitant medications, including zidovudine, with no reported interactions. Because the nephrotoxic effects may be additive, the concomitant or sequential use of pentamidine isethionate and other nephrotoxic drugs such as aminoglycosides, amphotericin B, cisplatin, foscarnet, or vancomycin should be closely monitored and avoided, if possible.

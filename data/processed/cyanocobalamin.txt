@@ -1,0 +1,4 @@
+Drug: cyanocobalamin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Chloramphenicol may decrease the efficacy of Cyanocobalamin Nasal Spray when used for treatment of anemia. If Cyanocobalamin Nasal Spray is used for the treatment of anemia concomitantly with chloramphenicol, monitor for reduced efficacy and if needed, consider an alternative therapy.

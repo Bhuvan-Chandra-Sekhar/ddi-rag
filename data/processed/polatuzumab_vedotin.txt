@@ -1,0 +1,4 @@
+Drug: polatuzumab_vedotin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Concomitant use of strong CYP3A inhibitors or inducers has the potential to affect the exposure to unconjugated monomethyl auristatin E (MMAE). ( 7.1 ) 7.1 Effects of Other Drugs on POLIVY Strong CYP3A Inhibitors Concomitant use with a strong CYP3A4 inhibitor may increase unconjugated MMAE AUC [see Clinical Pharmacology (12.3) ] , which may increase POLIVY toxicities. Monitor patients for signs of toxicity. Strong CYP3A Inducers Concomitant use with a strong CYP3A4 inducer may decrease unconjugated MMAE AUC [see Clinical Pharmacology (12.3) ] .

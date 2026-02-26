@@ -1,0 +1,4 @@
+Drug: inotuzumab_ozogamicin
+
+=== Drug Interactions ===
+7. DRUG INTERACTIONS Drugs That Prolong the QT Interval Concomitant use of BESPONSA with drugs known to prolong the QT interval or induce Torsades de Pointes may increase the risk of a clinically significant QTc interval prolongation [see Clinical Pharmacology (12.2) ] . Discontinue or use alternative concomitant drugs that do not prolong QT/QTc interval while the patient is using BESPONSA. When it is not feasible to avoid concomitant use of drugs known to prolong QT/QTc, obtain ECGs and electrolytes prior to the start of treatment, after initiation of any drug known to prolong QTc, and periodically monitor as clinically indicated during treatment [see Warnings and Precautions (5.5) ] .

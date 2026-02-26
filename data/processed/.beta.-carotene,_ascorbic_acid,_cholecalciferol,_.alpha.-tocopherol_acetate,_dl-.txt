@@ -1,0 +1,4 @@
+Drug: .beta.-carotene,_ascorbic_acid,_cholecalciferol,_.alpha.-tocopherol_acetate,_dl-
+
+=== Drug Interactions ===
+DRUG INTERACTIONS Prescriber should be aware of a number of iron/drug interactions, including antacids, tetracyclines, or fluoroquinolones.

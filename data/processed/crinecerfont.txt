@@ -1,0 +1,4 @@
+Drug: crinecerfont
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Strong CYP3A4 I nducers: Increase CRENESSITY morning and evening dosage 2-fold. (Section 2.3 , 7.1 ) Moderate CYP3A4 Inducers: Increase CRENESSITY evening dosage 2-fold. ( 2.4 , 7.1 ) 7.1 Effects of Other Drugs on CRENESSITY Strong CYP3A4 Inducers Increase CRENESSITY morning and evening dosages 2-fold when CRENESSITY is used concomitantly with a strong CYP3A4 inducer [see Dosage and Administration ( 2.3 )]. Moderate CYP3A4 Inducers Increase CRENESSITY evening dosage 2-fold when CRENESSITY is used concomitantly with a moderate CYP3A4 inducer. Do not increase the morning dosage [see Dosage and Administration ( 2.4 )]. Mechanism of Drug Interaction and Clinical Effect CRENESSITY is a CYP3A4 substrate. Concomitant use of CRENESSITY with a strong or moderate CYP3A4 inducer decreases crinecerfont exposure [see Clinical Pharmacology ( 12.3 ) ], which may reduce CRENESSITY efficacy.

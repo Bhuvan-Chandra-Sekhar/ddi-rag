@@ -1,0 +1,4 @@
+Drug: ganirelix_acetate
+
+=== Drug Interactions ===
+Drug Interactions No formal drug-drug interaction studies have been performed.

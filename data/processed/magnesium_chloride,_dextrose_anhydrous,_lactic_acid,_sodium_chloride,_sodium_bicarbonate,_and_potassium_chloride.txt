@@ -1,0 +1,4 @@
+Drug: magnesium_chloride,_dextrose_anhydrous,_lactic_acid,_sodium_chloride,_sodium_bicarbonate,_and_potassium_chloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS As with the use of other replacement solutions, blood concentrations of dialyzable drugs may be reduced by CRRT due to their removal by the hemofilter or hemodiafilter. The blood concentrations of certain drugs may need to be monitored and appropriate therapy implemented to correct for removal during treatment. 7.1 Citrate When used as an anticoagulant, citrate contributes to the overall buffer load and can reduce plasma calcium levels. Select the PRISMASOL/PHOXILLUM formulation(s) accordingly.

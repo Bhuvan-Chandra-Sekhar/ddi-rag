@@ -1,0 +1,4 @@
+Drug: nipocalimab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Closely monitor for reduced effectiveness of medications that bind to the human neonatal Fc receptor. When concomitant long-term use of such medications is essential for patient care, consider discontinuing IMAAVY and using alternative therapies. ( 7 ) 7.1 Effect of IMAAVY on Other Drugs Concomitant use of IMAAVY with medications that bind to the human neonatal Fc receptor (FcRn) (e.g., immunoglobulin products, monoclonal antibodies, or antibody derivates containing the human Fc domain of the IgG subclass) may lower systemic exposures and reduce effectiveness of such medications. Closely monitor for reduced effectiveness of medications that bind to the human neonatal Fc receptor. When concomitant long-term use of such medications is essential for patient care, consider discontinuing IMAAVY, and using alternative therapies [see Clinical Pharmacology (12.3) ] .

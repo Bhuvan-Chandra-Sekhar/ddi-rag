@@ -1,0 +1,4 @@
+Drug: carmustine
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Cimetidine: Increased myelosuppression with concomitant use. ( 7.1 ) Phenobarbital: Induces carmustine metabolism, reducing exposure. May lead to reduced efficacy. ( 7.1 ) Phenytoin: Carmustine may reduce the efficacy of phenytoin. ( 7.2 ) 7.1 Effects of Other Drugs on Carmustine Cimetidine: Greater myelosuppression (e.g., leukopenia and neutropenia) has been reported when oral cimetidine has been coadministered with carmustine. Consider alternative drugs to cimetidine. Phenobarbital: Phenobarbital induces the metabolism of carmustine and may compromise antitumor activity of carmustine. Consider alternative drugs to phenobarbital. 7.2 Effects of Carmustine on Other Drugs Phenytoin: Carmustine when coadministered with phenytoin may reduce phenytoin serum concentrations. Consider alternative drugs to phenytoin.

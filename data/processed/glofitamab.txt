@@ -1,0 +1,4 @@
+Drug: glofitamab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS For certain CYP substrates where minimal concentration changes may lead to serious adverse reactions, monitor for toxicities or drug concentrations of such CYP substrates when coadministered with COLUMVI. Glofitamab-gxbm causes the release of cytokines [see Clinical Pharmacology (12.2) ] that may suppress the activity of CYP enzymes, resulting in increased exposure of CYP substrates. Increased exposure of CYP substrates is more likely to occur after the first dose of COLUMVI on Cycle 1 Day 8 and up to 14 days after the first 30 mg dose on Cycle 2 Day 1 and during and after CRS [see Warnings and Precautions (5.1) ] .

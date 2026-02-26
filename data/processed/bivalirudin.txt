@@ -1,0 +1,4 @@
+Drug: bivalirudin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS In clinical trials in patients undergoing PCI/percutaneous transluminal coronary angioplasty (PTCA), co-administration of bivalirudin for injection with heparin, warfarin, thrombolytics, or GPIs was associated with increased risks of major bleeding events compared to patients not receiving these concomitant medications Heparin, warfarin, thrombolytics, or GPIs: Increased major bleeding risk with concomitant use. ( 7 )

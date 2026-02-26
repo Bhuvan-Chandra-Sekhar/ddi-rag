@@ -1,0 +1,4 @@
+Drug: etoposide_phosphate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Warfarin: Co-administration of ETOPOPHOS with warfarin can result in elevated international normalized ratio (INR). Measure INR frequently. Warfarin: Co-administration can result in elevated international normalized ratio (INR). Measure INR frequently. ( 7 )

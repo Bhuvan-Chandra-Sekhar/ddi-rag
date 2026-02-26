@@ -1,0 +1,4 @@
+Drug: bevacizumab-bvzr
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Effects of ZIRABEV on Other Drugs No clinically meaningful effect on the pharmacokinetics of irinotecan or its active metabolite SN38, interferon alfa, carboplatin or paclitaxel was observed when bevacizumab was administered in combination with these drugs; however, 3 of the 8 patients receiving bevacizumab with paclitaxel and carboplatin had lower paclitaxel exposure after four cycles of treatment (at Day 63) than those at Day 0, while patients receiving paclitaxel and carboplatin alone had a greater paclitaxel exposure at Day 63 than at Day 0.

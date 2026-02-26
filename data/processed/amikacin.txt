@@ -1,0 +1,4 @@
+Drug: amikacin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Drugs with Neurotoxic, Nephrotoxic, or Ototoxic Potential Avoid concomitant use of ARIKAYCE with medications associated with neurotoxicity, nephrotoxicity, and ototoxicity. 7.2 Ethacrynic Acid, Furosemide, Urea, or Mannitol Some diuretics can enhance aminoglycoside toxicity by altering aminoglycoside concentrations in serum and tissue. Avoid concomitant use of ARIKAYCE with ethacrynic acid, furosemide, urea, or intravenous mannitol.

@@ -1,0 +1,4 @@
+Drug: oxacillin
+
+=== Drug Interactions ===
+Drug Interactions Tetracycline, a bacteriostatic antibiotic, may antagonize the bactericidal effect of penicillin and concurrent use of these drugs should be avoided. Oxacillin blood levels may be increased and prolonged by concurrent administration of probenecid which blocks the renal tubular secretion of penicillins. Probenecid decreases the apparent volume of distribution and slows the rate of excretion by competitively inhibiting renal tubular secretion of penicillins. Oxacillin-probenecid therapy should be limited to those infections where very high serum levels of oxacillin are necessary.

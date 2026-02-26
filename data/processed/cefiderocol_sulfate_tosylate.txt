@@ -1,0 +1,4 @@
+Drug: cefiderocol_sulfate_tosylate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Use alternate testing methods to confirm positive results of dipstick tests (urine protein, ketones, or occult blood). ( 7.1 ) 7.1 Drug/Laboratory Test Interactions Cefiderocol may result in false-positive results in dipstick tests (urine protein, ketones, or occult blood). Use alternate clinical laboratory methods of testing to confirm positive tests.

@@ -1,0 +1,4 @@
+Drug: cefotetan
+
+=== Drug Interactions ===
+Drug Interactions Increases in serum creatinine have occurred when cefotetan was given alone. If cefotetan and an aminoglycoside are used concomitantly, renal function should be carefully monitored, because nephrotoxicity may be potentiated.

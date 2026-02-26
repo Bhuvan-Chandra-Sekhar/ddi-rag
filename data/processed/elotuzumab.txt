@@ -1,0 +1,4 @@
+Drug: elotuzumab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Drug Interactions For important drug interactions involving lenalidomide, pomalidomide and dexamethasone, refer to their respective prescribing information. 7.2 Laboratory Test Interference EMPLICITI may be detected in the SPEP and serum immunofixation assays of myeloma patients and could interfere with correct response classification. A small peak in the early gamma region on SPEP that is IgGƙ on serum immunofixation may potentially be attributed to EMPLICITI, particularly in patients whose endogenous myeloma protein is IgA, IgM, IgD, or lambda light chain restricted. This interference can impact the determination of complete response and possibly relapse from complete response in patients with IgG kappa myeloma protein [see Warnings and Precautions (5.5) ].

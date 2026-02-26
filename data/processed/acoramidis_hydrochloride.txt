@@ -1,0 +1,4 @@
+Drug: acoramidis_hydrochloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS UDP-glucuronosyltransferases (UGT) Inducers and Strong CYP3A Inducers Acoramidis is metabolized by UGT enzyme-mediated glucuronidation. Concomitant use of UGT inducers can potentially decrease acoramidis exposure. While acoramidis is not metabolized by CYP3A, strong CYP3A inducers can also induce UGT enzymes. Avoid concomitant use of ATTRUBY with UGT inducers and strong CYP3A inducers. Sensitive Cytochrome P450 2C9 (CYP2C9) substrates Acoramidis inhibits CYP2C9 and may result in an increase in CYP2C9 substrate concentrations when these drugs are co administered. Consider more frequent monitoring of patients for evidence of increased exposure (for example, signs of exposure related toxicity) when ATTRUBY is co administered with sensitive CYP2C9 substrates.

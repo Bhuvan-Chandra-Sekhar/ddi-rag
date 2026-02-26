@@ -1,0 +1,4 @@
+Drug: tezepelumab-ekko
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No formal drug interaction studies have been performed with TEZSPIRE.

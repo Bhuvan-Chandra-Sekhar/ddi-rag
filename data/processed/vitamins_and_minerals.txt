@@ -1,0 +1,4 @@
+Drug: vitamins_and_minerals
+
+=== Drug Interactions ===
+DRUG INTERACTIONS Prescriber should be aware of a number of iron/drug interactions, including antacids, tetracyclines, or fluoroquinolones.

@@ -1,0 +1,4 @@
+Drug: ethiodized_oil
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Lipiodol may interfere with thyroid function testing and with radioactive iodine uptake by the thyroid tissue during diagnostic or therapeutic procedures. ( 7.1 ) 7.1 Interference with Iodine-Based Diagnostic Tests and Iodine-Based Radiotherapy Following Lipiodol administration, ethiodized oil remains in the body for several months. Ethiodized oil interferes with radioactive iodine uptake by the thyroid for several weeks to months may impair visualization of thyroid scintigraphy and reduce effectiveness of iodine 131 treatment.

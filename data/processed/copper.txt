@@ -1,0 +1,4 @@
+Drug: copper
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No drug-drug interaction or drug-herbal supplement interaction studies have been conducted with Paragard.

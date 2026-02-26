@@ -1,0 +1,4 @@
+Drug: sodium_phenylbutyrate
+
+=== Drug Interactions ===
+Neurotoxicity of phenylacetate in animals: When given subcutaneously to rat pups, 190 to 474 mg/kg phenylacetate caused decreased proliferation and increased loss of neurons, and it reduced CNS myelin. Cerebral synapse maturation was retarded, and the number of functioning nerve terminals in the cerebrum was reduced, which resulted in impaired brain growth. Prenatal exposure of rat pups to phenylacetate produced lesions in layer 5 of the cortical pyramidal cells; dendritic spines were longer and thinner than normal and reduced in number.

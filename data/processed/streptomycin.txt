@@ -1,0 +1,4 @@
+Drug: streptomycin
+
+=== Drug Interactions ===
+Drug Interactions The ototoxic effects of the aminoglycosides, including streptomycin, are potentiated by the coadministration of ethacrynic acid, furosemide, mannitol and possibly other diuretics.

@@ -1,0 +1,4 @@
+Drug: eravacycline
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Strong CYP 3A Inducers: Co-administration decreases the exposure of eravacycline; increase XERAVA dose with concomitant use. ( 2.3 , 7.1 , 12.3 ) Anticoagulant Drugs: Downward adjustment of anticoagulant dosage may be required. ( 7.2 ) 7.1 Effect of Other Drugs on XERAVA Strong CYP3A Inducers Concomitant use of strong CYP3A inducers decreases the exposure of eravacycline, which may reduce the efficacy of XERAVA [see Clinical Pharmacology ( 12.3 )] . Increase XERAVA dose in patients with concomitant use of a strong CYP3A inducer [see Dosage and Administration ( 2.3 )] . 7.2 Effect of XERAVA on other Drugs Anticoagulant Drugs Because tetracyclines have been shown to depress plasma prothrombin activity, patients who are on anticoagulant therapy may require downward adjustment of their anticoagulant dosage.

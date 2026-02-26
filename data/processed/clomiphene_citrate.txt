@@ -1,0 +1,4 @@
+Drug: clomiphene_citrate
+
+=== Drug Interactions ===
+DRUG INTERACTIONS Drug interactions with clomiphene citrate tablets have not been documented.

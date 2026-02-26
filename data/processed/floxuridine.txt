@@ -1,0 +1,4 @@
+Drug: floxuridine
+
+=== Drug Interactions ===
+Drug Interactions See WARNINGS section.

@@ -1,0 +1,4 @@
+Drug: cetrorelix_acetate_for_injection
+
+=== Drug Interactions ===
+Drug Interactions No formal drug interaction studies have been performed with cetrorelix acetate for injection.

@@ -1,0 +1,4 @@
+Drug: sargramostim
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Use with caution in patients receiving drugs that may potentiate LEUKINE's myeloproliferative effects, such as lithium and corticosteroids. ( 7.1 ) 7.1 Concomitant Use with Products that Induce Myeloproliferation Avoid the concomitant use of LEUKINE and products that induce myeloproliferation (such as lithium and corticosteroids). Such products may increase the myeloproliferative effects of LEUKINE. Monitor patients receiving both LEUKINE and products that induce myeloproliferation frequently for clinical and laboratory signs of excess myeloproliferative effects.

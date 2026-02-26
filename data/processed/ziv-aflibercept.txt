@@ -1,0 +1,4 @@
+Drug: ziv-aflibercept
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No dedicated drug-drug interaction studies have been conducted for ZALTRAP. No clinically important pharmacokinetic interactions were found between ziv-aflibercept and irinotecan/SN-38 or fluorouracil [see Clinical Pharmacology (12.3) ] .

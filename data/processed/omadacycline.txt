@@ -1,0 +1,4 @@
+Drug: omadacycline
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Patients who are on anticoagulant therapy may require downward adjustment of their anticoagulant dosage while taking NUZYRA. ( 7.1 ) Absorption of tetracyclines, including NUZYRA, is impaired by antacids containing aluminum, calcium, or magnesium, bismuth subsalicylate and iron containing preparations. ( 2.1 , 7.2 ) 7.1 Anticoagulant Drugs Because tetracyclines have been shown to depress plasma prothrombin activity, patients who are on anticoagulant therapy may require downward adjustment of their anticoagulant dosage while also taking NUZYRA. 7.2 Antacids and Iron Preparations Absorption of oral tetracyclines, including NUZYRA, is impaired by antacids containing aluminum, calcium, or magnesium, bismuth subsalicylate, and iron containing preparations [see Dosage and Administration (2.1) ].

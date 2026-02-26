@@ -1,0 +1,4 @@
+Drug: remimazolam_besylate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Opioid Analgesics and Other Sedative-Hypnotics The sedative effect of intravenous BYFAVO can be accentuated by concomitantly administered CNS depressant medications, including opioid analgesics, other benzodiazepines, and propofol. Continuously monitor vital signs during sedation and through the recovery period. Titrate the dose of BYFAVO when administered with opioid analgesics and sedative-hypnotics to the desired clinical response [see Warnings and Precautions (5.2) ].

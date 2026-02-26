@@ -1,0 +1,4 @@
+Drug: trametinib
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS MEKINIST is indicated for use in combination with dabrafenib. Refer to the dabrafenib prescribing information for additional risk information that applies to combination use treatment.

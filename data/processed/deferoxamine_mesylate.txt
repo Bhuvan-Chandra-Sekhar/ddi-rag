@@ -1,0 +1,4 @@
+Drug: deferoxamine_mesylate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS • Concurrent treatment with prochlorperazine may lead to temporary impairment of consciousness. ( 7.1 ) • Imaging results may be distorted due to rapid urinary excretion of deferoxamine mesylate bound gallium-67. Discontinue deferoxamine mesylate 48 hours prior to scintigraphy. ( 7.2 ) 7.1 Prochlorperazine Concurrent treatment with deferoxamine mesylate and prochlorperazine, a phenothiazine derivative, may lead to temporary impairment of consciousness. 7.2 Gallium-67 Imaging results may be distorted because of the rapid urinary excretion of deferoxamine mesylate-bound gallium-67. Discontinue deferoxamine mesylate 48 hours prior to scintigraphy.

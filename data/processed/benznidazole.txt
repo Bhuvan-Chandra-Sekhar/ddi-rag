@@ -1,0 +1,4 @@
+Drug: benznidazole
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Disulfiram Psychotic reactions have been reported in patients who are concurrently taking disulfiram and nitroimidazole agents (structurally related to benznidazole, but not with benznidazole). Benznidazole Tablets should not be given to patients who have taken disulfiram within the last two weeks [see Contraindications ( 4.2 )] . 7.2 Alcohol and Products Containing Propylene Glycol In vitro studies showed that benznidazole, at concentrations from 0.03 μM to 100 μM, does not inhibit the enzymatic activity of human alcohol dehydrogenase (ALDH). Benznidazole Tablets are not expected to cause alcohol aversion or a disulfiram-like reaction as a result of ethanol ingestion.

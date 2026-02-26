@@ -1,0 +1,4 @@
+Drug: tobramycin_inhalation
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Concurrent and/or sequential use of Tobramycin Inhalation Solution with other drugs with neurotoxic, nephrotoxic or ototoxic potential should be avoided. ( 7.1 ) Tobramycin Inhalation Solution should not be administered concomitantly with ethacrynic acid, furosemide, urea, or intravenous mannitol. ( 7.2 ) 7.1 Drugs with Neurotoxic, Nephrotoxic, or Ototoxic Potential Concurrent and/or sequential use of Tobramycin Inhalation Solution with other drugs with neurotoxic, nephrotoxic, or ototoxic potential should be avoided. 7.2 Diuretics Some diuretics can enhance aminoglycoside toxicity by altering antibiotic concentrations in serum and tissue. Therefore, Tobramycin Inhalation Solution should not be administered concomitantly with ethacrynic acid, furosemide, urea, or intravenous mannitol. The interaction between inhaled mannitol and Tobramycin Inhalation Solution has not been evaluated.

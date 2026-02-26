@@ -1,0 +1,4 @@
+Drug: potassium_phosphates
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Use of Other Medications that Increase Potassium : Avoid use in patients receiving such products. If use cannot be avoided, closely monitor serum potassium concentrations. ( 5.3 , 7.1 ) 7.1 Other Products that Increase Serum Potassium Administration of Potassium Phosphates Injection to patients treated concurrently or recently with products that increase serum potassium (e.g., potassium-sparing diuretics, ACE inhibitors, angiotensin II receptor antagonists, digoxin, or the immunosuppressants tacrolimus and cyclosporine) increases the risk of severe and potentially fatal hyperkalemia, in particular in the presence of other risk factors for hyperkalemia [see Warnings and Precautions ( 5.3 )] . Avoid use of Potassium Phosphates Injection in patients receiving such products. If use cannot be avoided, closely monitor serum potassium concentrations [see Dosage and Administration ( 2.2 , 2.4 )] .

@@ -1,0 +1,4 @@
+Drug: pralatrexate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Avoid coadministration with probenecid or nonsteroidal anti-inflammatory drugs. If coadministration is unavoidable, monitor for increased risk of adverse reactions. ( 7.1 ) 7.1 Effects of Other Drugs on FOLOTYN Coadministration of FOLOTYN with probenecid increased pralatrexate plasma concentrations [ see Clinical Pharmacology (12.3) ] , which may increase the risk of adverse reactions. Avoid coadministration with probenecid or nonsteroidal anti-inflammatory drugs. If coadministration is unavoidable, monitor for increased risk of adverse reactions.

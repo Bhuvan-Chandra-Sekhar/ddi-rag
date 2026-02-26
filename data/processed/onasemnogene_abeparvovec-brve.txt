@@ -1,0 +1,4 @@
+Drug: onasemnogene_abeparvovec-brve
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Adjust patient’s vaccination schedule to accommodate concomitant corticosteroid administration prior to and following ITVISMA injection [see Dosage and Administration (2.1)] . Certain vaccines, such as measles, mumps, and rubella (MMR) and varicella, are contraindicated for patients on a substantially immunosuppressive steroid dose (i.e., ≥ 2 weeks of daily receipt of 20 mg or 2 mg/kg body weight of prednisone or equivalent). Adjust patient’s vaccination schedule to accommodate concomitant corticosteroid administration prior to and following ITVISMA injection. ( 7 )

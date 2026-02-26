@@ -1,0 +1,4 @@
+Drug: crovalimab
+
+=== Drug Interactions ===
+7. DRUG INTERACTIONS PIASKY binds different epitopes on C5 compared to eculizumab and ravulizumab, which can lead to the formation of DTDCs when patients switch between PIASKY and either eculizumab or ravulizumab. These DTDCs comprise one or more units of C5 bound to both PIASKY and to eculizumab or ravulizumab. These DTDCs are expected to be cleared within approximately 8 weeks (in the case of eculizumab) or longer (in the case of ravulizumab) and can result in Type III hypersensitivity reactions [see Warnings and Precautions (5.3) , Adverse Reactions (6.1) and Clinical Pharmacology (12.3) ] .

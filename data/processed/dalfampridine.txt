@@ -1,0 +1,4 @@
+Drug: dalfampridine
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS OCT2 Inhibitors: Concomitant use may cause an increased exposure and potential risk of seizures ( 7.1 ) 7.1 OCT2 Inhibitors Concurrent treatment with OCT2 inhibitors, such as cimetidine, may cause increased exposure to dalfampridine [see Clinical Pharmacology ( 12.3 )] . Elevated levels of dalfampridine increase the risk of seizures [see Warnings and Precautions ( 5.1 , 5.2 )]. The potential benefits of taking OCT2 inhibitors concurrently with dalfampridine extended-release tablets should be considered against the risk of seizures in these patients. 7.2 Baclofen No interaction was identified between dalfampridine and baclofen [see Clinical Pharmacology ( 12.3 )] .

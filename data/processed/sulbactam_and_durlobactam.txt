@@ -1,0 +1,4 @@
+Drug: sulbactam_and_durlobactam
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Organic Anion Transporter 1 (OAT1) Inhibitors : Concomitant administration with OAT1 inhibitors may increase plasma concentrations of XACDURO. Concomitant administration is not recommended. ( 7.1 ) 7.1 Organic Anion Transporter 1 (OAT1) Inhibitors Concomitant administration with OAT1 inhibitors may increase plasma concentrations of sulbactam. Concomitant administration of OAT1 inhibitors (e.g., probenecid) with XACDURO is not recommended. [see Clinical Pharmacology (12.3) ] .

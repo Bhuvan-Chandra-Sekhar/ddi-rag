@@ -1,0 +1,4 @@
+Drug: nitazoxanide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Competition for binding sites may occur when administered concurrently with other highly plasma protein-bound drugs with narrow therapeutic indices. Monitor for adverse reactions (7) . 7.1 Highly Protein Bound Drugs with Narrow Therapeutic Indices Tizoxanide (the active metabolite of nitazoxanide) is highly bound to plasma protein (>99.9%). Therefore, monitor for adverse reactions when administering nitazoxanide concurrently with other highly plasma protein-bound drugs with narrow therapeutic indices, as competition for binding sites may occur (e.g., warfarin).

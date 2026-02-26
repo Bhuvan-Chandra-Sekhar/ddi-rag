@@ -1,0 +1,4 @@
+Drug: neomycin_sulfate,_polymyxin_b_sulfate_and_hydrocortisone
+
+=== Drug Interactions ===
+Information for Patients Avoid contaminating the bottle tip with material from the ear, fingers or other source. This caution is necessary if the sterility of the drops is to be preserved. If sensitization or irritation occurs, discontinue use immediately and contact your physician. SHAKE WELL BEFORE USING.

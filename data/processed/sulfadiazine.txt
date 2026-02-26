@@ -1,0 +1,4 @@
+Drug: sulfadiazine
+
+=== Drug Interactions ===
+Drug Interactions Administration of a sulfonamide may increase the effect of oral anticoagulants and methotrexate, probably by displacement of these drugs from binding sites on plasma albumin. Potentiation of the action of sulfonylurea hypoglycemic agents, thiazide diuretics and uricosuric agents may also be noted. This may also be due to displacement of the drugs from albumin or a pharmacodynamic mechanism may play a role. Conversely, agents such as indomethacin, probenecid and salicylates may displace sulfonamides from plasma albumin and increase the concentrations of free drug in plasma.

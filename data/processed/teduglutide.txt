@@ -1,0 +1,4 @@
+Drug: teduglutide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Potential for Increased Absorption of Oral Medications Based upon the pharmacodynamic effect of GATTEX, there is a potential for increased absorption of concomitant oral medications. Altered mental status has been observed in patients taking GATTEX and benzodiazepines in the adult clinical studies [see Warnings and Precautions ( 5.5 )] . Monitor patients on concomitant oral drugs requiring titration or with a narrow therapeutic index for adverse reactions related to the concomitant drug while on GATTEX. The concomitant drug may require a reduction in dosage.

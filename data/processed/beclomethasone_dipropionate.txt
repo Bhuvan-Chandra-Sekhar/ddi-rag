@@ -1,0 +1,4 @@
+Drug: beclomethasone_dipropionate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No drug interaction studies have been performed with QNASL Nasal Aerosol.

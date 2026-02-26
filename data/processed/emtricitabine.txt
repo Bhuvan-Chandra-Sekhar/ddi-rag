@@ -1,0 +1,4 @@
+Drug: emtricitabine
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS The potential for drug interactions with emtricitabine has been studied in combination with AZT, indinavir, d4T, famciclovir, and tenofovir DF (TDF). There were no clinically significant drug interactions for any of these drugs. Drug interactions trials are described elsewhere in the labeling [see Clinical Pharmacology (12.3) ].

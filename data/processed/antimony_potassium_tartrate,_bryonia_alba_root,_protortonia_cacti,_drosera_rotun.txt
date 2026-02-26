@@ -1,0 +1,4 @@
+Drug: antimony_potassium_tartrate,_bryonia_alba_root,_protortonia_cacti,_drosera_rotun
+
+=== Drug Interactions ===
+

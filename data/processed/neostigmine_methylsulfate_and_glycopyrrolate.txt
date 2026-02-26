@@ -1,0 +1,4 @@
+Drug: neostigmine_methylsulfate_and_glycopyrrolate
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Neostigmine Methylsulfate The pharmacokinetic interaction between neostigmine methylsulfate and other drugs has not been studied. Neostigmine methylsulfate is metabolized by microsomal enzymes in the liver. Use with caution when using neostigmine methylsulfate with other drugs which may alter the activity of metabolizing enzymes or transporters. Glycopyrrolate The concurrent use of glycopyrrolate with other anticholinergics or medications with anticholinergic activity, such as phenothiazines, antiparkinson drugs, or tricyclic antidepressants, may intensify the antimuscarinic effects and may result in an increase in anticholinergic side effects. The concurrent use of glycopyrrolate with other anticholinergics or medications with anticholinergic activity may intensify the antimuscarinic effects and may result in an increase in anticholinergic side effects. ( 7 )

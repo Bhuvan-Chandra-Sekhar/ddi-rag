@@ -1,0 +1,4 @@
+Drug: olive_oil_and_soybean_oil
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No drug interaction studies have been performed with CLINOLIPID. Olive and soybean oils have a natural content of Vitamin K 1 that may counteract the anticoagulant activity of coumadin derivatives, including warfarin. The anticoagulant activity of coumarin derivatives, including warfarin, may be counteracted. ( 7 )

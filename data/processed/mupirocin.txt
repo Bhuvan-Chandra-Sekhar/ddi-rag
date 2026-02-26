@@ -1,0 +1,4 @@
+Drug: mupirocin
+
+=== Drug Interactions ===
+Drug Interactions The effect of the concurrent application of mupirocin ointment and other drug products has not been studied.

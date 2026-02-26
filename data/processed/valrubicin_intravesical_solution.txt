@@ -1,0 +1,4 @@
+Drug: valrubicin_intravesical_solution
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No drug interaction studies were conducted.

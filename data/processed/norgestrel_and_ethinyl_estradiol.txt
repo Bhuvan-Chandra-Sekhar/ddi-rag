@@ -1,0 +1,4 @@
+Drug: norgestrel_and_ethinyl_estradiol
+
+=== Drug Interactions ===
+8. Nursing Mothers Advise the nursing mother to use other forms of contraception, when possible, until she has weaned her child. COCs can reduce milk production in breastfeeding mothers. This is less likely to occur once breastfeeding is well-established; however, it can occur at any time in some women. Small amounts of oral contraceptive steroids and/or metabolites are present in breast milk.

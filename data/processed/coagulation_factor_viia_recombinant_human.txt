@@ -1,0 +1,4 @@
+Drug: coagulation_factor_viia_recombinant_human
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Clinical experience with pharmacologic use of FVIIa-containing products indicates an elevated risk of serious thrombotic events when used simultaneously with activated prothrombin complex concentrates. Clinical experience with pharmacologic use of FVIIa-containing products indicates an elevated risk of serious thrombotic events when used simultaneously with activated prothrombin complex concentrates ( 7 ).

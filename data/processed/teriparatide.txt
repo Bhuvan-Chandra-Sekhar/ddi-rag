@@ -1,0 +1,4 @@
+Drug: teriparatide
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Digoxin: Transient hypercalcemia may predispose patients to digitalis toxicity ( 5.5 , 7.1 ) 7.1 Digoxin Sporadic case reports have suggested that hypercalcemia may predispose patients to digitalis toxicity. Teriparatide may transiently increase serum calcium. Consider the potential onset of signs and symptoms of digitalis toxicity when BONSITY is used in patients receiving digoxin [see Warnings and Precautions ( 5.5 ), Clinical Pharmacology ( 12.3 )] .

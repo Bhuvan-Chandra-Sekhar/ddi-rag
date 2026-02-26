@@ -1,0 +1,4 @@
+Drug: loteprednol_etabonate
+
+=== Drug Interactions ===
+Information for Patients Patients should be advised not to allow the dropper tip to touch any surface, as this may contaminate the suspension. If pain develops, redness, itching or inflammation becomes aggravated, the patient should be advised to consult a physician. As with all ophthalmic preparations containing benzalkonium chloride, patients should be advised not to wear soft contact lenses when using loteprednol etabonate ophthalmic suspension.

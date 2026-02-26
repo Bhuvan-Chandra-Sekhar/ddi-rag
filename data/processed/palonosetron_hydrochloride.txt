@@ -1,0 +1,4 @@
+Drug: palonosetron_hydrochloride
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Serotonergic Drugs : Monitor for serotonin syndrome; if symptoms occur, discontinue palonosetron hydrochloride and initiate supportive treatment. ( 7.1 ) 7.1 Serotonergic Drugs Serotonin syndrome (including altered mental status, autonomic instability, and neuromuscular symptoms) has been described following the concomitant use of 5-HT 3 receptor antagonists and other serotonergic drugs, including selective serotonin reuptake inhibitors (SSRIs) and serotonin and noradrenaline reuptake inhibitors (SNRIs). Monitor for the emergence of serotonin syndrome. If symptoms occur, discontinue palonosetron hydrochloride and initiate supportive treatment [see Warnings and Precautions (5.2) ] .

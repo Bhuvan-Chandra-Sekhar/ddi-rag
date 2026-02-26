@@ -1,0 +1,4 @@
+Drug: lidocaine_5%
+
+=== Drug Interactions ===
+Drug Interactions Antiarrhythmic Drugs - Lidocan™ IV should be used with caution in patients receiving Class I antiarrhythmic drugs (such as tocainide and mexiletine) since the toxic effects are additive and potentially synergistic. Local Anesthetics - When Lidocan™ IV is used concomitantly with other products containing local anesthetic agents, the amount absorbed from all formulations must be considered. Drugs That May Cause Methemoglobinemia When Used with Lidocan™ IV Patients who are administered local anesthetics are at increased risk of developing methemoglobinemia when concurrently exposed to the following drugs, which could include other local anesthetics: Examples of Drugs Associated with Methemoglobinemia: Drug

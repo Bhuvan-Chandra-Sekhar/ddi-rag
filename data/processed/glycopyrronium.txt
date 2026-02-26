@@ -1,0 +1,4 @@
+Drug: glycopyrronium
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Coadministration of Qbrexza with anticholinergic medications may result in additive interaction leading to an increase in anticholinergic adverse effects. Avoid coadministration of Qbrexza with other anticholinergic-containing drugs ( 7 ) 7.1 Anticholinergics Coadministration of Qbrexza with anticholinergic medications may result in additive interaction leading to an increase in anticholinergic adverse effects [see Warnings and Precautions ( 5 ) and Adverse Reactions ( 6 )] . Avoid coadministration of Qbrexza with other anticholinergic-containing drugs.

@@ -1,0 +1,4 @@
+Drug: teclistamab
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS TECVAYLI causes release of cytokines [see Clinical Pharmacology (12.2) ] that may suppress activity of cytochrome P450 (CYP) enzymes, resulting in increased exposure of CYP substrates. The highest risk of drug-drug interaction is expected to occur from initiation of TECVAYLI step-up dosing schedule up to 7 days after the first treatment dose and during and after CRS [see Warnings and Precautions (5.1) ] . Monitor for toxicity or concentrations of drugs that are CYP substrates where minimal concentration changes may lead to serious adverse reactions. Adjust the dose of the concomitant CYP substrate drug as needed.

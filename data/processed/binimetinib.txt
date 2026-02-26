@@ -1,0 +1,4 @@
+Drug: binimetinib
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS No clinically important drug interactions have been observed with MEKTOVI.

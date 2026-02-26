@@ -1,0 +1,4 @@
+Drug: mirvetuximab_soravtansine
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Strong CYP3A4 Inhibitors: Closely monitor for ELAHERE adverse reactions. ( 7.1 ) 7.1 Effects of Other Drugs on ELAHERE Strong CYP3A4 Inhibitors DM4 is a CYP3A4 substrate. Concomitant use of ELAHERE with strong CYP3A4 inhibitors may increase unconjugated DM4 exposure [see Clinical Pharmacology ( 12.3 )] , which may increase the risk of ELAHERE adverse reactions [see Adverse Reactions ( 6 )] . Closely monitor patients for adverse reactions with ELAHERE when used concomitantly with strong CYP3A4 inhibitors [ see Warnings and Precautions ( 5 ) ] .

@@ -1,0 +1,4 @@
+Drug: venofer_(iron_sucrose)
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS Venofer may reduce the absorption of concomitantly administered oral iron preparations.

@@ -1,0 +1,4 @@
+Drug: glutamine
+
+=== Drug Interactions ===
+Drug Interactions No drug interaction studies have been conducted.

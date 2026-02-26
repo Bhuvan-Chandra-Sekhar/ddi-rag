@@ -1,0 +1,4 @@
+Drug: antimony_potassium_tartrate,_bryonia_alba_root,_protortonia_cacti,_drosera_rotundifolia,_ipecac,_pulsatilla_vulgaris,_rumex_crispus_root,_pongia_officinalis_skeleton,_roasted,_lobaria_pulmonaria
+
+=== Drug Interactions ===
+

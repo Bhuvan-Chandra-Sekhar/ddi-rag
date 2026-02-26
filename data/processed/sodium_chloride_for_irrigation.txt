@@ -1,0 +1,4 @@
+Drug: sodium_chloride_for_irrigation
+
+=== Drug Interactions ===
+Drug Interactions Some additives may be incompatible. Consult with pharmacist. When introducing additives, use aseptic technique. Mix thoroughly. Do not store.

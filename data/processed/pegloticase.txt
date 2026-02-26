@@ -1,0 +1,4 @@
+Drug: pegloticase
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Methotrexate KRYSTEXXA 8 mg every 2 weeks has been studied in patients with chronic gout refractory to conventional therapy taking concomitant oral methotrexate 15 mg weekly [see Clinical Studies (14) ] . Co-administration of methotrexate with KRYSTEXXA may increase pegloticase concentration compared to KRYSTEXXA alone [see Clinical Pharmacology (12.3) ] . 7.2 PEGylated products Because anti-pegloticase antibodies appear to bind to the PEG portion of the drug, there may be potential for binding with other PEGylated products. The impact of anti-PEG antibodies on patients' responses to other PEG-containing therapeutics is unknown.

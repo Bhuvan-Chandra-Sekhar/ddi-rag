@@ -1,0 +1,4 @@
+Drug: fezolinetant
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS 7.1 Effect of Other Drugs on VEOZAH CYP1A2 Inhibitors VEOZAH is a substrate of CYP1A2. Concomitant use of VEOZAH with drugs that are weak, moderate, or strong CYP1A2 inhibitors, increase the plasma C max and AUC of VEOZAH [see Clinical Pharmacology ( 12.3 )] . VEOZAH is contraindicated in individuals using CYP1A2 inhibitors.

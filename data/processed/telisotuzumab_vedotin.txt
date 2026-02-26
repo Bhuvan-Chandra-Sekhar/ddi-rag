@@ -1,0 +1,4 @@
+Drug: telisotuzumab_vedotin
+
+=== Drug Interactions ===
+7 DRUG INTERACTIONS S trong CYP3A I nhibitors : concomitant use with EMRELIS may increase the AUC of MMAE. Monitor for increased risk of adverse reactions to EMRELIS. ( 7.1 ) 7.1 Effect of Other Drugs on EMRELIS Strong CYP3A Inhibitors Concomitant use with strong CYP3A inhibitors may increase unconjugated MMAE AUC [see Clinical Pharmacology ( 12.3 ) ] , which may increase the risk of EMRELIS adverse reactions. Monitor patients for adverse reactions when EMRELIS is given concomitantly with strong CYP3A inhibitors.
