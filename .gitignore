@@ -4,3 +4,5 @@ __pycache__/
 
 # Large or local-only data
 data/raw/
+data/clean_ddi_dataset.csv
+src/clean_ddi_dataset.csv
