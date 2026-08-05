@@ -1,0 +1,38 @@
+# Core data
+pandas
+numpy
+scikit-learn
+
+# Vector store + embeddings
+chromadb
+qdrant-client
+sentence-transformers
+torch
+
+# LLM generation (Groq API)
+requests
+
+# Flask API
+flask
+flask-cors
+flask-jwt-extended
+
+# Auth
+bcrypt
+
+# Database
+sqlalchemy
+psycopg2-binary  # only needed for PostgreSQL; SQLite works without this
+
+# Scheduler (nightly FDA sync)
+apscheduler
+
+# MCP server (Claude Desktop / Cursor integration)
+mcp[cli]
+
+# Environment
+python-dotenv
+
+# Visualization (EDA notebooks)
+matplotlib
+seaborn
