@@ -36,6 +36,10 @@ from config import (
     MAX_TOP_K, QDRANT_API_KEY, QDRANT_URL, SYSTEM_PROMPT, TEXT_COLS,
 )
 
+# ── RxNorm API (structured DDI fallback — no local storage required) ──────────
+_RXNORM_BASE = "https://rxnav.nlm.nih.gov/REST"
+_RXNORM_TIMEOUT = 5
+
 log = logging.getLogger("ddi.crag")
 
 # ── Module-level singletons ───────────────────────────────────────────────────
@@ -366,6 +370,89 @@ def _crag_retrieve(
     return best, status
 
 
+# ── RxNorm structured DDI fallback ───────────────────────────────────────────
+
+@lru_cache(maxsize=512)
+def _rxnorm_get_rxcui(drug_name: str) -> Optional[str]:
+    """Resolve a drug name to an RxCUI identifier via the NLM RxNorm API."""
+    try:
+        r = requests.get(
+            f"{_RXNORM_BASE}/rxcui.json",
+            params={"name": drug_name, "search": 1},
+            timeout=_RXNORM_TIMEOUT,
+        )
+        data = r.json()
+        rxcui = data.get("idGroup", {}).get("rxnormId", [None])[0]
+        if rxcui:
+            return rxcui
+        # Approximate match fallback
+        r2 = requests.get(
+            f"{_RXNORM_BASE}/approximateTerm.json",
+            params={"term": drug_name, "maxEntries": 1},
+            timeout=_RXNORM_TIMEOUT,
+        )
+        candidates = r2.json().get("approximateGroup", {}).get("candidate", [])
+        return candidates[0]["rxcui"] if candidates else None
+    except Exception:
+        return None
+
+
+def _rxnorm_get_interactions(drug_a: str, drug_b: str) -> Optional[str]:
+    """
+    Query NLM RxNorm for structured DDI between two drugs.
+    Returns a formatted evidence string, or None if no interaction found.
+    Sources: DrugBank, ONCHigh, NDF-RT — all free, no API key needed.
+    """
+    rxcui_a = _rxnorm_get_rxcui(drug_a)
+    rxcui_b = _rxnorm_get_rxcui(drug_b)
+    if not rxcui_a or not rxcui_b:
+        return None
+    try:
+        r = requests.get(
+            f"{_RXNORM_BASE}/interaction/list.json",
+            params={"rxcuis": f"{rxcui_a}+{rxcui_b}"},
+            timeout=_RXNORM_TIMEOUT,
+        )
+        pairs = r.json().get("fullInteractionTypeGroup", [])
+        lines = []
+        for group in pairs:
+            source = group.get("sourceName", "NLM")
+            for itype in group.get("fullInteractionType", []):
+                desc = itype.get("comment", "")
+                for pair in itype.get("interactionPair", []):
+                    severity = pair.get("severity", "unknown").upper()
+                    detail = pair.get("description", desc)
+                    lines.append(f"[{severity}] {detail} (Source: {source})")
+        return "\n".join(lines) if lines else None
+    except Exception:
+        return None
+
+
+def _rxnorm_single_drug_interactions(drug_name: str) -> Optional[str]:
+    """Query RxNorm for all known interactions of a single drug."""
+    rxcui = _rxnorm_get_rxcui(drug_name)
+    if not rxcui:
+        return None
+    try:
+        r = requests.get(
+            f"{_RXNORM_BASE}/interaction/interaction.json",
+            params={"rxcui": rxcui},
+            timeout=_RXNORM_TIMEOUT,
+        )
+        pairs = r.json().get("interactionTypeGroup", [])
+        lines = []
+        for group in pairs:
+            source = group.get("sourceName", "NLM")
+            for itype in group.get("interactionType", []):
+                for pair in itype.get("interactionPair", []):
+                    severity = pair.get("severity", "unknown").upper()
+                    detail = pair.get("description", "")
+                    lines.append(f"[{severity}] {detail} (Source: {source})")
+        return "\n".join(lines[:10]) if lines else None
+    except Exception:
+        return None
+
+
 # ── Groq API generation ───────────────────────────────────────────────────────
 
 def _call_groq_api(
@@ -452,17 +539,33 @@ def _cached_answer(
 
     log.info("CRAG status: %s | chunks: %d", crag_status, len(retrieved))
 
-    if retrieved.empty:
+    # ── RxNorm structured fallback when FDA evidence is weak ─────────────────
+    rxnorm_evidence = None
+    if crag_status in ("incorrect:no_evidence", "incorrect:rewritten") or retrieved.empty:
+        rxnorm_evidence = _rxnorm_single_drug_interactions(drug_name or "")
+        if rxnorm_evidence:
+            log.info("RxNorm fallback activated for '%s': %d chars", drug_name, len(rxnorm_evidence))
+
+    if retrieved.empty and not rxnorm_evidence:
         return {
-            "answer"     : "No relevant FDA label evidence found for this drug.",
+            "answer"     : (
+                "No relevant FDA label evidence found for this drug, and no "
+                "structured interaction data was available from NLM RxNorm. "
+                "Please consult a licensed pharmacist or physician."
+            ),
             "sources"    : [],
             "crag_status": crag_status,
         }
 
-    # ── Build prompt with top-3 verified chunks ───────────────────────────────
-    context = "\n".join(
+    # ── Build prompt with top-3 verified chunks + optional RxNorm data ───────
+    fda_context = "\n".join(
         f"[{i}] {row['section'].replace('_',' ').title()}: {row['text'][:300]}"
         for i, (_, row) in enumerate(retrieved.head(3).iterrows(), 1)
+    ) if not retrieved.empty else ""
+
+    rxnorm_block = (
+        f"\nStructured Interaction Data (NLM RxNorm):\n{rxnorm_evidence}\n"
+        if rxnorm_evidence else ""
     )
 
     med_block = (
@@ -470,14 +573,17 @@ def _cached_answer(
         if history_context else ""
     )
 
+    context = fda_context + rxnorm_block
+
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {
             "role": "user",
             "content": (
                 f"{med_block}"
-                f"FDA Evidence (CRAG-verified, status={crag_status}):\n{context}\n\n"
-                f"Q: {query}"
+                f"Evidence (CRAG status={crag_status}):\n{context}\n\n"
+                f"Q: {query}\n\n"
+                "Important: Explain the evidence. Do not make autonomous prescribing decisions."
             ),
         },
     ]

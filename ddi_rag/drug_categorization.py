@@ -1,6 +1,9 @@
 """
 drug_categorization.py — Drug-name → route and product-type mapping.
 
+Drug lists are loaded from data/drug_lists/drug_routes.csv at import time,
+not hardcoded in source. To add or update drugs, edit the CSV file.
+
 Public API:
     lookup_route(drug_name)   -> (route: str | None, method: str)
     categorize_drug(name)     -> category: str | None
@@ -9,234 +12,34 @@ Public API:
 """
 
 import re
+import csv
+import logging
+from pathlib import Path
+
 import pandas as pd
 from difflib import get_close_matches
 from config import FUZZY_CUTOFF, MIN_ROOT_LEN
 
-# ── Route lists ───────────────────────────────────────────────────────────────
-oral_meds = [
-    'amoxicillin and clavulanate potassium','buspirone hydrochloride',
-    'olmesartan medoxomil / amlodipine besylate / hydrochlorothiazide',
-    'linagliptin and metformin hydrochloride','sacubitril and valsartan',
-    'losartan potassium and hydrochlorothiazide','triamterene and hydrochlorothiazide',
-    'acetaminophen and codeine phosphate','hydrocodone bitartrate and acetaminophen',
-    'lurasidone hydrochloride','omeprazole sodium bicarbonate','febuxostat',
-    'allopurinol','fluconazole','pregabalin','carbamazepine','icosapent ethyl',
-    'fluoxetine','famotidine','potassium citrate','esomeprazole magnesium',
-    'methimazole','clonidine hydrochloride','brivaracetam','metformin hydrochloride',
-    'venlafaxine hydrochloride','bumetanide','celecoxib','sertraline hydrochloride',
-    'quetiapine','atorvastatin calcium','sildenafil','tamsulosin hydrochloride',
-    'propranolol hydrochloride','atenolol','finasteride','olanzapine',
-    'phentermine hydrochloride','guanfacine','tizanidine hydrochloride',
-    'hydroxychloroquine sulfate','metronidazole','alprazolam','fenofibrate',
-    'oxybutynin','bisoprolol fumarate','nortriptyline hydrochloride',
-    'metoprolol succinate','lisinopril','ibuprofen','solifenacin succinate',
-    'spironolactone','fluvoxamine maleate','benazepril hydrochloride','rufinamide',
-    'lithium','lithium carbonate','lithium citrate',
-    'gabapentin','probenecid','phenytoin','phenytoin sodium',
-    'rifampin','warfarin','warfarin sodium','thyroid',
-    'azithromycin','simvastatin','ondansetron','ondansetron hydrochloride',
-    'topiramate','amoxicillin','cholestyramine','cyclosporine',
-    'digoxin','ciprofloxacin','ciprofloxacin hydrochloride',
-    'methocarbamol','phenobarbital','omeprazole','sucralfate',
-    'erythromycin','niacin','acyclovir','naproxen','naproxen sodium',
-    'lamotrigine','diltiazem','diltiazem hydrochloride',
-    'bupropion','bupropion hydrochloride','levothyroxine','levothyroxine sodium',
-    'aripiprazole','duloxetine','duloxetine hydrochloride',
-    'mirtazapine','lorazepam','cimetidine','ritonavir','atazanavir',
-    'emtricitabine and tenofovir disoproxil fumarate',
-    'diclofenac','diclofenac sodium','diclofenac potassium',
-    'furosemide','metformin hydrochloride tablets',
-    'dextroamphetamine sulfate','methylphenidate','methylphenidate hydrochloride',
-    'clonazepam','diazepam','valproic acid','valproate sodium','divalproex sodium',
-    'levetiracetam','oxcarbazepine','risperidone',
-    'ziprasidone','ziprasidone hydrochloride','clozapine','haloperidol',
-    'amlodipine','amlodipine besylate','ramipril','enalapril','captopril',
-    'valsartan','irbesartan','candesartan','telmisartan','hydrochlorothiazide',
-    'chlorthalidone','pravastatin','rosuvastatin','lovastatin','fluvastatin',
-    'pantoprazole','lansoprazole','rabeprazole','ranitidine',
-    'metoclopramide','loperamide','lactulose','docusate','senna',
-    'prednisone','prednisolone','methylprednisolone','dexamethasone',
-    'sulfasalazine','hydroxyzine','hydroxyzine hydrochloride',
-    'cetirizine','loratadine','fexofenadine','montelukast','clopidogrel','aspirin',
-    'tetracycline','doxycycline','minocycline',
-    'trimethoprim and sulfamethoxazole','sulfamethoxazole and trimethoprim',
-    'nitrofurantoin','clindamycin','linezolid','voriconazole','itraconazole',
-    'glyburide','glipizide','glimepiride','pioglitazone','sitagliptin',
-    'empagliflozin','canagliflozin','dapagliflozin',
-    'estradiol','conjugated estrogens','medroxyprogesterone','testosterone',
-    'alendronate','risedronate','colchicine',
-    'tacrolimus','mycophenolate mofetil','azathioprine','methotrexate',
-    'oxycodone','oxycodone hydrochloride','morphine','morphine sulfate',
-    'tramadol','tramadol hydrochloride',
-    'amitriptyline','amitriptyline hydrochloride','imipramine',
-    'citalopram','escitalopram','paroxetine','trazodone',
-    'carvedilol','labetalol','hydralazine',
-    'isosorbide mononitrate','isosorbide dinitrate',
-    'folic acid','cyanocobalamin','thiamine hydrochloride',
-    'pyridoxine hydrochloride','ascorbic acid','phytonadione',
-    'water','sterile water',
-    'imatinib','imatinib mesylate','dasatinib','nilotinib','bosutinib',
-    'erlotinib','erlotinib hydrochloride','gefitinib','afatinib','lapatinib',
-    'osimertinib','dabrafenib','vemurafenib','encorafenib','trametinib',
-    'sorafenib','sunitinib malate','pazopanib','regorafenib','cabozantinib',
-    'axitinib','lenvatinib','palbociclib','ribociclib','abemaciclib',
-    'venetoclax','thalidomide','lenalidomide','pomalidomide',
-    'everolimus','everolimus tablets','sirolimus',
-    'hydroxyurea','mercaptopurine','thioguanine','capecitabine',
-    'ibrutinib','acalabrutinib','zanubrutinib','baricitinib','tofacitinib',
-    'upadacitinib','apremilast','leflunomide',
-    'isoniazid','ethambutol hydrochloride','pyrazinamide','rifabutin','rifapentine',
-    'cefdinir','cefuroxime axetil','cephalexin','cefaclor',
-    'lamivudine','zidovudine','abacavir sulfate','tenofovir disoproxil fumarate',
-    'dolutegravir sodium','raltegravir','efavirenz','nevirapine','rilpivirine',
-    'darunavir','lopinavir and ritonavir','atazanavir and cobicistat',
-    'sumatriptan','sumatriptan succinate','rizatriptan','zolmitriptan',
-    'naratriptan','almotriptan','eletriptan hydrobromide','frovatriptan succinate',
-    'lasmiditan','ubrogepant','rimegepant sulfate','atogepant',
-    'acamprosate calcium','varenicline','varenicline tartrate',
-    'triazolam','zaleplon','ramelteon','suvorexant','lemborexant',
-    'carbidopa and levodopa','carbidopa levodopa','levodopa','carbidopa',
-    'ropinirole','ropinirole hydrochloride','pramipexole',
-    'amantadine','amantadine hydrochloride',
-    'valbenazine','deutetrabenazine','tetrabenazine',
-    'fingolimod','fingolimod hydrochloride','siponimod','teriflunomide',
-    'buprenorphine','buprenorphine and naloxone','methadone','methadone hydrochloride',
-    'naltrexone','naltrexone hydrochloride','naloxegol oxalate',
-    'oral semaglutide','liraglutide','semaglutide','dulaglutide','exenatide',
-    'ivacaftor','elexacaftor, tezacaftor, and ivacaftor','lumacaftor and ivacaftor',
-    'amphetamine',
-    'serdexmethylphenidate and dexmethylphenidate','viloxazine hydrochloride',
-]
+log = logging.getLogger("ddi.categorization")
 
-injectable_meds = [
-    'piperacillin and tazobactam','calcium gluconate','nicardipine hydrochloride',
-    'bupivacaine hydrochloride','cyclophosphamide','amiodarone hydrochloride',
-    'zoledronic acid','potassium phosphates','calcium chloride','epinephrine',
-    'carboplatin','naloxone hydrochloride','ethacrynate sodium','oxaliplatin',
-    'levofloxacin','ropivacaine hydrochloride','vasopressin','bivalirudin',
-    'fulvestrant','caspofungin acetate','bortezomib','cefazolin','irinotecan',
-    'dexmedetomidine','daptomycin','thiotepa','dobutamine','arsenic trioxide',
-    'amphotericin b','vancomycin','vancomycin hydrochloride',
-    'heparin','heparin sodium','enoxaparin',
-    'insulin','insulin lispro','insulin glargine','insulin aspart',
-    'insulin regular','insulin detemir',
-    'dexamethasone injection','methylprednisolone sodium succinate',
-    'labetalol hydrochloride','hydralazine hydrochloride',
-    'phenylephrine','norepinephrine','dopamine','adenosine','atropine',
-    'magnesium sulfate','sodium bicarbonate','potassium chloride',
-    'rituximab','trastuzumab','pertuzumab','bevacizumab','cetuximab',
-    'paclitaxel','docetaxel','gemcitabine','cisplatin','fluorouracil','leucovorin',
-    'vincristine','azacitidine','decitabine',
-    'midazolam','propofol','fentanyl','hydromorphone','ketorolac',
-    'succinylcholine','succinylcholine chloride',
-    'meropenem','methylene blue','esmolol hydrochloride',
-    'oxytocin','flumazenil','terbutaline sulfate','argatroban','eptifibatide',
-    'pemetrexed disodium','busulfan','cefoxitin',
-    'nelarabine','sodium nitroprusside','topotecan','fludarabine phosphate','ifosfamide',
-    'acetylcysteine','cytarabine','granisetron hydrochloride','cladribine',
-    'carmustine','bendamustine hydrochloride','ertapenem sodium',
-    'methylergonovine maleate','fosaprepitant dimeglumine','abatacept',
-    'ampicillin sodium and sulbactam sodium','pamidronate disodium',
-    'cefepime','mannitol','vecuronium bromide','milrinone lactate',
-    'fondaparinux sodium','romidepsin','caffeine citrate',
-    'amikacin','penicillin g potassium','daunorubicin hydrochloride',
-    'tocilizumab','mitoxantrone','bleomycin','bleomycin sulfate',
-    'alteplase','aldesleukin','albumin human',
-    'dalteparin sodium','tenecteplase','ferumoxytol','epirubicin hydrochloride',
-    'thiamine hydrochloride','ceftriaxone','remifentanil hydrochloride',
-    'iron sucrose','cefotaxime','ustekinumab',
-    'fomepizole','etoposide','etoposide phosphate',
-    'tobramycin','tobramycin sulfate',
-    'ocrelizumab','natalizumab','mepolizumab',
-    'adalimumab','adalimumab-ryvk','adalimumab-bwwd','adalimumab-atto',
-    'eculizumab','omalizumab','ranibizumab','somatropin',
-    'glucagon','glucagon injection',
-    'golimumab','goserelin','triptorelin','etanercept',
-    'infliximab','vedolizumab','basiliximab','secukinumab','ixekizumab',
-    'guselkumab','risankizumab','dupilumab','tralokinumab',
-    'anakinra','peginterferon alfa-2a',
-    'penicillin g benzathine','penicillin g sodium','penicillin g',
-    'micafungin','micafungin sodium',
-    'paliperidone palmitate','sugammadex','deferoxamine mesylate','treprostinil',
-    'iron dextran','tirzepatide','clevidipine',
-    'daratumumab',
-    'doxorubicin','doxorubicin hydrochloride',
-    'melphalan','chlorambucil','mechlorethamine hydrochloride',
-    'vinblastine sulfate','cabazitaxel',
-    'polatuzumab vedotin','brentuximab vedotin','sacituzumab govitecan',
-    'ado-trastuzumab emtansine','mirvetuximab soravtansine',
-    'blinatumomab','dinutuximab',
-    'nalbuphine hydrochloride','butorphanol tartrate',
-    'elapegademase-lvlr','pegaspargase','pralatrexate',
-    'iohexol','gadodiamide','gadoterate meglumine',
-    'sodium fluoride','dextrose','sterile water for injection','water injection',
-    'magnesium sulfate heptahydrate','soybean oil',
-    'leuprolide acetate',
-    'aztreonam','imipenem and cilastatin','ertapenem','tigecycline',
-    'oritavancin','telavancin hydrochloride','foscarnet sodium','ganciclovir sodium',
-    'mesna','dexrazoxane','oxytocin','methylergonovine maleate',
-    'follitropin','menotropins','pramlintide acetate',
-    'immune globulin intravenous (human) %','nirsevimab','palivizumab',
-    'adrenalin (epinephrine)',
-]
+# ── Load route map from CSV ───────────────────────────────────────────────────
 
-topical_meds = [
-    'lidocaine','diclofenac sodium gel','mupirocin','mometasone furoate',
-    'clindamycin phosphate and benzoyl peroxide','tazarotene','adapalene',
-    'clotrimazole','hydroquinone','ketoconazole','tretinoin','fentanyl transdermal',
-    'scopolamine transdermal','brimonidine tartrate','latanoprost','timolol maleate',
-    'tacrolimus ointment','pimecrolimus','clobetasol propionate','betamethasone',
-    'triamcinolone acetonide','hydrocortisone','metronidazole gel',
-    'ivermectin topical','permethrin','nystatin','miconazole',
-    'terbinafine','salicylic acid','benzoyl peroxide',
-    'testosterone gel','estradiol patch','nitroglycerin ointment',
-    'dorzolamide','travoprost','bimatoprost',
-    'sulfacetamide sodium','sulfacetamide sodium and prednisolone sodium phosphate',
-    'moxifloxacin ophthalmic','moxifloxacin ophthalmic solution',
-    'tropicamide','apraclonidine','cyclopentolate hydrochloride',
-    'dorzolamide hydrochloride timolol maleate',
-    'crotamiton','oxiconazole nitrate','penciclovir','capsaicin',
-    'methoxsalen','dapsone gel, %','sofpironium bromide','trifarotene','rotigotine',
-    'efinaconazole','ofloxacin otic',
-]
+_CSV_PATH = Path(__file__).parent.parent / "data" / "drug_lists" / "drug_routes.csv"
 
-inhaled_meds = [
-    'albuterol sulfate','fluticasone propionate and salmeterol',
-    'budesonide inhalation','ipratropium bromide','arformoterol tartrate',
-    'tiotropium bromide','formoterol fumarate',
-    'beclomethasone dipropionate','ciclesonide','levalbuterol',
-    'umeclidinium','aclidinium bromide','indacaterol','vilanterol','salmeterol',
-    'budesonide and formoterol','umeclidinium and vilanterol',
-    'fluticasone furoate and vilanterol',
-    'glycopyrrolate inhalation','glycopyrrolate and formoterol fumarate',
-    'glycopyrronium','olodaterol respimat inhalation spray',
-    'mometasone furoate inhalation','fluticasone propionate','revefenacin',
-]
+def _load_route_map() -> dict:
+    if not _CSV_PATH.exists():
+        log.warning("drug_routes.csv not found at %s — route lookup disabled.", _CSV_PATH)
+        return {}
+    route_map = {}
+    with open(_CSV_PATH, newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            name = row["drug_name"].strip().lower()
+            if name:
+                route_map[name] = row["route"].strip()
+    log.info("Loaded %d drug routes from %s", len(route_map), _CSV_PATH)
+    return route_map
 
-vaginal_meds = [
-    'etonogestrel and ethinyl estradiol','progesterone vaginal',
-    'clindamycin vaginal','metronidazole vaginal',
-    'miconazole vaginal','terconazole','boric acid vaginal',
-    'dinoprostone','alprostadil',
-]
-
-nasal_meds = [
-    'azelastine hydrochloride','fluticasone propionate nasal',
-    'mometasone furoate nasal','triamcinolone acetonide nasal',
-    'budesonide nasal','oxymetazoline','ipratropium bromide nasal',
-    'ciclesonide nasal','olopatadine hydrochloride and mometasone furoate',
-    'zavegepant',
-]
-
-# ── Build route_map ───────────────────────────────────────────────────────────
-route_map: dict = {}
-for _d in oral_meds:       route_map[_d.lower().strip()] = "oral"
-for _d in injectable_meds: route_map[_d.lower().strip()] = "intravenous"
-for _d in topical_meds:    route_map[_d.lower().strip()] = "topical"
-for _d in inhaled_meds:    route_map[_d.lower().strip()] = "respiratory (inhalation)"
-for _d in vaginal_meds:    route_map[_d.lower().strip()] = "vaginal"
-for _d in nasal_meds:      route_map[_d.lower().strip()] = "nasal"
+route_map: dict = _load_route_map()
 
 # ── Salt-suffix normalization ─────────────────────────────────────────────────
 _SALT_SUFFIXES = [
@@ -315,10 +118,7 @@ def lookup_route(drug_name) -> tuple:
 
 
 def apply_route_column(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Fill missing openfda_route values using lookup_route().
-    Returns the DataFrame with openfda_route partially or fully filled.
-    """
+    """Fill missing openfda_route values using lookup_route()."""
     if "openfda_route" not in df.columns:
         df["openfda_route"] = None
 
@@ -327,9 +127,9 @@ def apply_route_column(df: pd.DataFrame) -> pd.DataFrame:
         lambda x: lookup_route(x)[0]
     )
     df.loc[mask, "openfda_route"] = results
-    print(
-        f"Route fill: {mask.sum()} rows processed. "
-        f"Remaining NaN: {df['openfda_route'].isna().sum()}"
+    log.info(
+        "Route fill: %d rows processed. Remaining NaN: %d",
+        mask.sum(), df["openfda_route"].isna().sum()
     )
     return df
 
@@ -352,45 +152,29 @@ human_otc_drugs: set = {
     "loperamide", "docusate", "senna", "melatonin",
 }
 
-_all_drugs = (
-    set(d.strip().lower() for d in oral_meds)
-    | set(d.strip().lower() for d in injectable_meds)
-    | set(d.strip().lower() for d in topical_meds)
-    | set(d.strip().lower() for d in inhaled_meds)
-    | set(d.strip().lower() for d in vaginal_meds)
-    | set(d.strip().lower() for d in nasal_meds)
-)
-
+_all_drugs = set(route_map.keys())
 human_prescription_drugs: set = _all_drugs - cellular_therapy - human_otc_drugs
 
 _cat_map = (
-    {d: "cellular_therapy"        for d in cellular_therapy}
-    | {d: "human_otc_drug"        for d in human_otc_drugs}
+    {d: "cellular_therapy"          for d in cellular_therapy}
+    | {d: "human_otc_drug"          for d in human_otc_drugs}
     | {d: "human_prescription_drug" for d in human_prescription_drugs}
 )
 
 
 def categorize_drug(drug_name) -> str | None:
-    """
-    Classify a drug name into: cellular_therapy, human_otc_drug,
-    human_prescription_drug, or None (via fuzzy fallback).
-    """
+    """Classify a drug into: cellular_therapy, human_otc_drug, human_prescription_drug, or None."""
     if pd.isna(drug_name):
         return None
     name = str(drug_name).strip().lower()
     if name in _cat_map:
         return _cat_map[name]
-
-    # Fuzzy fallback
     close = get_close_matches(name, _cat_map.keys(), n=1, cutoff=0.85)
     return _cat_map[close[0]] if close else None
 
 
 def apply_product_type(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Fill missing openfda_product_type values using categorize_drug().
-    Remaining unresolved rows are labeled 'no data from<fda>'.
-    """
+    """Fill missing openfda_product_type values using categorize_drug()."""
     if "openfda_product_type" in df.columns:
         df["openfda_product_type"] = df["openfda_product_type"].str.replace(
             " ", "_", regex=False
@@ -402,6 +186,4 @@ def apply_product_type(df: pd.DataFrame) -> pd.DataFrame:
         .apply(lambda x: categorize_drug(x) if pd.notna(x) else "no data from<fda>")
         .fillna("no data from<fda>")
     )
-    print("Product type value counts:")
-    print(df["openfda_product_type"].value_counts(dropna=False))
     return df

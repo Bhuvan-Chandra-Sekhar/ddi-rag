@@ -1,0 +1,587 @@
+drug_name,route
+amoxicillin,oral
+warfarin,oral
+warfarin sodium,oral
+aspirin,oral
+metformin hydrochloride,oral
+lisinopril,oral
+amlodipine,oral
+amlodipine besylate,oral
+metoprolol succinate,oral
+atorvastatin calcium,oral
+levothyroxine sodium,oral
+levothyroxine,oral
+omeprazole,oral
+gabapentin,oral
+sertraline hydrochloride,oral
+alprazolam,oral
+clonazepam,oral
+diazepam,oral
+lorazepam,oral
+fluoxetine,oral
+escitalopram,oral
+citalopram,oral
+paroxetine,oral
+duloxetine hydrochloride,oral
+venlafaxine hydrochloride,oral
+bupropion hydrochloride,oral
+mirtazapine,oral
+trazodone,oral
+amitriptyline hydrochloride,oral
+imipramine,oral
+nortriptyline hydrochloride,oral
+quetiapine,oral
+aripiprazole,oral
+risperidone,oral
+olanzapine,oral
+clozapine,oral
+haloperidol,oral
+lithium carbonate,oral
+valproic acid,oral
+divalproex sodium,oral
+lamotrigine,oral
+carbamazepine,oral
+phenytoin sodium,oral
+levetiracetam,oral
+topiramate,oral
+oxcarbazepine,oral
+phenobarbital,oral
+pregabalin,oral
+tramadol hydrochloride,oral
+oxycodone hydrochloride,oral
+morphine sulfate,oral
+hydrocodone bitartrate and acetaminophen,oral
+acetaminophen and codeine phosphate,oral
+ibuprofen,oral
+naproxen sodium,oral
+naproxen,oral
+celecoxib,oral
+diclofenac sodium,oral
+prednisone,oral
+prednisolone,oral
+methylprednisolone,oral
+dexamethasone,oral
+methotrexate,oral
+azathioprine,oral
+mycophenolate mofetil,oral
+tacrolimus,oral
+cyclosporine,oral
+sirolimus,oral
+everolimus,oral
+hydroxychloroquine sulfate,oral
+sulfasalazine,oral
+leflunomide,oral
+colchicine,oral
+allopurinol,oral
+febuxostat,oral
+clopidogrel,oral
+digoxin,oral
+atenolol,oral
+propranolol hydrochloride,oral
+carvedilol,oral
+bisoprolol fumarate,oral
+labetalol,oral
+hydralazine,oral
+isosorbide mononitrate,oral
+isosorbide dinitrate,oral
+valsartan,oral
+losartan potassium and hydrochlorothiazide,oral
+irbesartan,oral
+candesartan,oral
+telmisartan,oral
+ramipril,oral
+enalapril,oral
+captopril,oral
+benazepril hydrochloride,oral
+diltiazem hydrochloride,oral
+furosemide,oral
+hydrochlorothiazide,oral
+chlorthalidone,oral
+spironolactone,oral
+simvastatin,oral
+rosuvastatin,oral
+pravastatin,oral
+lovastatin,oral
+fluvastatin,oral
+fenofibrate,oral
+cholestyramine,oral
+metformin hydrochloride tablets,oral
+glipizide,oral
+glyburide,oral
+glimepiride,oral
+pioglitazone,oral
+sitagliptin,oral
+empagliflozin,oral
+canagliflozin,oral
+dapagliflozin,oral
+liraglutide,oral
+semaglutide,oral
+oral semaglutide,oral
+rifampin,oral
+isoniazid,oral
+azithromycin,oral
+ciprofloxacin hydrochloride,oral
+doxycycline,oral
+amoxicillin and clavulanate potassium,oral
+trimethoprim and sulfamethoxazole,oral
+nitrofurantoin,oral
+clindamycin,oral
+fluconazole,oral
+itraconazole,oral
+voriconazole,oral
+acyclovir,oral
+lamivudine,oral
+efavirenz,oral
+ritonavir,oral
+atazanavir,oral
+darunavir,oral
+dolutegravir sodium,oral
+raltegravir,oral
+lopinavir and ritonavir,oral
+buspirone hydrochloride,oral
+linagliptin and metformin hydrochloride,oral
+sacubitril and valsartan,oral
+lurasidone hydrochloride,oral
+febuxostat,oral
+methimazole,oral
+clonidine hydrochloride,oral
+brivaracetam,oral
+bumetanide,oral
+tamsulosin hydrochloride,oral
+finasteride,oral
+phentermine hydrochloride,oral
+guanfacine,oral
+tizanidine hydrochloride,oral
+metronidazole,oral
+fenofibrate,oral
+oxybutynin,oral
+solifenacin succinate,oral
+fluvoxamine maleate,oral
+rufinamide,oral
+lithium,oral
+lithium citrate,oral
+probenecid,oral
+phenytoin,oral
+ondansetron,oral
+ondansetron hydrochloride,oral
+cholestyramine,oral
+methocarbamol,oral
+sucralfate,oral
+erythromycin,oral
+niacin,oral
+acyclovir,oral
+cetirizine,oral
+loratadine,oral
+fexofenadine,oral
+montelukast,oral
+tetracycline,oral
+minocycline,oral
+sulfamethoxazole and trimethoprim,oral
+linezolid,oral
+estradiol,oral
+conjugated estrogens,oral
+medroxyprogesterone,oral
+testosterone,oral
+alendronate,oral
+risedronate,oral
+imatinib,oral
+imatinib mesylate,oral
+dasatinib,oral
+nilotinib,oral
+bosutinib,oral
+erlotinib,oral
+erlotinib hydrochloride,oral
+gefitinib,oral
+afatinib,oral
+lapatinib,oral
+osimertinib,oral
+dabrafenib,oral
+vemurafenib,oral
+encorafenib,oral
+trametinib,oral
+sorafenib,oral
+sunitinib malate,oral
+pazopanib,oral
+regorafenib,oral
+cabozantinib,oral
+axitinib,oral
+lenvatinib,oral
+palbociclib,oral
+ribociclib,oral
+abemaciclib,oral
+venetoclax,oral
+thalidomide,oral
+lenalidomide,oral
+pomalidomide,oral
+everolimus tablets,oral
+hydroxyurea,oral
+mercaptopurine,oral
+thioguanine,oral
+capecitabine,oral
+ibrutinib,oral
+acalabrutinib,oral
+zanubrutinib,oral
+baricitinib,oral
+tofacitinib,oral
+upadacitinib,oral
+apremilast,oral
+isoniazid,oral
+ethambutol hydrochloride,oral
+pyrazinamide,oral
+rifabutin,oral
+rifapentine,oral
+cefdinir,oral
+cefuroxime axetil,oral
+cephalexin,oral
+cefaclor,oral
+abacavir sulfate,oral
+tenofovir disoproxil fumarate,oral
+nevirapine,oral
+rilpivirine,oral
+atazanavir and cobicistat,oral
+sumatriptan,oral
+sumatriptan succinate,oral
+rizatriptan,oral
+zolmitriptan,oral
+naratriptan,oral
+almotriptan,oral
+eletriptan hydrobromide,oral
+frovatriptan succinate,oral
+lasmiditan,oral
+ubrogepant,oral
+rimegepant sulfate,oral
+atogepant,oral
+acamprosate calcium,oral
+varenicline,oral
+varenicline tartrate,oral
+triazolam,oral
+zaleplon,oral
+ramelteon,oral
+suvorexant,oral
+lemborexant,oral
+carbidopa and levodopa,oral
+carbidopa levodopa,oral
+levodopa,oral
+carbidopa,oral
+ropinirole,oral
+ropinirole hydrochloride,oral
+pramipexole,oral
+amantadine,oral
+amantadine hydrochloride,oral
+valbenazine,oral
+deutetrabenazine,oral
+tetrabenazine,oral
+fingolimod,oral
+fingolimod hydrochloride,oral
+siponimod,oral
+teriflunomide,oral
+buprenorphine,oral
+buprenorphine and naloxone,oral
+methadone,oral
+methadone hydrochloride,oral
+naltrexone,oral
+naltrexone hydrochloride,oral
+naloxegol oxalate,oral
+dulaglutide,oral
+exenatide,oral
+ivacaftor,oral
+lumacaftor and ivacaftor,oral
+amphetamine,oral
+dextroamphetamine sulfate,oral
+methylphenidate,oral
+methylphenidate hydrochloride,oral
+serdexmethylphenidate and dexmethylphenidate,oral
+viloxazine hydrochloride,oral
+folic acid,oral
+cyanocobalamin,oral
+thiamine hydrochloride,oral
+pyridoxine hydrochloride,oral
+ascorbic acid,oral
+phytonadione,oral
+omeprazole sodium bicarbonate,oral
+famotidine,oral
+potassium citrate,oral
+esomeprazole magnesium,oral
+pantoprazole,oral
+lansoprazole,oral
+rabeprazole,oral
+ranitidine,oral
+metoclopramide,oral
+loperamide,oral
+lactulose,oral
+docusate,oral
+senna,oral
+vancomycin hydrochloride,intravenous
+heparin sodium,intravenous
+enoxaparin,intravenous
+epinephrine,intravenous
+norepinephrine,intravenous
+dopamine,intravenous
+dobutamine,intravenous
+magnesium sulfate,intravenous
+potassium chloride,intravenous
+sodium bicarbonate,intravenous
+calcium gluconate,intravenous
+calcium chloride,intravenous
+dextrose,intravenous
+piperacillin and tazobactam,intravenous
+meropenem,intravenous
+ceftriaxone,intravenous
+cefazolin,intravenous
+cefepime,intravenous
+aztreonam,intravenous
+levofloxacin,intravenous
+vancomycin,intravenous
+amphotericin b,intravenous
+ganciclovir sodium,intravenous
+paclitaxel,intravenous
+docetaxel,intravenous
+carboplatin,intravenous
+cisplatin,intravenous
+oxaliplatin,intravenous
+gemcitabine,intravenous
+fluorouracil,intravenous
+leucovorin,intravenous
+cyclophosphamide,intravenous
+doxorubicin hydrochloride,intravenous
+rituximab,intravenous
+trastuzumab,intravenous
+bevacizumab,intravenous
+cetuximab,intravenous
+tocilizumab,intravenous
+adalimumab,intravenous
+infliximab,intravenous
+midazolam,intravenous
+propofol,intravenous
+fentanyl,intravenous
+hydromorphone,intravenous
+ketorolac,intravenous
+naloxone hydrochloride,intravenous
+dexamethasone injection,intravenous
+methylprednisolone sodium succinate,intravenous
+mannitol,intravenous
+furosemide injection,intravenous
+labetalol hydrochloride,intravenous
+hydralazine hydrochloride,intravenous
+nicardipine hydrochloride,intravenous
+vasopressin,intravenous
+phenylephrine,intravenous
+adenosine,intravenous
+atropine,intravenous
+amiodarone hydrochloride,intravenous
+heparin,intravenous
+insulin lispro,intravenous
+insulin glargine,intravenous
+insulin aspart,intravenous
+insulin regular,intravenous
+insulin detemir,intravenous
+insulin,intravenous
+bivalirudin,intravenous
+argatroban,intravenous
+eptifibatide,intravenous
+fondaparinux sodium,intravenous
+alteplase,intravenous
+tenecteplase,intravenous
+dalteparin sodium,intravenous
+bortezomib,intravenous
+rituximab,intravenous
+pertuzumab,intravenous
+vincristine,intravenous
+azacitidine,intravenous
+decitabine,intravenous
+succinylcholine chloride,intravenous
+vecuronium bromide,intravenous
+rocuronium,intravenous
+meropenem,intravenous
+methylene blue,intravenous
+esmolol hydrochloride,intravenous
+oxytocin,intravenous
+flumazenil,intravenous
+terbutaline sulfate,intravenous
+pemetrexed disodium,intravenous
+busulfan,intravenous
+cefoxitin,intravenous
+nelarabine,intravenous
+sodium nitroprusside,intravenous
+topotecan,intravenous
+fludarabine phosphate,intravenous
+ifosfamide,intravenous
+acetylcysteine,intravenous
+cytarabine,intravenous
+granisetron hydrochloride,intravenous
+cladribine,intravenous
+carmustine,intravenous
+bendamustine hydrochloride,intravenous
+ertapenem sodium,intravenous
+methylergonovine maleate,intravenous
+fosaprepitant dimeglumine,intravenous
+abatacept,intravenous
+ampicillin sodium and sulbactam sodium,intravenous
+pamidronate disodium,intravenous
+milrinone lactate,intravenous
+romidepsin,intravenous
+caffeine citrate,intravenous
+amikacin,intravenous
+penicillin g potassium,intravenous
+daunorubicin hydrochloride,intravenous
+mitoxantrone,intravenous
+bleomycin sulfate,intravenous
+aldesleukin,intravenous
+albumin human,intravenous
+epirubicin hydrochloride,intravenous
+thiamine hydrochloride,intravenous
+remifentanil hydrochloride,intravenous
+iron sucrose,intravenous
+cefotaxime,intravenous
+ustekinumab,intravenous
+fomepizole,intravenous
+etoposide,intravenous
+tobramycin sulfate,intravenous
+ocrelizumab,intravenous
+natalizumab,intravenous
+mepolizumab,intravenous
+eculizumab,intravenous
+omalizumab,intravenous
+ranibizumab,intravenous
+somatropin,intravenous
+glucagon,intravenous
+golimumab,intravenous
+goserelin,intravenous
+triptorelin,intravenous
+etanercept,intravenous
+vedolizumab,intravenous
+basiliximab,intravenous
+secukinumab,intravenous
+ixekizumab,intravenous
+guselkumab,intravenous
+risankizumab,intravenous
+dupilumab,intravenous
+tralokinumab,intravenous
+anakinra,intravenous
+peginterferon alfa-2a,intravenous
+penicillin g benzathine,intravenous
+penicillin g sodium,intravenous
+micafungin sodium,intravenous
+paliperidone palmitate,intravenous
+sugammadex,intravenous
+deferoxamine mesylate,intravenous
+treprostinil,intravenous
+iron dextran,intravenous
+tirzepatide,intravenous
+clevidipine,intravenous
+daratumumab,intravenous
+doxorubicin,intravenous
+melphalan,intravenous
+chlorambucil,intravenous
+vinblastine sulfate,intravenous
+cabazitaxel,intravenous
+polatuzumab vedotin,intravenous
+brentuximab vedotin,intravenous
+sacituzumab govitecan,intravenous
+ado-trastuzumab emtansine,intravenous
+blinatumomab,intravenous
+dinutuximab,intravenous
+nalbuphine hydrochloride,intravenous
+pegaspargase,intravenous
+pralatrexate,intravenous
+leuprolide acetate,intravenous
+imipenem and cilastatin,intravenous
+tigecycline,intravenous
+foscarnet sodium,intravenous
+mesna,intravenous
+dexrazoxane,intravenous
+nirsevimab,intravenous
+palivizumab,intravenous
+zoledronic acid,intravenous
+potassium phosphates,intravenous
+caspofungin acetate,intravenous
+irinotecan,intravenous
+dexmedetomidine,intravenous
+daptomycin,intravenous
+thiotepa,intravenous
+arsenic trioxide,intravenous
+fulvestrant,intravenous
+ropivacaine hydrochloride,intravenous
+bupivacaine hydrochloride,intravenous
+piperacillin and tazobactam,intravenous
+lidocaine,topical
+mupirocin,topical
+clotrimazole,topical
+ketoconazole,topical
+tretinoin,topical
+adapalene,topical
+benzoyl peroxide,topical
+salicylic acid,topical
+hydrocortisone,topical
+clobetasol propionate,topical
+betamethasone,topical
+triamcinolone acetonide,topical
+tacrolimus ointment,topical
+pimecrolimus,topical
+miconazole,topical
+nystatin,topical
+terbinafine,topical
+permethrin,topical
+latanoprost,topical
+timolol maleate,topical
+dorzolamide,topical
+travoprost,topical
+bimatoprost,topical
+testosterone gel,topical
+estradiol patch,topical
+nitroglycerin ointment,topical
+diclofenac sodium gel,topical
+fentanyl transdermal,topical
+scopolamine transdermal,topical
+brimonidine tartrate,topical
+mometasone furoate,topical
+clindamycin phosphate and benzoyl peroxide,topical
+tazarotene,topical
+hydroquinone,topical
+ivermectin topical,topical
+metronidazole gel,topical
+capsaicin,topical
+rotigotine,topical
+trifarotene,topical
+efinaconazole,topical
+albuterol sulfate,respiratory (inhalation)
+fluticasone propionate and salmeterol,respiratory (inhalation)
+budesonide inhalation,respiratory (inhalation)
+ipratropium bromide,respiratory (inhalation)
+tiotropium bromide,respiratory (inhalation)
+formoterol fumarate,respiratory (inhalation)
+salmeterol,respiratory (inhalation)
+levalbuterol,respiratory (inhalation)
+umeclidinium,respiratory (inhalation)
+indacaterol,respiratory (inhalation)
+vilanterol,respiratory (inhalation)
+budesonide and formoterol,respiratory (inhalation)
+fluticasone furoate and vilanterol,respiratory (inhalation)
+mometasone furoate inhalation,respiratory (inhalation)
+fluticasone propionate,respiratory (inhalation)
+beclomethasone dipropionate,respiratory (inhalation)
+ciclesonide,respiratory (inhalation)
+arformoterol tartrate,respiratory (inhalation)
+aclidinium bromide,respiratory (inhalation)
+glycopyrrolate inhalation,respiratory (inhalation)
+glycopyrrolate and formoterol fumarate,respiratory (inhalation)
+revefenacin,respiratory (inhalation)
+etonogestrel and ethinyl estradiol,vaginal
+progesterone vaginal,vaginal
+clindamycin vaginal,vaginal
+metronidazole vaginal,vaginal
+miconazole vaginal,vaginal
+terconazole,vaginal
+boric acid vaginal,vaginal
+dinoprostone,vaginal
+alprostadil,vaginal
+azelastine hydrochloride,nasal
+fluticasone propionate nasal,nasal
+mometasone furoate nasal,nasal
+triamcinolone acetonide nasal,nasal
+budesonide nasal,nasal
+oxymetazoline,nasal
+ipratropium bromide nasal,nasal
+ciclesonide nasal,nasal
+olopatadine hydrochloride and mometasone furoate,nasal
+zavegepant,nasal
