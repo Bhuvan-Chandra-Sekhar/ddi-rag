@@ -1,8 +1,9 @@
 """
-rag_pipeline.py — Qdrant Cloud vector store + CRAG pipeline + Groq LLM generation.
+services/rag_pipeline.py — Postgres/pgvector evidence store (via
+services/evidence_store.py) + CRAG pipeline + Groq LLM generation.
 
 CRAG (Corrective RAG) enhances standard RAG with a relevance grading step:
-    1. Retrieve   — fetch top-K chunks from Qdrant Cloud
+    1. Retrieve   — fetch top-K chunks from the evidence store
     2. Grade      — score retrieval quality (correct / ambiguous / incorrect)
     3. Correct    — apply corrective action based on grade:
                     correct   → use chunks as-is
@@ -10,9 +11,12 @@ CRAG (Corrective RAG) enhances standard RAG with a relevance grading step:
                     incorrect → rewrite query via Groq, retry retrieval
     4. Generate   — produce answer using verified, high-quality context
 
+Embeddings are computed by Cohere's hosted API (services/evidence_store.py) —
+no local model, no torch. There is no load_models() step anymore; the
+embedding "model" is just an HTTP call.
+
 Public API:
-    load_models()                                          — load embedding model once
-    retrieve_chunks(query, top_k, drug_name, section)      — Qdrant retrieval
+    retrieve_chunks(query, top_k, drug_name, section)      — evidence-store retrieval
     answer_ddi(drug_name, section, top_k, history_context) — full CRAG pipeline
     answer_general(query, history_context)                 — general assistant (no retrieval)
 """
@@ -24,29 +28,19 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 import requests
-import torch
-from sentence_transformers import SentenceTransformer
-from qdrant_client import QdrantClient
-from qdrant_client.models import Filter, FieldCondition, MatchValue
 
 from config import (
-    CHROMA_DIR, COLLECTION_NAME, CHUNK_OVERLAP, CHUNK_SIZE,
-    DEFAULT_TOP_K, EMBED_BATCH_SIZE, EMBEDDING_MODEL,
+    CHUNK_OVERLAP, CHUNK_SIZE, DEFAULT_TOP_K,
     GENERAL_SYSTEM_PROMPT, GENERATION_MAX_NEW, GROQ_API_KEY, GROQ_MODEL, GROQ_TIMEOUT,
-    MAX_TOP_K, QDRANT_API_KEY, QDRANT_URL, SYSTEM_PROMPT, TEXT_COLS,
+    MAX_TOP_K, SYSTEM_PROMPT, TEXT_COLS,
 )
+from services import evidence_store
 
 # ── RxNorm API (structured DDI fallback — no local storage required) ──────────
 _RXNORM_BASE = "https://rxnav.nlm.nih.gov/REST"
 _RXNORM_TIMEOUT = 5
 
 log = logging.getLogger("ddi.crag")
-
-# ── Module-level singletons ───────────────────────────────────────────────────
-_embedding_model:    Optional[SentenceTransformer] = None
-_qdrant_client:      Optional[QdrantClient]        = None
-_chroma_client:      Optional[Any]                 = None
-_chroma_collection:  Optional[Any]                 = None
 
 # ── CRAG relevance thresholds ─────────────────────────────────────────────────
 RELEVANCE_HIGH = 0.65   # score ≥ this → "correct"  (use chunks as-is)
@@ -59,101 +53,6 @@ _CTRL = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]")
 
 def safe_str(val) -> str:
     return _CTRL.sub("", str(val) if val is not None else "")
-
-
-# ── Model loading ─────────────────────────────────────────────────────────────
-
-def load_models() -> None:
-    """Load the SentenceTransformer embedding model. Call once at startup."""
-    global _embedding_model
-
-    if _embedding_model is None:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        log.info("Loading embedding model: %s on %s", EMBEDDING_MODEL, device.upper())
-        _embedding_model = SentenceTransformer(EMBEDDING_MODEL, device=device)
-        log.info("Embedding model ready.")
-
-    if GROQ_API_KEY:
-        log.info("Groq API configured — model: %s", GROQ_MODEL)
-    else:
-        log.warning("GROQ_API_KEY not set. Add it to your .env / Streamlit secrets.")
-
-
-def _get_qdrant() -> QdrantClient:
-    """Return (and cache) the Qdrant Cloud client."""
-    global _qdrant_client
-    if _qdrant_client is None:
-        if not QDRANT_API_KEY:
-            raise RuntimeError("QDRANT_API_KEY is not set.")
-        _qdrant_client = QdrantClient(url=QDRANT_URL, api_key=QDRANT_API_KEY)
-        try:
-            info = _qdrant_client.get_collection(COLLECTION_NAME)
-            log.info('Qdrant collection "%s" — %d vectors.', COLLECTION_NAME,
-                     info.points_count)
-        except Exception:
-            log.warning('Qdrant collection "%s" not found.', COLLECTION_NAME)
-    return _qdrant_client
-
-
-# ── ChromaDB (local index) ────────────────────────────────────────────────────
-
-def _get_collection():
-    """Return (and cache) the local ChromaDB collection."""
-    global _chroma_client, _chroma_collection
-    if _chroma_collection is None:
-        import chromadb
-        _chroma_client     = chromadb.PersistentClient(path=CHROMA_DIR)
-        _chroma_collection = _chroma_client.get_or_create_collection(
-            name     = COLLECTION_NAME,
-            metadata = {"hnsw:space": "cosine"},
-        )
-        log.info('ChromaDB collection "%s" ready — %d vectors.',
-                 COLLECTION_NAME, _chroma_collection.count())
-    return _chroma_collection
-
-
-def build_chroma_index(chunk_df, rebuild: bool = False) -> None:
-    """Embed all chunks and upsert into the local ChromaDB collection."""
-    global _chroma_collection
-    if _embedding_model is None:
-        load_models()
-
-    if rebuild:
-        import chromadb
-        client = chromadb.PersistentClient(path=CHROMA_DIR)
-        try:
-            client.delete_collection(COLLECTION_NAME)
-            log.info('ChromaDB collection "%s" deleted for rebuild.', COLLECTION_NAME)
-        except Exception:
-            pass
-        _chroma_collection = None
-
-    collection = _get_collection()
-    texts  = chunk_df["text"].tolist()
-    ids    = chunk_df["doc_id"].tolist()
-    metas  = chunk_df[
-        ["generic_name", "brand_name", "product_type", "route", "section"]
-    ].to_dict(orient="records")
-    total  = len(texts)
-
-    log.info("Embedding %d chunks into ChromaDB (batch=%d)...", total, EMBED_BATCH_SIZE)
-    for start in range(0, total, EMBED_BATCH_SIZE):
-        end  = min(start + EMBED_BATCH_SIZE, total)
-        embs = _embedding_model.encode(
-            texts[start:end],
-            show_progress_bar    = False,
-            convert_to_numpy     = True,
-            normalize_embeddings = True,
-        ).tolist()
-        collection.upsert(
-            ids        = ids[start:end],
-            documents  = texts[start:end],
-            embeddings = embs,
-            metadatas  = metas[start:end],
-        )
-        log.info("  ChromaDB upsert: %d / %d", end, total)
-
-    log.info("ChromaDB index complete — %d vectors.", collection.count())
 
 
 # ── Chunking ──────────────────────────────────────────────────────────────────
@@ -206,60 +105,27 @@ def retrieve_chunks(
     section   : Optional[str] = None,
 ) -> pd.DataFrame:
     """
-    Query Qdrant Cloud for the top-k most relevant chunks.
+    Query the pgvector evidence store for the top-k most relevant chunks.
     Returns a DataFrame with: generic_name, brand_name, section, text, score.
+    Delegates to services.evidence_store.search(), which already fails
+    closed to an empty DataFrame on any error (missing config, connection
+    failure, embedding API error) — evidence retrieval failing must not
+    take down the caller.
     """
-    if _embedding_model is None:
-        raise RuntimeError("Call load_models() first.")
-
-    client = _get_qdrant()
-
-    try:
-        conditions = []
-        if drug_name:
-            conditions.append(
-                FieldCondition(key="generic_name",
-                               match=MatchValue(value=drug_name.strip().lower()))
-            )
-        if section:
-            conditions.append(
-                FieldCondition(key="section",
-                               match=MatchValue(value=section.strip().lower()))
-            )
-
-        query_filter = Filter(must=conditions) if conditions else None
-        query_emb    = _embedding_model.encode(
-            [query], convert_to_numpy=True, normalize_embeddings=True
-        ).tolist()[0]
-
-        response = client.query_points(
-            collection_name = COLLECTION_NAME,
-            query           = query_emb,
-            query_filter    = query_filter,
-            limit           = min(top_k, MAX_TOP_K),
-            with_payload    = True,
-        )
-
-        results = response.points
-        if not results:
-            return pd.DataFrame()
-
-        return pd.DataFrame([
-            {
-                "generic_name": safe_str(r.payload.get("generic_name", "")),
-                "brand_name"  : safe_str(r.payload.get("brand_name",   "")),
-                "product_type": safe_str(r.payload.get("product_type", "")),
-                "route"       : safe_str(r.payload.get("route",        "")),
-                "section"     : safe_str(r.payload.get("section",      "")),
-                "text"        : safe_str(r.payload.get("text",         "")),
-                "score"       : round(float(r.score), 4),
-            }
-            for r in results
-        ])
-
-    except Exception:
-        log.exception("retrieve_chunks failed")
-        return pd.DataFrame()
+    chunks = evidence_store.search(
+        query=query, top_k=min(top_k, MAX_TOP_K), drug_name=drug_name, section=section,
+    )
+    if chunks.empty:
+        return chunks
+    return chunks.assign(
+        generic_name=chunks["generic_name"].map(safe_str),
+        brand_name=chunks["brand_name"].map(safe_str),
+        product_type=chunks["product_type"].map(safe_str),
+        route=chunks["route"].map(safe_str),
+        section=chunks["section"].map(safe_str),
+        text=chunks["text"].map(safe_str),
+        score=chunks["score"].astype(float).round(4),
+    )
 
 
 # ── CRAG components ───────────────────────────────────────────────────────────
@@ -370,7 +236,12 @@ def _crag_retrieve(
     return best, status
 
 
-# ── RxNorm structured DDI fallback ───────────────────────────────────────────
+# ── RxNorm identity lookup ────────────────────────────────────────────────────
+# Note: RxNav's drug-drug interaction endpoints (interaction/list.json,
+# interaction/interaction.json) were discontinued by NLM on 2024-01-02 and are
+# no longer a valid safety signal — do not resurrect them as an interaction
+# fallback. _rxnorm_get_rxcui() remains valid for drug *identity* resolution
+# (RxCUI normalization) and is used by the medication-identity service.
 
 @lru_cache(maxsize=512)
 def _rxnorm_get_rxcui(drug_name: str) -> Optional[str]:
@@ -393,62 +264,6 @@ def _rxnorm_get_rxcui(drug_name: str) -> Optional[str]:
         )
         candidates = r2.json().get("approximateGroup", {}).get("candidate", [])
         return candidates[0]["rxcui"] if candidates else None
-    except Exception:
-        return None
-
-
-def _rxnorm_get_interactions(drug_a: str, drug_b: str) -> Optional[str]:
-    """
-    Query NLM RxNorm for structured DDI between two drugs.
-    Returns a formatted evidence string, or None if no interaction found.
-    Sources: DrugBank, ONCHigh, NDF-RT — all free, no API key needed.
-    """
-    rxcui_a = _rxnorm_get_rxcui(drug_a)
-    rxcui_b = _rxnorm_get_rxcui(drug_b)
-    if not rxcui_a or not rxcui_b:
-        return None
-    try:
-        r = requests.get(
-            f"{_RXNORM_BASE}/interaction/list.json",
-            params={"rxcuis": f"{rxcui_a}+{rxcui_b}"},
-            timeout=_RXNORM_TIMEOUT,
-        )
-        pairs = r.json().get("fullInteractionTypeGroup", [])
-        lines = []
-        for group in pairs:
-            source = group.get("sourceName", "NLM")
-            for itype in group.get("fullInteractionType", []):
-                desc = itype.get("comment", "")
-                for pair in itype.get("interactionPair", []):
-                    severity = pair.get("severity", "unknown").upper()
-                    detail = pair.get("description", desc)
-                    lines.append(f"[{severity}] {detail} (Source: {source})")
-        return "\n".join(lines) if lines else None
-    except Exception:
-        return None
-
-
-def _rxnorm_single_drug_interactions(drug_name: str) -> Optional[str]:
-    """Query RxNorm for all known interactions of a single drug."""
-    rxcui = _rxnorm_get_rxcui(drug_name)
-    if not rxcui:
-        return None
-    try:
-        r = requests.get(
-            f"{_RXNORM_BASE}/interaction/interaction.json",
-            params={"rxcui": rxcui},
-            timeout=_RXNORM_TIMEOUT,
-        )
-        pairs = r.json().get("interactionTypeGroup", [])
-        lines = []
-        for group in pairs:
-            source = group.get("sourceName", "NLM")
-            for itype in group.get("interactionType", []):
-                for pair in itype.get("interactionPair", []):
-                    severity = pair.get("severity", "unknown").upper()
-                    detail = pair.get("description", "")
-                    lines.append(f"[{severity}] {detail} (Source: {source})")
-        return "\n".join(lines[:10]) if lines else None
     except Exception:
         return None
 
@@ -539,33 +354,20 @@ def _cached_answer(
 
     log.info("CRAG status: %s | chunks: %d", crag_status, len(retrieved))
 
-    # ── RxNorm structured fallback when FDA evidence is weak ─────────────────
-    rxnorm_evidence = None
-    if crag_status in ("incorrect:no_evidence", "incorrect:rewritten") or retrieved.empty:
-        rxnorm_evidence = _rxnorm_single_drug_interactions(drug_name or "")
-        if rxnorm_evidence:
-            log.info("RxNorm fallback activated for '%s': %d chars", drug_name, len(rxnorm_evidence))
-
-    if retrieved.empty and not rxnorm_evidence:
+    if retrieved.empty:
         return {
             "answer"     : (
-                "No relevant FDA label evidence found for this drug, and no "
-                "structured interaction data was available from NLM RxNorm. "
+                "No relevant FDA label evidence found for this drug. "
                 "Please consult a licensed pharmacist or physician."
             ),
             "sources"    : [],
             "crag_status": crag_status,
         }
 
-    # ── Build prompt with top-3 verified chunks + optional RxNorm data ───────
+    # ── Build prompt with top-3 verified chunks ──────────────────────────────
     fda_context = "\n".join(
         f"[{i}] {row['section'].replace('_',' ').title()}: {row['text'][:300]}"
         for i, (_, row) in enumerate(retrieved.head(3).iterrows(), 1)
-    ) if not retrieved.empty else ""
-
-    rxnorm_block = (
-        f"\nStructured Interaction Data (NLM RxNorm):\n{rxnorm_evidence}\n"
-        if rxnorm_evidence else ""
     )
 
     med_block = (
@@ -573,7 +375,7 @@ def _cached_answer(
         if history_context else ""
     )
 
-    context = fda_context + rxnorm_block
+    context = fda_context
 
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
@@ -625,9 +427,6 @@ def answer_ddi(
                                  # 'incorrect:rewritten' | 'incorrect:no_evidence'
         }
     """
-    if _embedding_model is None:
-        load_models()
-
     return _cached_answer(
         drug_name       = drug_name,
         section         = section,

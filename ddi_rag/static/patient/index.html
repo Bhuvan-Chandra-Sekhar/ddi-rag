@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MedTrust Connect — Your medications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --primary: #00355F;
+    --primary-container: #0F4C81;
+    --primary-fixed-dim: #A0C9FF;
+    --secondary: #006C50;
+    --secondary-container: #93F2CD;
+    --background: #F9F9FF;
+    --surface: #FFFFFF;
+    --error: #BA1A1A;
+    --border: #E2E8F0;
+    --safe: #1B8A5A;
+    --caution: #B7791F;
+    --warning: #C2410C;
+  }
+  * { font-family: 'Public Sans', sans-serif; }
+  .font-label { font-family: 'Manrope', sans-serif; }
+  body { background: var(--background); }
+  .card-shadow { box-shadow: 0px 4px 12px rgba(15, 76, 129, 0.08); }
+  .reveal { opacity: 0; transform: translateY(10px); animation: reveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+  .pulse-dot { animation: pulse 2.2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+  .field { transition: border-color 0.15s ease, box-shadow 0.15s ease; }
+  .field:focus { outline: none; border-color: var(--primary-container); box-shadow: 0 0 0 3px rgba(15,76,129,0.12); }
+  .btn-primary { background: var(--primary); transition: background 0.15s ease, transform 0.1s ease; }
+  .btn-primary:hover { background: var(--primary-container); }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { background: #9CA9B8; cursor: not-allowed; }
+  ::selection { background: var(--secondary-container); }
+</style>
+</head>
+<body class="min-h-screen">
+
+<div id="app" class="min-h-screen"></div>
+
+<script>
+const API = window.location.origin;
+const $ = (sel, root=document) => root.querySelector(sel);
+const app = $('#app');
+
+function token() { return sessionStorage.getItem('medtrust_token'); }
+function setToken(t) { t ? sessionStorage.setItem('medtrust_token', t) : sessionStorage.removeItem('medtrust_token'); }
+function setUser(u) { sessionStorage.setItem('medtrust_user', JSON.stringify(u)); }
+function getUser() { try { return JSON.parse(sessionStorage.getItem('medtrust_user')); } catch { return null; } }
+
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+  if (token()) headers['Authorization'] = `Bearer ${token()}`;
+  const res = await fetch(`${API}${path}`, { ...opts, headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  return data;
+}
+
+const STATE_META = {
+  draft:                        { label: 'Getting started',        badge: 'bg-slate-100 text-slate-700',   dot: 'bg-slate-400' },
+  awaiting_analysis:             { label: 'Reviewing your prescription', badge: 'bg-slate-100 text-slate-700', dot: 'bg-slate-400' },
+  awaiting_pharmacist_review:    { label: 'Your pharmacist is reviewing this', badge: 'bg-blue-50 text-blue-800', dot: 'bg-blue-500' },
+  awaiting_prescriber_response:  { label: 'Checking with your prescriber', badge: 'bg-amber-50 text-amber-800', dot: 'bg-amber-500' },
+  escalated:                     { label: 'Under urgent review',    badge: 'bg-red-50 text-red-800',        dot: 'bg-red-500' },
+  ready_to_dispense:             { label: 'Reviewed and ready',     badge: 'bg-emerald-50 text-emerald-800', dot: 'bg-emerald-500' },
+  held_or_cancelled:             { label: 'On hold — contact your pharmacy', badge: 'bg-red-50 text-red-800', dot: 'bg-red-500' },
+  closed:                        { label: 'Complete',               badge: 'bg-emerald-50 text-emerald-800', dot: 'bg-emerald-500' },
+};
+
+function renderAuth() {
+  app.innerHTML = `
+    <div class="min-h-screen flex flex-col lg:flex-row">
+      <div class="lg:w-[42%] px-8 py-14 lg:px-16 lg:py-20 flex flex-col justify-between" style="background: var(--primary);">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
+            <span class="font-label text-[11px] tracking-[0.14em] uppercase text-blue-200">System online</span>
+          </div>
+          <h1 class="text-white text-4xl lg:text-5xl font-semibold leading-tight mt-6">MedTrust<br/><span style="color:var(--primary-fixed-dim)">Connect</span></h1>
+          <p class="font-label text-blue-100 text-sm mt-4 max-w-xs leading-relaxed">A closer look at what's in your medication list, reviewed by a licensed pharmacist before anything reaches you.</p>
+        </div>
+        <p class="font-label text-blue-300 text-[11px] max-w-xs leading-relaxed">This is a support tool, not a diagnosis. Always follow your care team's direction.</p>
+      </div>
+
+      <div class="flex-1 flex items-center justify-center px-6 py-14 lg:py-0">
+        <div class="w-full max-w-sm reveal">
+          <div class="flex gap-1 p-1 rounded-lg bg-slate-100 mb-8 font-label text-sm font-medium">
+            <button id="tab-login" class="flex-1 py-2 rounded-md transition-colors">Sign in</button>
+            <button id="tab-register" class="flex-1 py-2 rounded-md transition-colors">Create account</button>
+          </div>
+          <div id="auth-forms"></div>
+          <p id="auth-error" class="text-sm mt-4 hidden" style="color: var(--error);"></p>
+        </div>
+      </div>
+    </div>
+  `;
+
+  const forms = $('#auth-forms');
+  const errorEl = $('#auth-error');
+  const showError = (msg) => { errorEl.textContent = msg; errorEl.classList.remove('hidden'); };
+  const clearError = () => errorEl.classList.add('hidden');
+
+  function renderLogin() {
+    clearError();
+    forms.innerHTML = `
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">Email</label>
+          <input type="email" name="email" required class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm" placeholder="you@example.com" />
+        </div>
+        <div>
+          <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">Password</label>
+          <input type="password" name="password" required class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm" placeholder="••••••••" />
+        </div>
+        <button type="submit" class="btn-primary font-label w-full text-white text-sm font-semibold py-2.5 rounded mt-2">Sign in</button>
+      </form>
+    `;
+    $('#login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
+      const btn = e.target.querySelector('button');
+      btn.disabled = true; btn.textContent = 'Signing in…';
+      const fd = new FormData(e.target);
+      try {
+        const data = await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ email: fd.get('email'), password: fd.get('password') }) });
+        setToken(data.access_token);
+        setUser(data.user);
+        renderDashboard();
+      } catch (err) {
+        showError(err.message);
+        btn.disabled = false; btn.textContent = 'Sign in';
+      }
+    });
+  }
+
+  async function renderRegister() {
+    clearError();
+    forms.innerHTML = `<p class="font-label text-sm text-slate-400">Loading care organizations…</p>`;
+    let orgs = [];
+    try {
+      const data = await api('/v1/organizations');
+      orgs = data.organizations || [];
+    } catch { /* fall through with empty list */ }
+
+    const orgOptions = orgs.length
+      ? orgs.map(o => `<option value="${o.id}">${o.name}</option>`).join('')
+      : `<option value="">No organizations available yet</option>`;
+
+    forms.innerHTML = `
+      <form id="register-form" class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">First name</label>
+            <input type="text" name="first_name" required class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm" />
+          </div>
+          <div>
+            <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">Last name</label>
+            <input type="text" name="last_name" required class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm" />
+          </div>
+        </div>
+        <div>
+          <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">Care organization</label>
+          <select name="organization_id" required class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm bg-white">${orgOptions}</select>
+        </div>
+        <div>
+          <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">Email</label>
+          <input type="email" name="email" required class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm" placeholder="you@example.com" />
+        </div>
+        <div>
+          <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">Password</label>
+          <input type="password" name="password" required minlength="8" class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm" placeholder="At least 8 characters" />
+        </div>
+        <button type="submit" class="btn-primary font-label w-full text-white text-sm font-semibold py-2.5 rounded mt-2">Create account</button>
+      </form>
+    `;
+    $('#register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
+      const btn = e.target.querySelector('button');
+      btn.disabled = true; btn.textContent = 'Creating account…';
+      const fd = new FormData(e.target);
+      try {
+        await api('/api/auth/register', {
+          method: 'POST',
+          body: JSON.stringify({
+            email: fd.get('email'), password: fd.get('password'),
+            first_name: fd.get('first_name'), last_name: fd.get('last_name'),
+            full_name: `${fd.get('first_name')} ${fd.get('last_name')}`,
+            organization_id: fd.get('organization_id'),
+          }),
+        });
+        const data = await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ email: fd.get('email'), password: fd.get('password') }) });
+        setToken(data.access_token);
+        setUser(data.user);
+        renderDashboard();
+      } catch (err) {
+        showError(err.message);
+        btn.disabled = false; btn.textContent = 'Create account';
+      }
+    });
+  }
+
+  function setTab(active) {
+    const login = $('#tab-login'), register = $('#tab-register');
+    login.style.background = active === 'login' ? 'white' : 'transparent';
+    login.style.color = active === 'login' ? 'var(--primary)' : '#64748b';
+    login.style.boxShadow = active === 'login' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none';
+    register.style.background = active === 'register' ? 'white' : 'transparent';
+    register.style.color = active === 'register' ? 'var(--primary)' : '#64748b';
+    register.style.boxShadow = active === 'register' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none';
+  }
+
+  $('#tab-login').addEventListener('click', () => { setTab('login'); renderLogin(); });
+  $('#tab-register').addEventListener('click', () => { setTab('register'); renderRegister(); });
+  setTab('login'); renderLogin();
+}
+
+function caseCard(c, i) {
+  const meta = STATE_META[c.state] || STATE_META.draft;
+  const comm = (c.communications && c.communications[0]) || null;
+  const body = comm
+    ? comm.explanation
+    : `We're working through your ${c.medication} prescription. This isn't a guarantee of safety or risk — it means your pharmacist hasn't finished reviewing it yet.`;
+  const dateStr = c.created_at ? new Date(c.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+
+  return `
+    <div class="bg-white rounded-xl border border-slate-100 card-shadow p-5 reveal" style="animation-delay: ${i * 70}ms">
+      <div class="flex items-start justify-between gap-3 mb-3">
+        <div>
+          <p class="font-label text-[11px] uppercase tracking-wide text-slate-400 mb-1">${dateStr}</p>
+          <h3 class="text-[15px] font-semibold text-slate-900">${c.medication}</h3>
+        </div>
+        <span class="font-label inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${meta.badge}">
+          <span class="w-1.5 h-1.5 rounded-full ${meta.dot}"></span>${meta.label}
+        </span>
+      </div>
+      <p class="text-[13.5px] text-slate-600 leading-relaxed">${body}</p>
+    </div>
+  `;
+}
+
+async function renderDashboard() {
+  const user = getUser();
+  app.innerHTML = `
+    <div class="min-h-screen">
+      <header class="border-b border-slate-100 bg-white">
+        <div class="max-w-2xl mx-auto px-6 py-5 flex items-center justify-between">
+          <div>
+            <p class="font-label text-[11px] uppercase tracking-[0.12em] text-slate-400">MedTrust Connect</p>
+            <h1 class="text-lg font-semibold text-slate-900 mt-0.5">Hi, ${(user && user.full_name) || 'there'}</h1>
+          </div>
+          <button id="logout" class="font-label text-xs font-medium text-slate-500 hover:text-slate-700 border border-slate-200 rounded px-3 py-1.5">Sign out</button>
+        </div>
+      </header>
+      <main class="max-w-2xl mx-auto px-6 py-8">
+        <p class="font-label text-xs text-slate-400 mb-5">Your medications, and where each one stands with your care team.</p>
+        <div id="cases" class="space-y-3"></div>
+      </main>
+    </div>
+  `;
+
+  $('#logout').addEventListener('click', () => { setToken(null); setUser(null); renderAuth(); });
+
+  const casesEl = $('#cases');
+  casesEl.innerHTML = `<p class="font-label text-sm text-slate-400">Loading…</p>`;
+  try {
+    const data = await api('/v1/my/cases');
+    const cases = data.cases || [];
+    casesEl.innerHTML = cases.length
+      ? cases.map(caseCard).join('')
+      : `<div class="bg-white rounded-xl border border-dashed border-slate-200 p-8 text-center reveal">
+           <p class="text-sm font-medium text-slate-700">No prescriptions on file yet</p>
+           <p class="font-label text-[13px] text-slate-400 mt-1.5 max-w-xs mx-auto">Once your prescriber sends a prescription to your pharmacy, it'll show up here after review.</p>
+         </div>`;
+  } catch (err) {
+    if (err.message.includes('401') || err.message.toLowerCase().includes('token')) {
+      setToken(null); setUser(null); renderAuth(); return;
+    }
+    casesEl.innerHTML = `<p class="text-sm" style="color: var(--error)">${err.message}</p>`;
+  }
+}
+
+(token() ? renderDashboard() : renderAuth());
+</script>
+</body>
+</html>

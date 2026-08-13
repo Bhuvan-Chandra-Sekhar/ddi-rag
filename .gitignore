@@ -1,8 +1,25 @@
 __pycache__/
+venv/
 .venv/
 .ipynb_checkpoints/
+.pytest_cache/
+.hypothesis/
+
+# Secrets — never commit these
+.env
+ddi_rag/.env
+*.env
+!.env.example
+
+# Local dev database / vector store artifacts
+*.db
+*.sqlite
+*.sqlite3
+chroma_ddi_db/
 
 # Large or local-only data
 data/raw/
 data/clean_ddi_dataset.csv
+data/datasets/clean_ddi_dataset.csv
 src/clean_ddi_dataset.csv
+data/processed/

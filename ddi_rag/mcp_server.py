@@ -2,11 +2,14 @@
 mcp_server.py — DrugSafe AI MCP Server
 
 Exposes DrugSafe AI capabilities as MCP tools so any MCP-compatible client
-(Claude Desktop, Cursor, etc.) can query drug interactions and find pharmacies.
+(Claude Desktop, Cursor, etc.) can query drug interactions.
+
+Note: this is a research/operations interface, not the hospital production
+boundary — the architecture doc explicitly says not to expose the MCP
+server as the primary clinical API (that's app.py).
 
 Tools:
     query_drug_interactions  — RAG pipeline: retrieve FDA evidence + Groq answer
-    find_nearby_pharmacies   — OpenStreetMap pharmacy search by GPS coordinates
     list_drug_warnings       — Quick interaction summary for a drug pair
 
 Run (stdio transport — used by Claude Desktop):
@@ -23,7 +26,6 @@ Claude Desktop config (~/.claude/claude_desktop_config.json):
     }
 """
 
-import json
 import logging
 import sys
 from pathlib import Path
@@ -33,34 +35,22 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from mcp.server.fastmcp import FastMCP
 
-from config import GROQ_API_KEY, GROQ_MODEL
-from pharmacy_search import find_pharmacies
-
 log = logging.getLogger("ddi.mcp")
 logging.basicConfig(level=logging.INFO, stream=sys.stderr)
 
 # ── Create MCP server ─────────────────────────────────────────────────────────
 
 mcp = FastMCP(
-    name        = "DrugSafe AI",
-    description = (
+    name         = "DrugSafe AI",
+    instructions = (
         "FDA-powered drug interaction checker. "
-        "Query drug-drug interactions using Qdrant RAG + Llama 3.1 via Groq. "
-        "Find nearby pharmacies using OpenStreetMap."
+        "Query drug-drug interactions using pgvector RAG + Llama 3.1 via Groq."
     ),
 )
 
-# Lazy-load RAG pipeline (heavy models) only when a tool is first called
-_rag_ready = False
-
-def _ensure_rag():
-    global _rag_ready
-    if not _rag_ready:
-        log.info("Loading RAG models for MCP server...")
-        from rag_pipeline import load_models
-        load_models()
-        _rag_ready = True
-
+# Note: there used to be a lazy _ensure_rag()/load_models() step here to
+# load a local embedding model on first use. Embeddings are now a Cohere
+# API call (services/evidence_store.py) — nothing local to preload.
 
 # ── Tool 1: Query drug interactions ──────────────────────────────────────────
 
@@ -68,12 +58,16 @@ def _ensure_rag():
 def query_drug_interactions(
     drug_name: str,
     history_context: str = "",
-) -> str:
+):
+    # No `-> str` return annotation: mcp==1.27.0's structured-output model
+    # generation raises a PydanticUserError for bare `str` return types on
+    # tool functions with this pydantic version. The docstring below still
+    # documents the return value for callers.
     """
     Query FDA label data and DDI pair database for drug interaction information.
 
-    Uses Qdrant vector search (930k+ vectors) + Llama 3.1 via Groq to
-    provide clinically relevant interaction warnings and contraindications.
+    Uses pgvector similarity search (Cohere embeddings) + Llama 3.1 via Groq
+    to provide clinically relevant interaction warnings and contraindications.
 
     Args:
         drug_name       : Generic drug name to query (e.g. "warfarin", "aspirin")
@@ -84,8 +78,7 @@ def query_drug_interactions(
     Returns:
         Clinical summary of drug interactions, warnings, and contraindications.
     """
-    _ensure_rag()
-    from rag_pipeline import answer_ddi
+    from services.rag_pipeline import answer_ddi
 
     if not drug_name or not drug_name.strip():
         return "Error: drug_name is required."
@@ -124,7 +117,8 @@ def query_drug_interactions(
 def list_drug_warnings(
     drug_1: str,
     drug_2: str,
-) -> str:
+):
+    # See query_drug_interactions() above for why there's no -> str here.
     """
     Check for known interactions between two specific drugs.
 
@@ -138,8 +132,7 @@ def list_drug_warnings(
     Returns:
         Known interaction descriptions and severity information.
     """
-    _ensure_rag()
-    from rag_pipeline import retrieve_chunks
+    from services.rag_pipeline import retrieve_chunks
 
     d1 = drug_1.strip().lower()
     d2 = drug_2.strip().lower()
@@ -157,70 +150,6 @@ def list_drug_warnings(
         text    = (row.get("text") or "")[:400]
         score   = float(row.get("score", 0))
         lines.append(f"**Source {i}** ({section}, relevance={score:.3f}):\n{text}\n")
-
-    return "\n".join(lines)
-
-
-# ── Tool 3: Find nearby pharmacies ───────────────────────────────────────────
-
-@mcp.tool()
-def find_nearby_pharmacies(
-    latitude: float,
-    longitude: float,
-    drug_name: str = "",
-    radius_km: float = 5.0,
-) -> str:
-    """
-    Find pharmacies near a GPS location using OpenStreetMap (no API key needed).
-
-    Args:
-        latitude  : GPS latitude  (e.g. 17.385 for Hyderabad)
-        longitude : GPS longitude (e.g. 78.486 for Hyderabad)
-        drug_name : Optional drug name — shown in results for context
-        radius_km : Search radius in km (default 5 km, max 20 km)
-
-    Returns:
-        Formatted list of nearby pharmacies with addresses, distances, and
-        Google Maps links sorted by proximity.
-    """
-    radius_km = min(float(radius_km), 20.0)
-    radius_m  = int(radius_km * 1000)
-
-    log.info(
-        "MCP tool call: find_nearby_pharmacies(%.4f, %.4f, radius=%dm)",
-        latitude, longitude, radius_m,
-    )
-
-    pharmacies = find_pharmacies(
-        lat       = latitude,
-        lon       = longitude,
-        radius_m  = radius_m,
-        drug_name = drug_name,
-    )
-
-    if not pharmacies:
-        return (
-            f"No pharmacies found within {radius_km:.0f} km of "
-            f"({latitude:.4f}, {longitude:.4f}). "
-            "Try increasing the radius."
-        )
-
-    drug_line = f" — searching for: **{drug_name}**" if drug_name else ""
-    lines = [
-        f"## Nearby Pharmacies{drug_line}",
-        f"Found {len(pharmacies)} pharmacies within {radius_km:.0f} km\n",
-    ]
-
-    for i, p in enumerate(pharmacies[:10], 1):
-        lines.append(f"### {i}. {p['name']}  ({p['distance_label']})")
-        lines.append(f"📍 {p['address']}")
-        if p["phone"]:
-            lines.append(f"📞 {p['phone']}")
-        if p["opening_hours"]:
-            lines.append(f"🕐 {p['opening_hours']}")
-        lines.append(f"🗺  [Open in Google Maps]({p['maps_url']})")
-        lines.append(f"🧭 [Get Directions]({p['directions_url']})")
-        lines.append("")
 
     return "\n".join(lines)
 

@@ -1,29 +1,30 @@
 """
-fda_sync.py — Incremental sync from openFDA API into ChromaDB.
+fda_sync.py — Incremental sync from openFDA API.
 
-How it works:
-  1. Fetch drug labels updated since last_sync_date from openFDA API
-  2. For each updated drug, delete old ChromaDB chunks and upsert new ones
-  3. Persist the new last_sync_date
+STATUS: sync execution is currently disabled. This module was written
+against a local ChromaDB index; the evidence store has since moved to
+Postgres/pgvector (services/evidence_store.py, via Cohere embeddings),
+and this module was never ported to sync against it. run_sync() and
+start_scheduler() raise NotImplementedError rather than silently doing
+nothing or crashing on import — reimplementing sync against the
+evidence store is tracked as follow-up work, not attempted here (a
+one-time manual ingestion path exists separately in scripts/).
 
-Scheduler (APScheduler) calls run_sync() nightly at SYNC_HOUR.
-Can also be triggered manually via POST /api/sync.
+The openFDA fetch/parse helpers below (_fetch_page, _parse_label) are
+still valid and reusable once a pgvector-backed upsert path exists.
 """
 
 import logging
 import os
-from datetime import date, datetime, timezone
-from typing import List, Optional
+from datetime import date
+from typing import Optional
 
-import pandas as pd
 import requests
 
 from config import (
-    CHROMA_DIR, COLLECTION_NAME, EMBED_BATCH_SIZE,
-    OPENFDA_BASE_URL, OPENFDA_PAGE_SIZE, SYNC_HOUR, TEXT_COLS,
+    COLLECTION_NAME, OPENFDA_BASE_URL, OPENFDA_PAGE_SIZE, SYNC_HOUR, TEXT_COLS,
 )
 from data_preprocessing import clean_text
-from rag_pipeline import _chunk_text, _get_collection, safe_str
 
 log = logging.getLogger("ddi.sync")
 
@@ -125,160 +126,29 @@ def _parse_label(record: dict) -> Optional[dict]:
     return row
 
 
-# ── ChromaDB update ───────────────────────────────────────────────────────────
-
-def _delete_drug_chunks(collection, drug_name: str):
-    """Delete all ChromaDB chunks for a given generic drug name."""
-    try:
-        existing = collection.get(
-            where={"generic_name": {"$eq": drug_name}}, limit=9_999
-        )
-        ids = existing.get("ids", [])
-        if ids:
-            collection.delete(ids=ids)
-            log.debug("Deleted %d old chunks for '%s'.", len(ids), drug_name)
-    except Exception as exc:
-        log.warning("Could not delete chunks for '%s': %s", drug_name, exc)
-
-
-def _upsert_drug(collection, embedding_model, row: dict, row_index: int):
-    """Build chunks for one drug record and upsert into ChromaDB."""
-    from rag_pipeline import build_chunk_df
-    import pandas as _pd
-
-    drug_df  = _pd.DataFrame([row])
-    chunk_df = build_chunk_df(drug_df)
-
-    if chunk_df.empty:
-        return
-
-    # Re-index doc_ids using row_index to avoid collisions
-    chunk_df["doc_id"] = [
-        f"sync_{row_index}_{col}_{ci}"
-        for ci, col in enumerate(chunk_df["doc_id"].tolist())
-    ]
-
-    texts      = chunk_df["text"].tolist()
-    embeddings = embedding_model.encode(
-        texts,
-        show_progress_bar=False,
-        convert_to_numpy=True,
-        normalize_embeddings=True,
-    ).tolist()
-
-    collection.upsert(
-        ids        = chunk_df["doc_id"].tolist(),
-        documents  = texts,
-        embeddings = embeddings,
-        metadatas  = chunk_df[
-            ["generic_name", "brand_name", "product_type", "route", "section"]
-        ].to_dict(orient="records"),
-    )
-
-
 # ── Main sync entry point ─────────────────────────────────────────────────────
 
 def run_sync(full: bool = False) -> dict:
     """
-    Fetch updated drug labels from openFDA and update ChromaDB.
-
-    Args:
-        full: if True, ignore last_sync_date and fetch everything
-              (WARNING: very slow — use only for initial rebuild)
-
-    Returns:
-        {"synced": int, "skipped": int, "errors": int, "sync_date": str}
+    Disabled. This function used to delete/upsert into a local ChromaDB
+    collection; that code path was removed along with ChromaDB support.
+    Sync against the pgvector evidence store (services/evidence_store.py)
+    has not been implemented. Raising here — rather than silently
+    returning a fake success dict — so a caller (or a scheduled job)
+    cannot mistake "did nothing" for "synced".
     """
-    from rag_pipeline import _embedding_model
-
-    if _embedding_model is None:
-        return {"error": "Embedding model not loaded. Call load_models() first."}
-
-    since       = None if full else _load_last_sync_date()
-    collection  = _get_collection()
-    today_str   = date.today().strftime("%Y%m%d")
-
-    log.info(
-        "Starting FDA sync — since: %s, full: %s",
-        since or "beginning", full,
+    raise NotImplementedError(
+        "fda_sync.run_sync() is disabled: it targeted ChromaDB, which was "
+        "removed. pgvector-backed sync has not been implemented yet."
     )
-
-    synced = skipped = errors = 0
-    skip   = 0
-
-    while True:
-        data = _fetch_page(since=since, skip=skip)
-
-        if not data or "results" not in data:
-            break
-
-        records = data["results"]
-        if not records:
-            break
-
-        for i, record in enumerate(records):
-            row = _parse_label(record)
-            if row is None:
-                skipped += 1
-                continue
-            try:
-                _delete_drug_chunks(collection, row["final_generic_name"])
-                _upsert_drug(collection, _embedding_model, row, skip + i)
-                synced += 1
-            except Exception as exc:
-                log.warning(
-                    "Error syncing '%s': %s",
-                    row.get("final_generic_name", "?"), exc,
-                )
-                errors += 1
-
-        total_available = data.get("meta", {}).get("results", {}).get("total", 0)
-        skip += OPENFDA_PAGE_SIZE
-
-        log.info(
-            "Sync progress — fetched: %d / %d, synced: %d, skip: %d, errors: %d",
-            min(skip, total_available), total_available, synced, skipped, errors,
-        )
-
-        if skip >= total_available:
-            break
-
-    _save_last_sync_date(today_str)
-    log.info(
-        "FDA sync complete — synced: %d, skipped: %d, errors: %d",
-        synced, skipped, errors,
-    )
-
-    return {
-        "synced":    synced,
-        "skipped":   skipped,
-        "errors":    errors,
-        "sync_date": today_str,
-    }
 
 
 # ── APScheduler setup ─────────────────────────────────────────────────────────
 
 def start_scheduler():
-    """
-    Start APScheduler to run run_sync() nightly at SYNC_HOUR.
-    Call once at application startup (from run.py).
-    """
-    try:
-        from apscheduler.schedulers.background import BackgroundScheduler
-
-        scheduler = BackgroundScheduler(timezone="UTC")
-        scheduler.add_job(
-            run_sync,
-            trigger="cron",
-            hour=SYNC_HOUR,
-            minute=0,
-            id="fda_nightly_sync",
-            replace_existing=True,
-        )
-        scheduler.start()
-        log.info("FDA nightly sync scheduler started (runs at %02d:00 UTC).", SYNC_HOUR)
-        return scheduler
-    except Exception as exc:
-        log.error("Could not start scheduler: %s", exc)
-        return None
+    """Disabled — see run_sync(). Does not schedule a job that would fail
+    silently every night; raises immediately instead."""
+    raise NotImplementedError(
+        "fda_sync.start_scheduler() is disabled until run_sync() is "
+        "reimplemented against Qdrant."
+    )
