@@ -1,0 +1,469 @@
+{
+  "answer_ddi": [
+    {
+      "drug": "warfarin",
+      "crag_status": "correct",
+      "n_sources": 1,
+      "faithfulness": 0.239,
+      "api_error": false,
+      "latency_s": 2.3,
+      "answer_preview": "According to the provided information, the drug interactions and warnings for warfarin sodium are related to pharmacokinetic mechanisms, specifically:\n\n1. Enzym"
+    },
+    {
+      "drug": "aspirin and dipyridamole",
+      "crag_status": "incorrect:rewritten",
+      "n_sources": 5,
+      "faithfulness": 0.417,
+      "api_error": false,
+      "latency_s": 8.46,
+      "answer_preview": "Based on the provided FDA label excerpts, there is no direct mention of aspirin and dipyridamole. However, the excerpts do mention the following:\n\n- Aspirin is "
+    },
+    {
+      "drug": "ibuprofen",
+      "crag_status": "incorrect:rewritten",
+      "n_sources": 5,
+      "faithfulness": 0.541,
+      "api_error": false,
+      "latency_s": 4.73,
+      "answer_preview": "Based on the provided evidence, I can identify the following interactions and warnings for ibuprofen:\n\n1. **Interaction with anticoagulant drugs:** There is no "
+    },
+    {
+      "drug": "penicillin g potassium",
+      "crag_status": "incorrect:rewritten",
+      "n_sources": 5,
+      "faithfulness": 0.438,
+      "api_error": false,
+      "latency_s": 4.22,
+      "answer_preview": "Based on the provided information, there is no direct mention of penicillin G potassium. However, since penicillin G potassium is a type of penicillin, I will p"
+    },
+    {
+      "drug": "metformin hydrochloride",
+      "crag_status": "ambiguous:broadened",
+      "n_sources": 5,
+      "faithfulness": 0.393,
+      "api_error": false,
+      "latency_s": 4.12,
+      "answer_preview": "Based on the provided FDA label excerpts, the following interactions and warnings are associated with metformin hydrochloride:\n\n1. **Increased metformin concent"
+    },
+    {
+      "drug": "acetaminophen",
+      "crag_status": "ambiguous:broadened",
+      "n_sources": 5,
+      "faithfulness": 0.603,
+      "api_error": false,
+      "latency_s": 3.83,
+      "answer_preview": "Based on the provided evidence, here are the drug interactions and warnings for acetaminophen:\n\n1. **Drug Interactions:**\n   - Acetaminophen interacts with etha"
+    },
+    {
+      "drug": "abacavir",
+      "crag_status": "ambiguous:broadened",
+      "n_sources": 5,
+      "faithfulness": 0.414,
+      "api_error": false,
+      "latency_s": 5.47,
+      "answer_preview": "Based on the provided evidence, the following interactions and warnings for abacavir have been identified:\n\n**Contraindications:**\n\n1. Presence of HLA-B* allele"
+    },
+    {
+      "drug": "acetylcysteine",
+      "crag_status": "correct",
+      "n_sources": 2,
+      "faithfulness": 0.25,
+      "api_error": false,
+      "latency_s": 3.5,
+      "answer_preview": "Based on the provided FDA label excerpts, the information regarding drug interactions and warnings for acetylcysteine is as follows:\n\n1. There is no established"
+    },
+    {
+      "drug": "aldesleukin",
+      "crag_status": "correct",
+      "n_sources": 2,
+      "faithfulness": 0.423,
+      "api_error": false,
+      "latency_s": 3.36,
+      "answer_preview": "Based on the provided FDA label excerpts, here's the information about drug interactions and warnings for aldesleukin (Proleukin):\n\n1. **Contraindication:** The"
+    },
+    {
+      "drug": "alprostadil",
+      "crag_status": "correct",
+      "n_sources": 2,
+      "faithfulness": 0.522,
+      "api_error": false,
+      "latency_s": 2.37,
+      "answer_preview": "Based on the provided FDA label excerpts, the following are the drug interactions and warnings for alprostadil:\n\n1. **Lack of reported interactions with standar"
+    },
+    {
+      "drug": "amoxapine",
+      "crag_status": "correct",
+      "n_sources": 2,
+      "faithfulness": 0.47,
+      "api_error": false,
+      "latency_s": 7.37,
+      "answer_preview": "Based on the provided FDA label excerpts, the following drug interactions and warnings for amoxapine are identified:\n\n1. **Contraindications:** Concurrent usage"
+    },
+    {
+      "drug": "apalutamide",
+      "crag_status": "ambiguous:broadened",
+      "n_sources": 5,
+      "faithfulness": 0.579,
+      "api_error": false,
+      "latency_s": 4.7,
+      "answer_preview": "Based on the provided FDA label excerpts, the following interactions and warnings have been identified for apalutamide:\n\n1. **Contraindications and Warnings:**\n"
+    },
+    {
+      "drug": "ascorbic acid",
+      "crag_status": "correct",
+      "n_sources": 4,
+      "faithfulness": 0.456,
+      "api_error": false,
+      "latency_s": 2.51,
+      "answer_preview": "Based on the provided FDA label excerpts, the drug interactions and warnings for ascorbic acid are as follows:\n\n1. **Contraindication:** Concomitant administrat"
+    },
+    {
+      "drug": "avapritinib",
+      "crag_status": "correct",
+      "n_sources": 2,
+      "faithfulness": 0.466,
+      "api_error": false,
+      "latency_s": 5.81,
+      "answer_preview": "Based on the provided FDA label excerpts, the drug interactions and warnings for avapritinib (Ayvakit) are as follows:\n\n1. **Contraindication**: Avoid coadminis"
+    },
+    {
+      "drug": "baricitinib",
+      "crag_status": "ambiguous:broadened",
+      "n_sources": 5,
+      "faithfulness": 0.621,
+      "api_error": false,
+      "latency_s": 4.67,
+      "answer_preview": "Based on the provided FDA label excerpts, the following information is available regarding the drug interactions and warnings for baricitinib:\n\n1. **Contraindic"
+    },
+    {
+      "drug": "bevacizumab",
+      "crag_status": "correct",
+      "n_sources": 2,
+      "faithfulness": 0.348,
+      "api_error": false,
+      "latency_s": 2.27,
+      "answer_preview": "Based on the provided FDA label excerpts, there are no clinically meaningful effects of bevacizumab (Avastin or Avzivi) on the pharmacokinetics of the following"
+    },
+    {
+      "drug": "bosutinib",
+      "crag_status": "correct",
+      "n_sources": 4,
+      "faithfulness": 0.481,
+      "api_error": false,
+      "latency_s": 2.1,
+      "answer_preview": "Based on the provided FDA label excerpts, the drug interactions and warnings for bosutinib are as follows:\n\n**Contraindications:**\n\n- Bosutinib should not be us"
+    },
+    {
+      "drug": "brodalumab",
+      "crag_status": "ambiguous:broadened",
+      "n_sources": 5,
+      "faithfulness": 0.61,
+      "api_error": false,
+      "latency_s": 3.56,
+      "answer_preview": "There is no mention of brodalumab in the provided evidence. The information is about Alunbrig (brigatinib) and Doxorubicin Hydrochloride. \n\nHowever, if you'd li"
+    },
+    {
+      "drug": "cabazitaxel",
+      "crag_status": "correct",
+      "n_sources": 2,
+      "faithfulness": 0.312,
+      "api_error": false,
+      "latency_s": 2.07,
+      "answer_preview": "According to the FDA label excerpts, the drug interactions and warnings for cabazitaxel are as follows:\n\n1. **Contraindication:** There is no explicit contraind"
+    },
+    {
+      "drug": "canagliflozin",
+      "crag_status": "ambiguous:broadened",
+      "n_sources": 5,
+      "faithfulness": 0.542,
+      "api_error": false,
+      "latency_s": 5.7,
+      "answer_preview": "Based on the provided FDA label excerpts and structured interaction data, the following drug interactions and warnings are identified for canagliflozin (Invokan"
+    },
+    {
+      "drug": "carboplatin",
+      "crag_status": "correct",
+      "n_sources": 2,
+      "faithfulness": 0.16,
+      "api_error": false,
+      "latency_s": 3.32,
+      "answer_preview": "Based on the provided FDA label excerpts, the drug interactions and warnings for carboplatin are as follows:\n\n1. The renal effects of nephrotoxic compounds may "
+    },
+    {
+      "drug": "cefixime",
+      "crag_status": "correct",
+      "n_sources": 4,
+      "faithfulness": 0.517,
+      "api_error": false,
+      "latency_s": 3.82,
+      "answer_preview": "Based on the provided FDA label excerpts, the following interactions and warnings are noted for cefixime:\n\n1. **Elevated carbamazepine levels**: There have been"
+    },
+    {
+      "drug": "cenobamate",
+      "crag_status": "ambiguous:broadened",
+      "n_sources": 5,
+      "faithfulness": 0.744,
+      "api_error": false,
+      "latency_s": 5.32,
+      "answer_preview": "Based on the provided information, there is no mention of cenobamate. The interactions mentioned involve other medications:\n\n1. Cefixime:\n   - Elevated carbamaz"
+    },
+    {
+      "drug": "ciclesonide",
+      "crag_status": "correct",
+      "n_sources": 4,
+      "faithfulness": 0.464,
+      "api_error": false,
+      "latency_s": 2.8,
+      "answer_preview": "Based on the provided FDA label excerpts and structured interaction data, there are no significant drug interactions or warnings for ciclesonide. \n\nThe evidence"
+    },
+    {
+      "drug": "clevidipine",
+      "crag_status": "correct",
+      "n_sources": 1,
+      "faithfulness": 0.509,
+      "api_error": false,
+      "latency_s": 5.18,
+      "answer_preview": "Based on the provided FDA label excerpt, there are no clinical drug interaction studies conducted for clevidipine. Additionally, clevidipine and its major dihyd"
+    }
+  ],
+  "explain_finding": [
+    {
+      "drug": "warfarin",
+      "n_citations": 3,
+      "faithfulness": 0.091,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.66,
+      "explanation_preview": "This finding is a major concern because it involves a potential interaction between the medication you're reviewing and warfarin, a blood thinner. Warfarin work"
+    },
+    {
+      "drug": "aspirin and dipyridamole",
+      "n_citations": 1,
+      "faithfulness": 0.083,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.48,
+      "explanation_preview": "This finding is a major concern because it involves a potential interaction between the medications you're prescribing and aspirin and dipyridamole. The FDA has"
+    },
+    {
+      "drug": "ibuprofen",
+      "n_citations": 2,
+      "faithfulness": 0.352,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.39,
+      "explanation_preview": "This finding is a major concern because it involves a potential interaction between the medication you are reviewing and ibuprofen. The evidence suggests that w"
+    },
+    {
+      "drug": "penicillin g potassium",
+      "n_citations": 2,
+      "faithfulness": 0.276,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.8,
+      "explanation_preview": "This finding is a major concern because it involves a potential interaction between the medication you're reviewing and penicillin G potassium. According to the"
+    },
+    {
+      "drug": "metformin hydrochloride",
+      "n_citations": 1,
+      "faithfulness": 0.111,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 1.98,
+      "explanation_preview": "This finding is a major concern because it involves a potential interaction between two medications that can affect how the kidneys eliminate one of the medicat"
+    },
+    {
+      "drug": "acetaminophen",
+      "n_citations": 1,
+      "faithfulness": 0.152,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.03,
+      "explanation_preview": "When acetaminophen is taken with other medications, it can increase the risk of an adverse interaction. This is because acetaminophen is metabolized by the live"
+    },
+    {
+      "drug": "abacavir",
+      "n_citations": 3,
+      "faithfulness": 0.333,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.36,
+      "explanation_preview": "This safety finding is a major concern because it involves a potential adverse interaction between the medications you are prescribing. Specifically, when used "
+    },
+    {
+      "drug": "acetylcysteine",
+      "n_citations": 3,
+      "faithfulness": 0.253,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.35,
+      "explanation_preview": "This safety finding is a major concern because it involves a potential interaction between two medications. Acetylcysteine is a medication used to help loosen a"
+    },
+    {
+      "drug": "aldesleukin",
+      "n_citations": 3,
+      "faithfulness": 0.264,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 3.48,
+      "explanation_preview": "This finding is a major drug-drug interaction (DDI) warning. It means that when aldesleukin is used with another medication, the risk of an adverse interaction "
+    },
+    {
+      "drug": "alprostadil",
+      "n_citations": 3,
+      "faithfulness": 0.3,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 1.62,
+      "explanation_preview": "This safety finding indicates that there is a potential major risk of adverse interaction when heparin is used concurrently with alprostadil. This is because th"
+    },
+    {
+      "drug": "amoxapine",
+      "n_citations": 3,
+      "faithfulness": 0.268,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 3.17,
+      "explanation_preview": "This safety finding is a major concern because it involves a potential adverse interaction between amoxapine and another medication. Amoxapine is a type of tric"
+    },
+    {
+      "drug": "apalutamide",
+      "n_citations": 3,
+      "faithfulness": 0.236,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.15,
+      "explanation_preview": "This finding is about a potential interaction between apalutamide and another medication. Apalutamide works by blocking a protein called the androgen receptor, "
+    },
+    {
+      "drug": "ascorbic acid",
+      "n_citations": 3,
+      "faithfulness": 0.216,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.02,
+      "explanation_preview": "This safety finding is a major concern because it involves a potential adverse interaction between the medication and ascorbic acid. According to the evidence, "
+    },
+    {
+      "drug": "avapritinib",
+      "n_citations": 3,
+      "faithfulness": 0.254,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 1.9,
+      "explanation_preview": "This finding is about a potential interaction between two medications: avapritinib (also known as ayvakit) and a strong or moderate CYP3A inhibitor. \n\nAvapritin"
+    },
+    {
+      "drug": "baricitinib",
+      "n_citations": 3,
+      "faithfulness": 0.204,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 3.31,
+      "explanation_preview": "This finding is a major concern because it involves a potential adverse interaction between two medications. Baricitinib, a medication that affects the immune s"
+    },
+    {
+      "drug": "bevacizumab",
+      "n_citations": 3,
+      "faithfulness": 0.311,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.4,
+      "explanation_preview": "This finding is about a potential interaction between Avzivi and Bevacizumab. Bevacizumab works by blocking a protein called VEGF, which helps blood vessels gro"
+    },
+    {
+      "drug": "bosutinib",
+      "n_citations": 3,
+      "faithfulness": 0.132,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.45,
+      "explanation_preview": "This safety finding is a major concern because bosutinib, the medication in question, may not work as well when taken with certain other medications. Bosutinib "
+    },
+    {
+      "drug": "brodalumab",
+      "n_citations": 3,
+      "faithfulness": 0.361,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.04,
+      "explanation_preview": "This finding is about a potential interaction between brodalumab (Siliq) and another medication. Brodalumab works by blocking a protein called IL-17RA, which is"
+    },
+    {
+      "drug": "cabazitaxel",
+      "n_citations": 3,
+      "faithfulness": 0.205,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.74,
+      "explanation_preview": "This finding is about a potential interaction between Jevtana (cabazitaxel) and another medication that is a strong CYP3A inhibitor. \n\nCabazitaxel is primarily "
+    },
+    {
+      "drug": "canagliflozin",
+      "n_citations": 3,
+      "faithfulness": 0.239,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.91,
+      "explanation_preview": "This safety finding is about a potential interaction between Invokana (canagliflozin) and other medications that induce a specific enzyme called UGT. These medi"
+    },
+    {
+      "drug": "carboplatin",
+      "n_citations": 3,
+      "faithfulness": 0.274,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.25,
+      "explanation_preview": "This finding is a major concern because it involves a potential adverse interaction between the medications you are prescribing. The evidence suggests that when"
+    },
+    {
+      "drug": "cefixime",
+      "n_citations": 3,
+      "faithfulness": 0.341,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 2.11,
+      "explanation_preview": "This safety finding is a major concern because it indicates that taking cefixime with certain other medications, such as carbamazepine, warfarin, and anticoagul"
+    },
+    {
+      "drug": "cenobamate",
+      "n_citations": 3,
+      "faithfulness": 0.282,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 4.27,
+      "explanation_preview": "This finding is a major concern because it indicates that taking cenobamate with another medication (Xcopri) may increase the risk of an adverse interaction. Al"
+    },
+    {
+      "drug": "ciclesonide",
+      "n_citations": 3,
+      "faithfulness": 0.214,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 3.57,
+      "explanation_preview": "This finding is a major concern because it indicates that using ciclesonide (Omnaris nasal spray) with other medications may lead to an adverse interaction. Alt"
+    },
+    {
+      "drug": "clevidipine",
+      "n_citations": 3,
+      "faithfulness": 0.345,
+      "api_error": false,
+      "citations_grounded": true,
+      "latency_s": 4.92,
+      "explanation_preview": "This safety finding indicates that there's a potential major risk of an adverse interaction when clevidipine is used concurrently with another medication. Altho"
+    }
+  ],
+  "summary": {
+    "n_drugs": 25,
+    "answer_ddi_api_errors": 0,
+    "explain_finding_api_errors": 0,
+    "crag_status_distribution": {
+      "correct": 14,
+      "incorrect:rewritten": 3,
+      "ambiguous:broadened": 8
+    },
+    "avg_faithfulness_answer_ddi": 0.461,
+    "avg_faithfulness_explain_finding": 0.244,
+    "citation_grounding_rate": 1.0
+  }
+}

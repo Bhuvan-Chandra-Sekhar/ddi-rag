@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Clinical Console — DDI-RAG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  :root {
+    --bg: #0A0C0F;
+    --panel: #12161C;
+    --panel-alt: #171C23;
+    --panel-raised: #1B212A;
+    --border: #262E38;
+    --border-bright: #3A4552;
+    --text: #E4E9EF;
+    --text-dim: #8B98A8;
+    --text-faint: #4E5A67;
+    --accent: #FFB020;
+    --accent-soft: rgba(255,176,32,0.14);
+    --accent-glow: rgba(255,176,32,0.35);
+    --info: #6FC8FF;
+    --caution: #FFB020;
+    --major: #FF8A3D;
+    --critical: #FF5555;
+    --unknown: #B48DFF;
+    --safe: #3ECF8E;
+  }
+  * { font-family: 'IBM Plex Sans', sans-serif; }
+  .mono { font-family: 'IBM Plex Mono', monospace; }
+  html, body { background: var(--bg); }
+  body {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 34px 34px;
+  }
+  ::selection { background: var(--accent-glow); color: #1a1200; }
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 5px; }
+
+  .panel { background: var(--panel); border: 1px solid var(--border); }
+  .panel-alt { background: var(--panel-alt); border: 1px solid var(--border); }
+  .panel-raised { background: var(--panel-raised); border: 1px solid var(--border-bright); }
+
+  .led { display: inline-block; width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .led-glow { box-shadow: 0 0 8px 1px currentColor; }
+  .pulse { animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .reveal { opacity: 0; transform: translateY(8px); animation: reveal 0.45s cubic-bezier(0.16,1,0.3,1) forwards; }
+  @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+
+  .field {
+    background: var(--panel-alt); border: 1px solid var(--border); color: var(--text);
+    transition: border-color .12s ease, box-shadow .12s ease;
+  }
+  .field::placeholder { color: var(--text-faint); }
+  .field:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  select.field { -webkit-appearance: none; appearance: none; }
+
+  .btn { font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.02em; transition: all .12s ease; }
+  .btn-primary { background: var(--accent); color: #1a1200; font-weight: 600; }
+  .btn-primary:hover { background: #ffc350; }
+  .btn-primary:disabled { background: #4a4230; color: #7a715a; cursor: not-allowed; }
+  .btn-outline { background: transparent; border: 1px solid var(--border-bright); color: var(--text); }
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-danger { background: transparent; border: 1px solid #7a2c2c; color: var(--critical); }
+  .btn-danger:hover { background: rgba(255,85,85,0.1); }
+  .btn:active { transform: scale(0.98); }
+
+  .navlink { transition: all .12s ease; border-left: 2px solid transparent; }
+  .navlink:hover { background: var(--panel-alt); }
+  .navlink.active { background: var(--accent-soft); border-left-color: var(--accent); color: var(--accent); }
+
+  .tag { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; padding: 2px 7px; border-radius: 3px; border: 1px solid var(--border-bright); color: var(--text-dim); }
+  .scanline { position: relative; overflow: hidden; }
+  .scanline::after {
+    content: ''; position: absolute; left: 0; right: 0; height: 120px; top: -120px;
+    background: linear-gradient(180deg, transparent, rgba(255,176,32,0.05), transparent);
+    animation: scan 7s linear infinite;
+  }
+  @keyframes scan { to { transform: translateY(620px); } }
+
+  .console-line { animation: consoleIn .35s ease forwards; }
+  @keyframes consoleIn { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: translateX(0); } }
+
+  .spinner { width: 13px; height: 13px; border: 2px solid var(--border-bright); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body class="min-h-screen" style="color: var(--text)">
+
+<div id="app" class="min-h-screen"></div>
+<div id="log-feed" class="fixed bottom-4 right-4 z-50 flex flex-col gap-1.5 items-end pointer-events-none"></div>
+
+<script>
+const API = window.location.origin;
+const $  = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const app = $('#app');
+
+const CURATED_DRUGS = ['warfarin','aspirin','ibuprofen','amoxicillin','penicillin','lisinopril','metformin','acetaminophen'];
+
+// ── Session ───────────────────────────────────────────────────────────────
+function token() { return sessionStorage.getItem('cc_token'); }
+function setToken(t) { t ? sessionStorage.setItem('cc_token', t) : sessionStorage.removeItem('cc_token'); }
+function setUser(u) { sessionStorage.setItem('cc_user', JSON.stringify(u)); }
+function getUser() { try { return JSON.parse(sessionStorage.getItem('cc_user')); } catch { return null; } }
+
+function recentCases() { try { return JSON.parse(localStorage.getItem('cc_recent') || '[]'); } catch { return []; } }
+function pushRecentCase(c) {
+  const list = recentCases().filter(x => x.id !== c.id);
+  list.unshift({ id: c.id, patient: c.patient?.name || '—', medication: c.medication?.display_name || '—', state: c.state });
+  localStorage.setItem('cc_recent', JSON.stringify(list.slice(0, 12)));
+}
+
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+  if (token()) headers['Authorization'] = `Bearer ${token()}`;
+  const res = await fetch(`${API}${path}`, { ...opts, headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
+  return data;
+}
+
+function log(msg, kind = 'info') {
+  const feed = $('#log-feed');
+  const color = kind === 'error' ? 'var(--critical)' : kind === 'ok' ? 'var(--safe)' : 'var(--text-dim)';
+  const row = document.createElement('div');
+  row.className = 'console-line mono text-[11px] px-3 py-1.5 rounded panel-raised';
+  row.style.color = color;
+  const ts = new Date().toLocaleTimeString(undefined, { hour12: false });
+  row.textContent = `[${ts}] ${msg}`;
+  feed.appendChild(row);
+  setTimeout(() => { row.style.transition = 'opacity .4s'; row.style.opacity = '0'; setTimeout(() => row.remove(), 400); }, 4200);
+}
+
+// ── Meta tables ───────────────────────────────────────────────────────────
+const SEVERITY_META = {
+  informational: { label: 'INFORMATIONAL', color: 'var(--info)' },
+  caution:       { label: 'CAUTION',       color: 'var(--caution)' },
+  major:         { label: 'MAJOR',         color: 'var(--major)' },
+  critical:      { label: 'CRITICAL',      color: 'var(--critical)' },
+  unknown:       { label: 'UNKNOWN',       color: 'var(--unknown)' },
+};
+const STATE_META = {
+  draft:                        { label: 'DRAFT',                    color: 'var(--text-dim)' },
+  awaiting_analysis:            { label: 'AWAITING ANALYSIS',         color: 'var(--text-dim)' },
+  awaiting_pharmacist_review:   { label: 'AWAITING PHARMACIST REVIEW',color: 'var(--info)' },
+  awaiting_prescriber_response: { label: 'AWAITING PRESCRIBER',       color: 'var(--caution)' },
+  escalated:                    { label: 'ESCALATED',                 color: 'var(--critical)' },
+  ready_to_dispense:            { label: 'READY TO DISPENSE',         color: 'var(--safe)' },
+  held_or_cancelled:            { label: 'HELD / CANCELLED',          color: 'var(--critical)' },
+  closed:                       { label: 'CLOSED',                    color: 'var(--text-faint)' },
+};
+
+function ledBadge(color, label) {
+  return `<span class="inline-flex items-center gap-1.5 mono text-[10.5px] font-semibold tracking-wide" style="color:${color}">
+    <span class="led led-glow" style="background:${color}"></span>${label}
+  </span>`;
+}
+function fmtDate(s) { if (!s) return '—'; return new Date(s).toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }); }
+function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function parseList(str) { return (str || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean); }
+
+// ── Router state ──────────────────────────────────────────────────────────
+const R = { view: 'query', caseId: null };
+function nav(view, params = {}) { Object.assign(R, { view }, params); renderView(); }
+
+// ── Auth screen ───────────────────────────────────────────────────────────
+function renderAuth() {
+  app.innerHTML = `
+    <div class="min-h-screen flex items-center justify-center px-6 scanline">
+      <div class="w-full max-w-md reveal">
+        <div class="flex items-center gap-2 mb-1">
+          <span class="led led-glow pulse" style="background:var(--safe)"></span>
+          <span class="mono text-[10.5px] tracking-[0.16em] uppercase" style="color:var(--text-dim)">System online</span>
+        </div>
+        <h1 class="text-3xl font-semibold mt-3 mb-1">Clinical Console</h1>
+        <p class="mono text-[12px] mb-8" style="color:var(--text-dim)">DDI-RAG · pharmacist / prescriber verification instrument</p>
+
+        <form id="login-form" class="panel rounded p-6 space-y-4">
+          <div>
+            <label class="mono text-[11px] uppercase tracking-wide block mb-1.5" style="color:var(--text-dim)">Email</label>
+            <input type="email" name="email" required class="field w-full rounded px-3.5 py-2.5 text-sm" placeholder="pharmacist@demo.local" />
+          </div>
+          <div>
+            <label class="mono text-[11px] uppercase tracking-wide block mb-1.5" style="color:var(--text-dim)">Password</label>
+            <input type="password" name="password" required class="field w-full rounded px-3.5 py-2.5 text-sm" placeholder="••••••••" />
+          </div>
+          <button type="submit" class="btn btn-primary w-full text-sm py-2.5 rounded mt-2">SIGN IN →</button>
+          <p id="auth-error" class="text-sm hidden" style="color: var(--critical)"></p>
+        </form>
+
+        <div class="mt-5 panel-alt rounded p-4">
+          <p class="mono text-[10.5px] uppercase tracking-wide mb-2" style="color:var(--text-faint)">Seeded demo accounts (scripts/seed_demo_staff.py)</p>
+          <p class="mono text-[11.5px]" style="color:var(--text-dim)">pharmacist@demo.local <span style="color:var(--text-faint)">/</span> DemoPharm123!</p>
+          <p class="mono text-[11.5px]" style="color:var(--text-dim)">prescriber@demo.local <span style="color:var(--text-faint)">/</span> DemoPrescriber123!</p>
+        </div>
+        <p class="text-[12px] mt-4" style="color:var(--text-faint)">This is a verification instrument, not the hospital production boundary. Self-registration for staff roles is intentionally disabled — accounts are provisioned directly.</p>
+      </div>
+    </div>
+  `;
+  const form = $('#login-form');
+  const errEl = $('#auth-error');
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    errEl.classList.add('hidden');
+    const btn = form.querySelector('button');
+    btn.disabled = true; btn.textContent = 'SIGNING IN…';
+    const fd = new FormData(form);
+    try {
+      const data = await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ email: fd.get('email'), password: fd.get('password') }) });
+      setToken(data.access_token); setUser(data.user);
+      log(`authenticated as ${data.user.email} (${data.user.role})`, 'ok');
+      renderShell();
+    } catch (err) {
+      errEl.textContent = err.message; errEl.classList.remove('hidden');
+      btn.disabled = false; btn.textContent = 'SIGN IN →';
+    }
+  });
+}
+
+// ── Shell (sidebar + header) ─────────────────────────────────────────────
+const NAV_ITEMS = [
+  { id: 'query',   label: 'Query Console', hint: '/api/query' },
+  { id: 'queue',   label: 'Pharmacist Queue', hint: '/v1/safety-cases/queue' },
+  { id: 'newcase', label: 'New Case', hint: 'patient → rx → analyze' },
+  { id: 'patients',label: 'Patients', hint: '/v1/patients' },
+];
+
+function renderShell() {
+  const user = getUser();
+  app.innerHTML = `
+    <div class="min-h-screen flex">
+      <aside class="w-60 shrink-0 panel flex flex-col" style="border-right:1px solid var(--border)">
+        <div class="px-5 py-5" style="border-bottom:1px solid var(--border)">
+          <div class="flex items-center gap-2">
+            <span class="led led-glow pulse" style="background:var(--safe)"></span>
+            <span class="mono text-[10px] tracking-[0.16em] uppercase" style="color:var(--text-dim)">Console online</span>
+          </div>
+          <h1 class="text-lg font-semibold mt-2">Clinical Console</h1>
+        </div>
+        <nav id="sidenav" class="flex-1 py-3"></nav>
+        <div class="px-5 py-4" style="border-top:1px solid var(--border)">
+          <p class="text-sm font-medium">${esc(user?.full_name || user?.email || '')}</p>
+          <p class="mono text-[10.5px] uppercase tracking-wide mt-0.5" style="color:var(--accent)">${esc(user?.role || '')}</p>
+          <button id="signout" class="btn btn-outline w-full text-[11px] py-1.5 rounded mt-3">SIGN OUT</button>
+        </div>
+      </aside>
+      <main class="flex-1 min-w-0">
+        <div id="content" class="max-w-5xl mx-auto px-8 py-8"></div>
+      </main>
+    </div>
+  `;
+  const navEl = $('#sidenav');
+  navEl.innerHTML = NAV_ITEMS.map(it => `
+    <button data-view="${it.id}" class="navlink w-full text-left px-5 py-3 flex flex-col">
+      <span class="text-sm font-medium">${it.label}</span>
+      <span class="mono text-[10px] mt-0.5" style="color:var(--text-faint)">${it.hint}</span>
+    </button>
+  `).join('');
+  navEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-view]');
+    if (btn) nav(btn.dataset.view);
+  });
+  $('#signout').addEventListener('click', () => { setToken(null); setUser(null); renderAuth(); });
+  renderView();
+}
+
+function setActiveNav() {
+  $$('.navlink').forEach(b => b.classList.toggle('active', b.dataset.view === R.view));
+}
+
+function renderView() {
+  const el = $('#content');
+  if (!el) return;
+  setActiveNav();
+  if (R.view === 'query') return renderQueryConsole(el);
+  if (R.view === 'queue') return renderQueue(el);
+  if (R.view === 'newcase') return renderNewCase(el);
+  if (R.view === 'patients') return renderPatients(el);
+  if (R.view === 'case') return renderCaseDetail(el, R.caseId);
+}
+
+function panelHeader(title, subtitle) {
+  return `<div class="mb-6 reveal">
+    <h2 class="text-2xl font-semibold">${title}</h2>
+    ${subtitle ? `<p class="mono text-[12px] mt-1" style="color:var(--text-dim)">${subtitle}</p>` : ''}
+  </div>`;
+}
+
+// ── Query Console ─────────────────────────────────────────────────────────
+function renderQueryConsole(el) {
+  el.innerHTML = `
+    ${panelHeader('Query Console', 'raw call to /api/query — the retrieval + explanation answer, unmediated')}
+    <div class="panel rounded p-5 reveal">
+      <div class="flex flex-wrap gap-1.5 mb-3">
+        ${CURATED_DRUGS.map(d => `<button data-drug="${d}" class="tag hover:border-[var(--accent)] hover:text-[var(--accent)]">${d}</button>`).join('')}
+      </div>
+      <form id="query-form" class="flex gap-2">
+        <input name="prescription" required class="field flex-1 rounded px-3.5 py-2.5 text-sm" placeholder="e.g. patient is taking warfarin and ibuprofen" />
+        <button type="submit" class="btn btn-primary text-sm px-5 rounded">RUN →</button>
+      </form>
+      <p class="mono text-[10.5px] mt-2" style="color:var(--text-faint)">Only the 8 curated drugs above have ingested FDA evidence — free text works but may retrieve nothing.</p>
+    </div>
+    <div id="query-results" class="mt-6 space-y-4"></div>
+  `;
+  $$('[data-drug]', el).forEach(b => b.addEventListener('click', () => {
+    $('input[name=prescription]', el).value = `patient is taking ${b.dataset.drug}`;
+  }));
+  $('#query-form', el).addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button');
+    const resultsEl = $('#query-results', el);
+    btn.disabled = true; btn.innerHTML = '<span class="spinner inline-block align-middle"></span>';
+    resultsEl.innerHTML = `<p class="mono text-sm" style="color:var(--text-dim)">Retrieving evidence and generating explanation…</p>`;
+    try {
+      const fd = new FormData(e.target);
+      const data = await api('/api/query', { method: 'POST', body: JSON.stringify({ prescription: fd.get('prescription'), top_k: 5 }) });
+      log(`query ran — detected: ${data.detected_drugs.join(', ') || 'none'}`, 'ok');
+      resultsEl.innerHTML = data.results.length
+        ? data.results.map((r, i) => queryResultCard(r, i)).join('')
+        : `<p class="text-sm" style="color:var(--text-dim)">No results.</p>`;
+    } catch (err) {
+      log(err.message, 'error');
+      resultsEl.innerHTML = `<p class="text-sm" style="color:var(--critical)">${esc(err.message)}</p>`;
+    } finally {
+      btn.disabled = false; btn.textContent = 'RUN →';
+    }
+  });
+}
+
+function queryResultCard(r, i) {
+  const sources = (r.sources || []);
+  return `
+    <div class="panel rounded p-5 reveal" style="animation-delay:${i * 60}ms">
+      <p class="mono text-[10.5px] uppercase tracking-wide mb-2" style="color:var(--accent)">${esc(r.drug)}</p>
+      <p class="text-sm leading-relaxed mb-4">${esc(r.answer)}</p>
+      ${sources.length ? `
+        <p class="mono text-[10.5px] uppercase tracking-wide mb-2" style="color:var(--text-faint)">Sources (${sources.length})</p>
+        <div class="space-y-2">
+          ${sources.map(s => `
+            <div class="panel-alt rounded p-3">
+              <div class="flex items-center justify-between mb-1">
+                <span class="mono text-[10.5px]" style="color:var(--text-dim)">${esc(s.section || s.generic_name || 'evidence')}</span>
+                ${s.score !== undefined ? `<span class="tag">score ${Number(s.score).toFixed(3)}</span>` : ''}
+              </div>
+              <p class="text-[12.5px]" style="color:var(--text-dim)">${esc((s.text || '').slice(0, 260))}${(s.text || '').length > 260 ? '…' : ''}</p>
+            </div>
+          `).join('')}
+        </div>
+      ` : `<p class="mono text-[11px]" style="color:var(--text-faint)">no evidence passages retrieved</p>`}
+    </div>
+  `;
+}
+
+// ── Queue ─────────────────────────────────────────────────────────────────
+async function renderQueue(el) {
+  el.innerHTML = panelHeader('Pharmacist Queue', 'cases in awaiting_pharmacist_review for your organization') +
+    `<div id="queue-list" class="space-y-2"></div>
+     <div class="mt-8">
+       <p class="mono text-[10.5px] uppercase tracking-wide mb-2" style="color:var(--text-faint)">Recently viewed (this browser)</p>
+       <div id="recent-list" class="space-y-1.5"></div>
+     </div>`;
+  const listEl = $('#queue-list', el);
+  listEl.innerHTML = `<p class="mono text-sm" style="color:var(--text-dim)">Loading…</p>`;
+  try {
+    const data = await api('/v1/safety-cases/queue');
+    listEl.innerHTML = data.cases.length ? data.cases.map((c, i) => queueRow(c, i)).join('') :
+      `<div class="panel rounded p-8 text-center"><p class="text-sm" style="color:var(--text-dim)">Queue is empty — no cases awaiting pharmacist review.</p></div>`;
+    $$('[data-case]', listEl).forEach(r => r.addEventListener('click', () => nav('case', { caseId: r.dataset.case })));
+  } catch (err) {
+    listEl.innerHTML = `<p class="text-sm" style="color:var(--critical)">${esc(err.message)}</p>`;
+  }
+  renderRecentList($('#recent-list', el));
+}
+
+function queueRow(c, i) {
+  return `
+    <div data-case="${c.id}" class="panel rounded px-4 py-3 flex items-center justify-between cursor-pointer hover:border-[var(--accent)] reveal" style="animation-delay:${i*40}ms">
+      <div>
+        <p class="text-sm font-medium">${esc(c.patient_name || 'Unknown patient')} <span style="color:var(--text-faint)">·</span> <span style="color:var(--text-dim)">${esc(c.medication || '')}</span></p>
+        <p class="mono text-[10.5px] mt-0.5" style="color:var(--text-faint)">${esc(c.id)} · ${fmtDate(c.created_at)}</p>
+      </div>
+      ${ledBadge(STATE_META[c.state]?.color || '#888', STATE_META[c.state]?.label || c.state)}
+    </div>
+  `;
+}
+
+function renderRecentList(el) {
+  const recents = recentCases();
+  el.innerHTML = recents.length ? recents.map(c => `
+    <div data-case="${c.id}" class="panel-alt rounded px-4 py-2.5 flex items-center justify-between cursor-pointer hover:border-[var(--accent)]">
+      <p class="text-[13px]">${esc(c.patient)} <span style="color:var(--text-faint)">·</span> <span style="color:var(--text-dim)">${esc(c.medication)}</span></p>
+      ${ledBadge(STATE_META[c.state]?.color || '#888', STATE_META[c.state]?.label || c.state)}
+    </div>
+  `).join('') : `<p class="mono text-[11.5px]" style="color:var(--text-faint)">none yet</p>`;
+  $$('[data-case]', el).forEach(r => r.addEventListener('click', () => nav('case', { caseId: r.dataset.case })));
+}
+
+// ── Patients ──────────────────────────────────────────────────────────────
+async function renderPatients(el) {
+  el.innerHTML = panelHeader('Patients', 'organization patient roster') + `<div id="patients-list" class="space-y-2"></div>`;
+  const listEl = $('#patients-list', el);
+  listEl.innerHTML = `<p class="mono text-sm" style="color:var(--text-dim)">Loading…</p>`;
+  try {
+    const data = await api('/v1/patients');
+    listEl.innerHTML = data.patients.length ? data.patients.map((p, i) => `
+      <div class="panel rounded p-4 reveal" style="animation-delay:${i*40}ms">
+        <div class="flex items-center justify-between">
+          <p class="text-sm font-medium">${esc(p.name)}</p>
+          <button data-newcase="${p.id}" class="btn btn-outline text-[11px] px-3 py-1.5 rounded">NEW CASE →</button>
+        </div>
+        <div class="flex flex-wrap gap-1.5 mt-2">
+          ${(p.medications || []).map(m => `<span class="tag">rx: ${esc(m)}</span>`).join('')}
+          ${(p.allergies || []).map(a => `<span class="tag" style="color:var(--critical);border-color:#7a2c2c">allergy: ${esc(a)}</span>`).join('')}
+        </div>
+      </div>
+    `).join('') : `<div class="panel rounded p-8 text-center"><p class="text-sm" style="color:var(--text-dim)">No patients yet — create one from New Case.</p></div>`;
+    $$('[data-newcase]', listEl).forEach(b => b.addEventListener('click', () => nav('newcase', { presetPatient: b.dataset.newcase })));
+  } catch (err) {
+    listEl.innerHTML = `<p class="text-sm" style="color:var(--critical)">${esc(err.message)}</p>`;
+  }
+}
+
+// ── New Case wizard ───────────────────────────────────────────────────────
+const SCENARIOS = {
+  allergy: {
+    label: 'Allergy conflict (critical, real)',
+    patient: { first_name: 'Allergy', last_name: 'Test', medications: '', allergies: 'penicillin', conditions: '' },
+    rx: { medication_name: 'penicillin', dose: '500mg', route: 'oral', frequency: 'twice daily' },
+  },
+  ddi: {
+    label: 'Unreviewed DDI pair (reproduces routing bug)',
+    patient: { first_name: 'DDI', last_name: 'Test', medications: 'ibuprofen', allergies: '', conditions: '' },
+    rx: { medication_name: 'warfarin', dose: '5mg', route: 'oral', frequency: 'daily' },
+  },
+};
+
+async function renderNewCase(el) {
+  el.innerHTML = panelHeader('New Case', 'create a patient + prescription, then run the real rule engine') + `
+    <div class="panel rounded p-5 mb-5">
+      <p class="mono text-[10.5px] uppercase tracking-wide mb-2" style="color:var(--text-faint)">Suggested scenarios (real data, reproducible)</p>
+      <div class="flex flex-wrap gap-2">
+        ${Object.entries(SCENARIOS).map(([k, s]) => `<button data-scenario="${k}" class="btn btn-outline text-[11.5px] px-3 py-1.5 rounded">${s.label}</button>`).join('')}
+      </div>
+    </div>
+    <form id="newcase-form" class="space-y-5">
+      <div class="panel rounded p-5">
+        <p class="text-sm font-semibold mb-3">Patient</p>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div><label class="mono text-[10.5px] uppercase block mb-1" style="color:var(--text-dim)">First name</label>
+            <input name="first_name" required class="field w-full rounded px-3 py-2 text-sm" /></div>
+          <div><label class="mono text-[10.5px] uppercase block mb-1" style="color:var(--text-dim)">Last name</label>
+            <input name="last_name" required class="field w-full rounded px-3 py-2 text-sm" /></div>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div><label class="mono text-[10.5px] uppercase block mb-1" style="color:var(--text-dim)">Existing medications</label>
+            <input name="medications" class="field w-full rounded px-3 py-2 text-sm" placeholder="aspirin, lisinopril" /></div>
+          <div><label class="mono text-[10.5px] uppercase block mb-1" style="color:var(--text-dim)">Allergies</label>
+            <input name="allergies" class="field w-full rounded px-3 py-2 text-sm" placeholder="penicillin" /></div>
+          <div><label class="mono text-[10.5px] uppercase block mb-1" style="color:var(--text-dim)">Conditions</label>
+            <input name="conditions" class="field w-full rounded px-3 py-2 text-sm" placeholder="atrial_fibrillation" /></div>
+        </div>
+        <p class="mono text-[10.5px] mt-2" style="color:var(--text-faint)">Comma-separated. These feed the deterministic rule engine exactly as typed.</p>
+      </div>
+
+      <div class="panel rounded p-5">
+        <p class="text-sm font-semibold mb-3">New Prescription</p>
+        <div class="grid grid-cols-2 gap-3 mb-3">
+          <div><label class="mono text-[10.5px] uppercase block mb-1" style="color:var(--text-dim)">Medication</label>
+            <input name="medication_name" required list="curated-drugs" class="field w-full rounded px-3 py-2 text-sm" placeholder="warfarin" />
+            <datalist id="curated-drugs">${CURATED_DRUGS.map(d => `<option value="${d}">`).join('')}</datalist>
+          </div>
+          <div><label class="mono text-[10.5px] uppercase block mb-1" style="color:var(--text-dim)">Prescriber</label>
+            <select name="prescriber_id" required class="field w-full rounded px-3 py-2 text-sm bg-transparent"></select></div>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div><label class="mono text-[10.5px] uppercase block mb-1" style="color:var(--text-dim)">Dose</label>
+            <input name="dose" class="field w-full rounded px-3 py-2 text-sm" placeholder="5mg" /></div>
+          <div><label class="mono text-[10.5px] uppercase block mb-1" style="color:var(--text-dim)">Route</label>
+            <input name="route" class="field w-full rounded px-3 py-2 text-sm" placeholder="oral" /></div>
+          <div><label class="mono text-[10.5px] uppercase block mb-1" style="color:var(--text-dim)">Frequency</label>
+            <input name="frequency" class="field w-full rounded px-3 py-2 text-sm" placeholder="daily" /></div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary text-sm px-6 py-3 rounded">CREATE &amp; RUN ANALYSIS →</button>
+      <p id="newcase-error" class="text-sm hidden" style="color:var(--critical)"></p>
+    </form>
+  `;
+
+  const prescriberSel = $('select[name=prescriber_id]', el);
+  prescriberSel.innerHTML = `<option value="">Loading staff…</option>`;
+  try {
+    const staff = await api('/v1/staff');
+    const prescribers = staff.staff.filter(s => s.role === 'prescriber');
+    const user = getUser();
+    prescriberSel.innerHTML = prescribers.map(p => `<option value="${p.id}" ${p.id === user?.id ? 'selected' : ''}>${esc(p.full_name)}</option>`).join('')
+      || `<option value="">No prescribers in org</option>`;
+  } catch { prescriberSel.innerHTML = `<option value="">Failed to load</option>`; }
+
+  $$('[data-scenario]', el).forEach(b => b.addEventListener('click', () => {
+    const s = SCENARIOS[b.dataset.scenario];
+    const f = $('#newcase-form', el);
+    Object.entries(s.patient).forEach(([k, v]) => { if (f[k]) f[k].value = v; });
+    Object.entries(s.rx).forEach(([k, v]) => { if (f[k]) f[k].value = v; });
+  }));
+
+  $('#newcase-form', el).addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = $('#newcase-error', el);
+    errEl.classList.add('hidden');
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner inline-block align-middle mr-2"></span>Creating…';
+    const fd = new FormData(e.target);
+    try {
+      const patient = await api('/v1/patients', { method: 'POST', body: JSON.stringify({
+        first_name: fd.get('first_name'), last_name: fd.get('last_name'),
+        medications: parseList(fd.get('medications')), allergies: parseList(fd.get('allergies')), conditions: parseList(fd.get('conditions')),
+      }) });
+      log(`patient created — ${fd.get('first_name')} ${fd.get('last_name')}`, 'ok');
+
+      const rx = await api('/v1/prescriptions', { method: 'POST', body: JSON.stringify({
+        patient_id: patient.patient_id, medication_name: fd.get('medication_name'),
+        dose: fd.get('dose'), route: fd.get('route'), frequency: fd.get('frequency'),
+        prescriber_id: fd.get('prescriber_id'),
+      }) });
+      log(`prescription created — ${rx.medication.display_name} (${rx.medication.resolution_method})`, 'ok');
+
+      const caseRes = await api('/v1/safety-cases', { method: 'POST', body: JSON.stringify({ prescription_id: rx.prescription_id }) });
+      log(`case analyzed — ${caseRes.findings.length} finding(s)`, 'ok');
+      pushRecentCase(caseRes);
+      nav('case', { caseId: caseRes.id });
+    } catch (err) {
+      log(err.message, 'error');
+      errEl.textContent = err.message; errEl.classList.remove('hidden');
+      btn.disabled = false; btn.textContent = 'CREATE & RUN ANALYSIS →';
+    }
+  });
+}
+
+// ── Case detail ───────────────────────────────────────────────────────────
+async function renderCaseDetail(el, caseId) {
+  el.innerHTML = `<p class="mono text-sm" style="color:var(--text-dim)">Loading case…</p>`;
+  let c;
+  try {
+    c = await api(`/v1/safety-cases/${caseId}`);
+    pushRecentCase(c);
+  } catch (err) {
+    el.innerHTML = `<p class="text-sm" style="color:var(--critical)">${esc(err.message)}</p>`;
+    return;
+  }
+  const meta = STATE_META[c.state] || STATE_META.draft;
+
+  el.innerHTML = `
+    <button id="back" class="mono text-[11px] mb-4" style="color:var(--text-dim)">← back</button>
+    <div class="flex items-start justify-between mb-1 reveal">
+      <div>
+        <h2 class="text-2xl font-semibold">${esc(c.patient?.name || 'Unknown patient')}</h2>
+        <p class="mono text-[11px] mt-1" style="color:var(--text-faint)">${esc(c.id)}</p>
+      </div>
+      ${ledBadge(meta.color, meta.label)}
+    </div>
+    <p class="mono text-[12px] mb-6" style="color:var(--text-dim)">${esc(c.medication?.display_name || '')} · created ${fmtDate(c.created_at)}${c.closed_at ? ' · closed ' + fmtDate(c.closed_at) : ''}</p>
+
+    <div class="grid grid-cols-2 gap-4 mb-6">
+      <div class="panel rounded p-4">
+        <p class="mono text-[10.5px] uppercase tracking-wide mb-2" style="color:var(--text-faint)">Prescription</p>
+        <p class="text-sm">${esc(c.medication?.display_name || '—')} <span style="color:var(--text-dim)">— ${esc(c.prescription?.dose || '')} ${esc(c.prescription?.route || '')} ${esc(c.prescription?.frequency || '')}</span></p>
+        <div class="flex flex-wrap gap-1.5 mt-2">
+          <span class="tag">rxcui: ${esc(c.medication?.rxcui || 'unresolved')}</span>
+          <span class="tag" style="${c.medication?.identity_confirmed ? '' : 'color:var(--caution);border-color:var(--caution)'}">${c.medication?.identity_confirmed ? 'identity confirmed' : 'unconfirmed identity'}</span>
+        </div>
+      </div>
+      <div class="panel rounded p-4">
+        <p class="mono text-[10.5px] uppercase tracking-wide mb-2" style="color:var(--text-faint)">Clinical profile snapshot</p>
+        <div class="flex flex-wrap gap-1.5">
+          ${(c.clinical_profile?.medications || []).map(m => `<span class="tag">rx: ${esc(m)}</span>`).join('') || ''}
+          ${(c.clinical_profile?.allergies || []).map(a => `<span class="tag" style="color:var(--critical);border-color:#7a2c2c">allergy: ${esc(a)}</span>`).join('') || ''}
+          ${(c.clinical_profile?.conditions || []).map(cd => `<span class="tag">${esc(cd)}</span>`).join('') || ''}
+          ${!(c.clinical_profile?.medications||[]).length && !(c.clinical_profile?.allergies||[]).length && !(c.clinical_profile?.conditions||[]).length ? `<span class="mono text-[11px]" style="color:var(--text-faint)">none recorded</span>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <section class="mb-6">
+      <p class="text-sm font-semibold mb-3">Findings <span class="mono text-[11px]" style="color:var(--text-faint)">(${c.findings.length})</span></p>
+      <div id="findings-list" class="space-y-3 mb-3"></div>
+      <form id="assess-form" class="panel rounded p-4 ${['awaiting_pharmacist_review'].includes(c.state) ? '' : 'hidden'}">
+        <button type="submit" class="btn btn-primary text-[12px] px-4 py-2 rounded">SUBMIT PHARMACIST REVIEW →</button>
+        <p class="mono text-[10.5px] mt-2" style="color:var(--text-faint)">Dismissing/overriding a MAJOR or CRITICAL finding requires a reason — the server enforces this even if you leave it blank here.</p>
+      </form>
+    </section>
+
+    <section id="interventions-section" class="mb-6"></section>
+    <section id="escalation-section" class="mb-6"></section>
+    <section id="dispense-section" class="mb-6"></section>
+    <section id="communicate-section" class="mb-6"></section>
+    <section id="close-section" class="mb-6"></section>
+    <section id="timeline-section"></section>
+  `;
+
+  $('#back', el).addEventListener('click', () => nav('queue'));
+  renderFindings(el, c);
+  renderInterventions(el, c);
+  renderEscalation(el, c);
+  renderDispense(el, c);
+  renderCommunicate(el, c);
+  renderClose(el, c);
+  renderTimeline(el, c);
+}
+
+function renderFindings(el, c) {
+  const listEl = $('#findings-list', el);
+  if (!c.findings.length) {
+    listEl.innerHTML = `<div class="panel rounded p-4"><p class="text-sm" style="color:var(--text-dim)">No findings — absence of a finding is not a safety claim, it just means no rule matched.</p></div>`;
+    return;
+  }
+  listEl.innerHTML = c.findings.map((f, i) => findingCard(f, i)).join('');
+  $$('[data-explain]', listEl).forEach(btn => btn.addEventListener('click', async () => {
+    btn.disabled = true; btn.innerHTML = '<span class="spinner inline-block align-middle mr-1"></span>generating…';
+    try {
+      const result = await api(`/v1/findings/${btn.dataset.explain}/explain`, { method: 'POST' });
+      log('explanation generated (grounded, Groq)', 'ok');
+      const box = $(`#explain-${btn.dataset.explain}`, el);
+      box.classList.remove('hidden');
+      box.innerHTML = explainBlock(result);
+      btn.remove();
+    } catch (err) {
+      log(err.message, 'error');
+      btn.disabled = false; btn.textContent = 'EXPLAIN →';
+    }
+  }));
+
+  const form = $('#assess-form', el);
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = form.querySelector('button');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner inline-block align-middle mr-1"></span>submitting…';
+    const decisions = {}, reasons = {};
+    c.findings.forEach(f => {
+      const sel = $(`select[data-review="${f.id}"]`, el);
+      const reason = $(`input[data-reason="${f.id}"]`, el);
+      if (sel) decisions[f.id] = sel.value;
+      if (reason) reasons[f.id] = reason.value;
+    });
+    try {
+      await api(`/v1/safety-cases/${c.id}/findings/assess`, { method: 'POST', body: JSON.stringify({ decisions, reasons }) });
+      log('review submitted', 'ok');
+      renderCaseDetail($('#content'), c.id);
+    } catch (err) {
+      log(err.message, 'error');
+      btn.disabled = false; btn.textContent = 'SUBMIT PHARMACIST REVIEW →';
+    }
+  });
+}
+
+function findingCard(f, i) {
+  const sev = SEVERITY_META[f.severity] || SEVERITY_META.unknown;
+  return `
+    <div class="panel rounded p-4 reveal" style="animation-delay:${i*50}ms; border-left:3px solid ${sev.color}">
+      <div class="flex items-center justify-between mb-2">
+        <div class="flex items-center gap-2">
+          ${ledBadge(sev.color, sev.label)}
+          <span class="tag">${esc(f.type)}</span>
+        </div>
+        <span class="tag" style="color:var(--text-dim)">review: ${esc(f.review_status)}</span>
+      </div>
+      <p class="text-sm mb-1.5">${esc(f.clinical_effect || '—')}</p>
+      <p class="text-[12.5px] mb-2" style="color:var(--text-dim)">${esc(f.recommended_action || '')}</p>
+      <div class="flex flex-wrap gap-1.5 mb-2">
+        ${(f.evidence_refs || []).map(r => `<span class="tag">${esc(r.rule_id ? `rule:${r.rule_id.slice(0,8)}` : r.rule)} · ${esc(r.rule_version || '')}${r.status ? ' · ' + esc(r.status) : ''}</span>`).join('')}
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 mt-3">
+        <div>
+          <label class="mono text-[10px] uppercase block mb-1" style="color:var(--text-faint)">Review decision</label>
+          <select data-review="${f.id}" class="field w-full rounded px-2.5 py-1.5 text-[12.5px] bg-transparent">
+            <option value="pending">pending</option>
+            <option value="accepted">accepted</option>
+            <option value="dismissed">dismissed</option>
+            <option value="overridden">overridden</option>
+            <option value="escalated">escalated</option>
+            <option value="resolved">resolved</option>
+          </select>
+        </div>
+        <div>
+          <label class="mono text-[10px] uppercase block mb-1" style="color:var(--text-faint)">Reason (required for MAJOR/CRITICAL dismiss/override)</label>
+          <input data-reason="${f.id}" class="field w-full rounded px-2.5 py-1.5 text-[12.5px]" placeholder="documented reason…" />
+        </div>
+      </div>
+
+      ${f.explanation ? `<div class="mt-3">${explainBlock({ explanation: f.explanation, citations: [] })}</div>` :
+        `<button data-explain="${f.id}" class="btn btn-outline text-[11px] px-3 py-1.5 rounded mt-3">EXPLAIN →</button>
+         <div id="explain-${f.id}" class="hidden mt-3"></div>`}
+    </div>
+  `;
+}
+
+function explainBlock(result) {
+  return `
+    <div class="panel-alt rounded p-3">
+      <p class="mono text-[10px] uppercase tracking-wide mb-1.5" style="color:var(--accent)">Constrained explanation (grounded, cannot alter severity/action)</p>
+      <p class="text-[13px] leading-relaxed">${esc(result.explanation)}</p>
+      ${(result.citations || []).length ? `
+        <div class="mt-2 space-y-1.5">
+          ${result.citations.map(cit => `<p class="text-[11.5px]" style="color:var(--text-faint)">↳ (${esc(cit.section || '')}) ${esc((cit.text||'').slice(0,150))}…</p>`).join('')}
+        </div>` : ''}
+    </div>
+  `;
+}
+
+function renderInterventions(el, c) {
+  const secEl = $('#interventions-section', el);
+  let html = `<p class="text-sm font-semibold mb-3">Interventions <span class="mono text-[11px]" style="color:var(--text-faint)">(${c.interventions.length})</span></p>`;
+  html += c.interventions.length ? c.interventions.map(iv => interventionCard(iv)).join('') :
+    `<div class="panel rounded p-4"><p class="text-sm" style="color:var(--text-dim)">None sent yet.</p></div>`;
+
+  if (c.state === 'awaiting_prescriber_response') {
+    const pending = c.interventions.filter(iv => !iv.response);
+    if (pending.length) {
+      html += pending.map(iv => `
+        <form data-respond="${iv.id}" class="panel rounded p-4 mt-2">
+          <p class="mono text-[10.5px] uppercase tracking-wide mb-2" style="color:var(--caution)">Respond to intervention ${esc(iv.id.slice(0,8))}</p>
+          <div class="grid grid-cols-2 gap-2 mb-2">
+            <select name="decision" required class="field rounded px-2.5 py-1.5 text-[12.5px] bg-transparent">
+              <option value="">choose decision…</option>
+              <option value="accept">accept</option>
+              <option value="change">change</option>
+              <option value="stop">stop</option>
+              <option value="continue_with_rationale">continue_with_rationale</option>
+              <option value="request_more_data">request_more_data</option>
+            </select>
+            <input name="monitoring_plan" class="field rounded px-2.5 py-1.5 text-[12.5px]" placeholder="monitoring plan (if continuing)" />
+          </div>
+          <textarea name="rationale" class="field w-full rounded px-2.5 py-1.5 text-[12.5px] mb-2" rows="2" placeholder="rationale…"></textarea>
+          <button type="submit" class="btn btn-primary text-[11px] px-3 py-1.5 rounded">SUBMIT RESPONSE →</button>
+        </form>
+      `).join('');
+    }
+  }
+
+  if (['awaiting_pharmacist_review', 'awaiting_prescriber_response'].includes(c.state)) {
+    html += `
+      <form id="new-intervention-form" class="panel rounded p-4 mt-2">
+        <p class="mono text-[10.5px] uppercase tracking-wide mb-2" style="color:var(--text-faint)">Send new intervention</p>
+        <div class="grid grid-cols-3 gap-2 mb-2">
+          <select name="target_prescriber_id" required class="field rounded px-2.5 py-1.5 text-[12.5px] bg-transparent"><option value="">prescriber…</option></select>
+          <select name="finding_id" class="field rounded px-2.5 py-1.5 text-[12.5px] bg-transparent"><option value="">(no linked finding)</option>
+            ${c.findings.map(f => `<option value="${f.id}">${esc(f.type)} / ${esc(f.severity)}</option>`).join('')}
+          </select>
+          <select name="urgency" class="field rounded px-2.5 py-1.5 text-[12.5px] bg-transparent">
+            ${Object.keys(SEVERITY_META).map(s => `<option value="${s}">${s}</option>`).join('')}
+          </select>
+        </div>
+        <textarea name="question_or_recommendation" required class="field w-full rounded px-2.5 py-1.5 text-[12.5px] mb-2" rows="2" placeholder="question or recommendation for the prescriber…"></textarea>
+        <button type="submit" class="btn btn-outline text-[11px] px-3 py-1.5 rounded">SEND →</button>
+      </form>
+    `;
+  }
+
+  secEl.innerHTML = html;
+
+  const newIvForm = $('#new-intervention-form', secEl);
+  if (newIvForm) {
+    api('/v1/staff').then(staff => {
+      const sel = $('select[name=target_prescriber_id]', newIvForm);
+      sel.innerHTML = '<option value="">prescriber…</option>' + staff.staff.filter(s => s.role === 'prescriber')
+        .map(p => `<option value="${p.id}">${esc(p.full_name)}</option>`).join('');
+    }).catch(() => {});
+    newIvForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      try {
+        await api('/v1/interventions', { method: 'POST', body: JSON.stringify({
+          case_id: c.id, target_prescriber_id: fd.get('target_prescriber_id'),
+          finding_id: fd.get('finding_id') || null, urgency: fd.get('urgency'),
+          question_or_recommendation: fd.get('question_or_recommendation'),
+        }) });
+        log('intervention sent', 'ok');
+        renderCaseDetail($('#content'), c.id);
+      } catch (err) { log(err.message, 'error'); }
+    });
+  }
+  $$('[data-respond]', secEl).forEach(form => form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    try {
+      await api(`/v1/interventions/${e.target.dataset.respond}/response`, { method: 'POST', body: JSON.stringify({
+        decision: fd.get('decision'), rationale: fd.get('rationale'), monitoring_plan: fd.get('monitoring_plan'),
+      }) });
+      log('prescriber response recorded', 'ok');
+      renderCaseDetail($('#content'), c.id);
+    } catch (err) { log(err.message, 'error'); }
+  }));
+}
+
+function interventionCard(iv) {
+  const urgMeta = SEVERITY_META[iv.urgency] || SEVERITY_META.unknown;
+  return `
+    <div class="panel rounded p-4 mb-2">
+      <div class="flex items-center justify-between mb-1.5">
+        ${ledBadge(urgMeta.color, urgMeta.label)}
+        <span class="mono text-[10.5px]" style="color:var(--text-faint)">${fmtDate(iv.created_at)}</span>
+      </div>
+      <p class="text-[13px] mb-2">${esc(iv.question_or_recommendation)}</p>
+      ${iv.response ? `
+        <div class="panel-alt rounded p-3">
+          <p class="mono text-[10.5px] uppercase tracking-wide mb-1" style="color:var(--safe)">Response: ${esc(iv.response.decision)}</p>
+          ${iv.response.rationale ? `<p class="text-[12.5px]">${esc(iv.response.rationale)}</p>` : ''}
+          ${iv.response.monitoring_plan ? `<p class="text-[11.5px] mt-1" style="color:var(--text-dim)">monitoring: ${esc(iv.response.monitoring_plan)}</p>` : ''}
+        </div>
+      ` : `<p class="mono text-[11px]" style="color:var(--caution)">awaiting prescriber response</p>`}
+    </div>
+  `;
+}
+
+function renderEscalation(el, c) {
+  const secEl = $('#escalation-section', el);
+  if (c.state !== 'escalated') { secEl.innerHTML = ''; return; }
+  secEl.innerHTML = `
+    <p class="text-sm font-semibold mb-3">Escalation</p>
+    <form id="escalation-form" class="panel rounded p-4" style="border-color:#7a2c2c">
+      <p class="mono text-[10.5px] uppercase tracking-wide mb-2" style="color:var(--critical)">Case escalated — resolve to route it forward</p>
+      <textarea name="reason" required class="field w-full rounded px-2.5 py-1.5 text-[12.5px] mb-2" rows="2" placeholder="escalation reason…"></textarea>
+      <textarea name="resolution" required class="field w-full rounded px-2.5 py-1.5 text-[12.5px] mb-2" rows="2" placeholder="resolution…"></textarea>
+      <select name="next_state" required class="field rounded px-2.5 py-1.5 text-[12.5px] mb-2 bg-transparent">
+        <option value="">next state…</option>
+        <option value="ready_to_dispense">ready_to_dispense</option>
+        <option value="held_or_cancelled">held_or_cancelled</option>
+      </select>
+      <button type="submit" class="btn btn-danger text-[11px] px-3 py-1.5 rounded block">RESOLVE ESCALATION →</button>
+    </form>
+  `;
+  $('#escalation-form', secEl).addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    try {
+      await api(`/v1/safety-cases/${c.id}/resolve-escalation`, { method: 'POST', body: JSON.stringify({
+        reason: fd.get('reason'), resolution: fd.get('resolution'), next_state: fd.get('next_state'),
+      }) });
+      log('escalation resolved', 'ok');
+      renderCaseDetail($('#content'), c.id);
+    } catch (err) { log(err.message, 'error'); }
+  });
+}
+
+function renderDispense(el, c) {
+  const secEl = $('#dispense-section', el);
+  if (c.dispensing_outcome) {
+    secEl.innerHTML = `<p class="text-sm font-semibold mb-3">Dispensing outcome</p>
+      <div class="panel rounded p-4"><p class="text-sm">${esc(c.dispensing_outcome.status)} ${c.dispensing_outcome.quantity ? '· ' + esc(c.dispensing_outcome.quantity) : ''} <span class="mono text-[11px]" style="color:var(--text-faint)">— ${fmtDate(c.dispensing_outcome.occurred_at)}</span></p></div>`;
+    return;
+  }
+  if (c.state !== 'ready_to_dispense') { secEl.innerHTML = ''; return; }
+  secEl.innerHTML = `
+    <p class="text-sm font-semibold mb-3">Dispensing outcome</p>
+    <form id="dispense-form" class="panel rounded p-4">
+      <div class="grid grid-cols-2 gap-2 mb-2">
+        <select name="status" required class="field rounded px-2.5 py-1.5 text-[12.5px] bg-transparent">
+          <option value="">status…</option><option value="dispensed">dispensed</option><option value="held">held</option><option value="cancelled">cancelled</option>
+        </select>
+        <input name="quantity" class="field rounded px-2.5 py-1.5 text-[12.5px]" placeholder="quantity (e.g. 30 tablets)" />
+      </div>
+      <button type="submit" class="btn btn-primary text-[11px] px-3 py-1.5 rounded">RECORD OUTCOME →</button>
+    </form>
+  `;
+  $('#dispense-form', secEl).addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    try {
+      await api(`/v1/safety-cases/${c.id}/dispense`, { method: 'POST', body: JSON.stringify({ status: fd.get('status'), quantity: fd.get('quantity') }) });
+      log('dispensing outcome recorded', 'ok');
+      renderCaseDetail($('#content'), c.id);
+    } catch (err) { log(err.message, 'error'); }
+  });
+}
+
+function renderCommunicate(el, c) {
+  const secEl = $('#communicate-section', el);
+  if (c.communications.length) {
+    secEl.innerHTML = `<p class="text-sm font-semibold mb-3">Patient communication</p>` +
+      c.communications.map(cm => `<div class="panel rounded p-4 mb-2"><p class="text-[13px]">${esc(cm.approved_explanation)}</p><p class="mono text-[10.5px] mt-1.5" style="color:var(--text-faint)">via ${esc(cm.delivery_channel)} · ${fmtDate(cm.created_at)}</p></div>`).join('');
+    return;
+  }
+  if (!['ready_to_dispense', 'held_or_cancelled'].includes(c.state)) { secEl.innerHTML = ''; return; }
+  const draft = c.findings.filter(f => f.explanation).map(f => f.explanation).join(' ');
+  secEl.innerHTML = `
+    <p class="text-sm font-semibold mb-3">Patient communication</p>
+    <form id="communicate-form" class="panel rounded p-4">
+      <textarea name="approved_explanation" required class="field w-full rounded px-2.5 py-1.5 text-[12.5px] mb-2" rows="3" placeholder="approved plain-language explanation for the patient…">${esc(draft)}</textarea>
+      <select name="delivery_channel" class="field rounded px-2.5 py-1.5 text-[12.5px] mb-2 bg-transparent">
+        <option value="portal">portal</option><option value="sms">sms</option><option value="email">email</option><option value="phone">phone</option><option value="in_person">in_person</option>
+      </select>
+      <button type="submit" class="btn btn-outline text-[11px] px-3 py-1.5 rounded block">SEND →</button>
+    </form>
+  `;
+  $('#communicate-form', secEl).addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    try {
+      await api(`/v1/safety-cases/${c.id}/communicate`, { method: 'POST', body: JSON.stringify({ approved_explanation: fd.get('approved_explanation'), delivery_channel: fd.get('delivery_channel') }) });
+      log('patient communication sent', 'ok');
+      renderCaseDetail($('#content'), c.id);
+    } catch (err) { log(err.message, 'error'); }
+  });
+}
+
+function renderClose(el, c) {
+  const secEl = $('#close-section', el);
+  if (!['ready_to_dispense', 'held_or_cancelled'].includes(c.state)) { secEl.innerHTML = ''; return; }
+  secEl.innerHTML = `<button id="close-case-btn" class="btn btn-primary text-[12px] px-5 py-2.5 rounded">CLOSE CASE →</button>`;
+  $('#close-case-btn', secEl).addEventListener('click', async () => {
+    try {
+      await api(`/v1/safety-cases/${c.id}/close`, { method: 'POST' });
+      log('case closed', 'ok');
+      renderCaseDetail($('#content'), c.id);
+    } catch (err) { log(err.message, 'error'); }
+  });
+}
+
+async function renderTimeline(el, c) {
+  const secEl = $('#timeline-section', el);
+  secEl.innerHTML = `<p class="text-sm font-semibold mb-3">Audit timeline</p><p class="mono text-sm" style="color:var(--text-dim)">Loading…</p>`;
+  try {
+    const data = await api(`/v1/safety-cases/${c.id}/timeline`);
+    secEl.innerHTML = `<p class="text-sm font-semibold mb-3">Audit timeline <span class="mono text-[11px]" style="color:var(--text-faint)">(${data.timeline.length} events, immutable)</span></p>
+      <div class="panel rounded p-4 space-y-0">
+        ${data.timeline.map((ev, i) => `
+          <div class="flex gap-3 py-2.5 ${i < data.timeline.length - 1 ? '' : ''}" style="${i < data.timeline.length - 1 ? 'border-bottom:1px solid var(--border)' : ''}">
+            <span class="led led-glow mt-1.5" style="background:var(--accent)"></span>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center justify-between">
+                <span class="mono text-[12px]">${esc(ev.action)}</span>
+                <span class="mono text-[10.5px]" style="color:var(--text-faint)">${fmtDate(ev.timestamp)}</span>
+              </div>
+              ${ev.after ? `<p class="mono text-[10.5px] mt-0.5" style="color:var(--text-faint)">${esc(JSON.stringify(ev.after))}</p>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>`;
+  } catch (err) {
+    secEl.innerHTML = `<p class="text-sm" style="color:var(--critical)">${esc(err.message)}</p>`;
+  }
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────
+(token() ? renderShell() : renderAuth());
+</script>
+</body>
+</html>

@@ -65,9 +65,12 @@ def _fetch_ingredients(rxcui: str) -> List[str]:
     """Ingredient/multi-ingredient/precise-ingredient names for a combination
     product or single-ingredient drug (RxNorm term types IN, PIN, MIN)."""
     try:
+        # RxNorm's `tty` param uses a literal `+` as an OR-separator (per
+        # their own docs: tty=IN+PIN+MIN). Passing it via `params=` makes
+        # requests percent-encode it to %2B, which RxNorm's API rejects
+        # with a 400 — must be embedded directly in the URL to stay literal.
         r = requests.get(
-            f"{_RXNORM_BASE}/rxcui/{rxcui}/related.json",
-            params={"tty": "IN+PIN+MIN"},
+            f"{_RXNORM_BASE}/rxcui/{rxcui}/related.json?tty=IN+PIN+MIN",
             timeout=_RXNORM_TIMEOUT,
         )
         r.raise_for_status()

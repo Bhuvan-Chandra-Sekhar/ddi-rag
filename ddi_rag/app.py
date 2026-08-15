@@ -46,12 +46,14 @@ from services.professional_workflow import (
     assess_findings_and_route, case_timeline, create_intervention,
     pharmacist_queue, record_prescriber_response,
 )
+from routes_clinical import clinical_bp
 
 log = logging.getLogger("ddi.app")
 
 flask_app = Flask("ddi")
 CORS(flask_app)
 configure_jwt(flask_app)
+flask_app.register_blueprint(clinical_bp)
 
 # ── Lookup tables (populated by init_lookups) ─────────────────────────────────
 _BRAND_TO_GENERIC:  Dict[str, str]        = {}
@@ -122,6 +124,16 @@ def health():
 def patient_app():
     """Serves the patient-facing single-page app (static HTML, no build step)."""
     return send_from_directory(Path(__file__).resolve().parent / "static" / "patient", "index.html")
+
+
+@flask_app.route("/clinical")
+def clinical_app():
+    """Serves the pharmacist/prescriber-facing single-page app (static HTML,
+    no build step) — a review/testing console for the deterministic rule
+    engine and constrained explanation answers, and the professional
+    workflow. Not the hospital production boundary (see mcp_server.py's
+    docstring for the analogous caveat on that interface)."""
+    return send_from_directory(Path(__file__).resolve().parent / "static" / "clinical", "index.html")
 
 
 @flask_app.route("/v1/organizations", methods=["GET"])
@@ -231,7 +243,18 @@ def safety_case_queue():
         if not user:
             return {"error": "unknown user"}, 401
         cases = pharmacist_queue(session, user.organization_id)
-        return {"cases": [{"id": c.id, "state": c.state.value} for c in cases]}, 200
+        result = []
+        for c in cases:
+            prescription = session.get(Prescription, c.prescription_id)
+            medication = session.get(Medication, prescription.medication_id) if prescription else None
+            patient = session.get(Patient, prescription.patient_id) if prescription else None
+            result.append({
+                "id": c.id, "state": c.state.value,
+                "created_at": c.created_at.isoformat() if c.created_at else None,
+                "patient_name": f"{patient.first_name} {patient.last_name}" if patient else None,
+                "medication": medication.display_name if medication else None,
+            })
+        return {"cases": result}, 200
 
 
 @flask_app.route("/v1/safety-cases/<case_id>/timeline", methods=["GET"])

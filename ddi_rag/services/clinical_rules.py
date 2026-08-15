@@ -110,6 +110,97 @@ def ingest_pairs_csv(
     return {"inserted": inserted, "skipped_junk": skipped_junk, "skipped_existing": skipped_existing}
 
 
+DDINTER_RULE_VERSION = "ddinter-2.0-v1"
+
+
+def ingest_ddinter_csv(
+    session,
+    csv_path: str,
+    source_dataset: str = "ddinter_2.0",
+    flush_every: int = 5000,
+    progress_every: int = 20000,
+) -> Dict[str, int]:
+    """
+    Load scripts/clean_ddinter_dataset.py's cleaned output into DRAFT
+    ClinicalRule rows. Unlike ingest_pairs_csv(), the real DDInter severity
+    is preserved on the row (not hardcoded to UNKNOWN) — but it still has
+    no clinical authority until a reviewer moves status to APPROVED;
+    evaluate_ddi_pairs() only trusts rule.severity for APPROVED rows, so a
+    DRAFT row from this ingestion produces the same type=UNKNOWN,
+    review_status=PENDING finding as any other unreviewed rule.
+
+    Existing pair_keys are left untouched — this only fills gaps the
+    current clinical_rules table doesn't already cover, never overwrites
+    a rule that came from a different source.
+
+    Performance note: this dataset is ~160K rows, so existing pair_keys are
+    loaded into an in-memory set ONCE up front rather than queried per row
+    (a per-row SELECT round-trip against a remote Supabase connection is
+    what made the first attempt at this run for 5+ minutes without
+    finishing — the same "per-row DB round trips" cost flagged in the
+    project handoff as the real constraint on large ingests, not API cost).
+    """
+    import csv as csv_module
+
+    existing_keys = {
+        row[0] for row in session.query(ClinicalRule.pair_key).all()
+    }
+    log.info("Loaded %d existing pair_keys for dedup.", len(existing_keys))
+
+    inserted = skipped_existing = skipped_invalid = 0
+    seen_in_file: set = set()
+
+    with open(csv_path, newline="", encoding="utf-8") as f:
+        reader = csv_module.DictReader(f)
+        for i, row in enumerate(reader, 1):
+            key = (row.get("alias_pair_key") or "").strip()
+            drug_a = (row.get("drug_a_common_alias") or row.get("drug_a_norm") or "").strip()
+            drug_b = (row.get("drug_b_common_alias") or row.get("drug_b_norm") or "").strip()
+            # The CSV's severity column already holds the final mapped value
+            # (scripts/clean_ddinter_dataset.py did major/caution/informational/
+            # unknown) — look it up directly by Severity's enum *value*, don't
+            # re-run it through DDInter's raw Level names.
+            try:
+                severity = Severity((row.get("severity") or "").strip().lower())
+            except ValueError:
+                severity = None
+
+            if not key or not drug_a or not drug_b or severity is None:
+                skipped_invalid += 1
+                continue
+
+            if key in existing_keys or key in seen_in_file:
+                skipped_existing += 1
+                continue
+            seen_in_file.add(key)
+
+            session.add(ClinicalRule(
+                rule_type=FindingType.DDI,
+                pair_key=key,
+                ingredient_a=drug_a,
+                ingredient_b=drug_b,
+                clinical_effect=row.get("Cleaned_Description", ""),
+                severity=severity,
+                source_description=f"DDInter Level: {row.get('severity_level_raw', '')}",
+                source_dataset=source_dataset,
+                status=RuleStatus.DRAFT,
+                rule_version=DDINTER_RULE_VERSION,
+            ))
+            inserted += 1
+
+            if inserted % flush_every == 0:
+                session.flush()
+            if i % progress_every == 0:
+                log.info("Processed %d rows — %d inserted, %d skipped so far.", i, inserted, skipped_existing)
+
+    session.flush()
+    log.info(
+        "Ingested %d draft rules from %s (skipped %d already present, %d invalid rows).",
+        inserted, source_dataset, skipped_existing, skipped_invalid,
+    )
+    return {"inserted": inserted, "skipped_existing": skipped_existing, "skipped_invalid": skipped_invalid}
+
+
 # ── Deterministic rule evaluation ────────────────────────────────────────────
 
 def evaluate_duplicate_ingredients(ingredient_names: Sequence[str]) -> List[dict]:
