@@ -1,0 +1,27 @@
+# Render "Infrastructure as Code" config — https://render.com/docs/blueprint-spec
+#
+# One web service: it serves the API, the patient portal (/patient), and
+# the clinical console (/clinical) — same Flask app (ddi_rag/app.py), no
+# separate frontend deploy. The database is already hosted on Supabase;
+# nothing here provisions a new one.
+#
+# Secret values (marked sync: false below) are entered in Render's
+# dashboard when you connect this repo — never stored here, never in git.
+
+services:
+  - type: web
+    name: ddi-rag
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --chdir ddi_rag app:flask_app --bind 0.0.0.0:$PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: COHERE_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: JWT_SECRET_KEY
+        sync: false

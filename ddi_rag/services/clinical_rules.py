@@ -258,11 +258,27 @@ def evaluate_ddi_pairs(session, ingredient_names: Sequence[str]) -> List[dict]:
     PENDING) — an unreviewed match is missing/conflicting evidence, not a
     cleared pair. Pairs with no matching rule produce no finding: absence of
     a finding is not a safety claim.
+
+    Batched to a single query regardless of how many ingredients are on
+    the medication list — this used to run one `pair_key` lookup per pair
+    (a query per pair means a query per C(n,2) combination), which scales
+    quadratically with medication count against a table now holding
+    161K+ rows. All pair_keys are computed first, then looked up in one
+    `IN (...)` query.
     """
+    pairs = list(_unique_unordered_pairs(ingredient_names))
+    if not pairs:
+        return []
+
+    keys = [_pair_key(a, b) for a, b in pairs]
+    rules_by_key = {
+        rule.pair_key: rule
+        for rule in session.query(ClinicalRule).filter(ClinicalRule.pair_key.in_(keys))
+    }
+
     findings = []
-    for a, b in _unique_unordered_pairs(ingredient_names):
-        key = _pair_key(a, b)
-        rule = session.query(ClinicalRule).filter_by(pair_key=key).first()
+    for (a, b), key in zip(pairs, keys):
+        rule = rules_by_key.get(key)
         if rule is None:
             continue
 

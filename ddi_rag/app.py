@@ -20,10 +20,9 @@ Environment:
 """
 
 import logging
-import re
 import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict
 
 # Allow imports from the ddi_rag package
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -36,11 +35,12 @@ from werkzeug.exceptions import HTTPException
 from auth import authenticate_user, configure_jwt, register_user
 from config import DEFAULT_TOP_K, MAX_PRESCRIPTION_LEN, MAX_TOP_K, PORT
 from database import get_session, init_db
-from enums import PrescriberDecision, ReviewStatus, Severity
+from enums import FindingType, PrescriberDecision, ReviewStatus, Severity
 from models import (
-    Intervention, Medication, Patient, PatientCommunication, Prescription,
-    SafetyCase, User,
+    Finding, Intervention, Medication, Patient, PatientCommunication,
+    Prescription, SafetyCase, User,
 )
+from prescription_parsing import init_lookups, parse_prescription
 from services.rag_pipeline import answer_ddi, safe_str
 from services.professional_workflow import (
     assess_findings_and_route, case_timeline, create_intervention,
@@ -55,54 +55,19 @@ CORS(flask_app)
 configure_jwt(flask_app)
 flask_app.register_blueprint(clinical_bp)
 
-# ── Lookup tables (populated by init_lookups) ─────────────────────────────────
-_BRAND_TO_GENERIC:  Dict[str, str]        = {}
-_SORTED_NAMES:      List[str]             = []
-_COMPILED_PATTERNS: Dict[str, re.Pattern] = {}
+# Runs at import time, not just under `python app.py` — a production WSGI
+# server (gunicorn) imports this module directly and never executes the
+# `if __name__ == "__main__":` block below, so init_db() has to happen
+# here to actually run in a real deployment. create_all() is idempotent —
+# safe to call on every worker boot, including against an already-
+# populated database; it only creates tables that don't exist yet.
+init_db()
 
-
-def init_lookups(chunk_df) -> None:
-    """
-    Build brand→generic mapping and pre-compile regex patterns
-    from the chunk DataFrame. Call once at startup before serving requests.
-    """
-    global _BRAND_TO_GENERIC, _SORTED_NAMES, _COMPILED_PATTERNS
-
-    b2g: Dict[str, str] = {}
-    for _, row in chunk_df[["brand_name", "generic_name"]].drop_duplicates().iterrows():
-        b = str(row["brand_name"]).strip().lower()
-        g = str(row["generic_name"]).strip().lower()
-        if b and b != "nan":
-            b2g[b] = g
-
-    _BRAND_TO_GENERIC  = b2g
-    generics           = set(chunk_df["generic_name"].str.lower().str.strip().dropna().unique())
-    all_names          = generics | set(b2g.keys())
-    _SORTED_NAMES      = sorted(all_names, key=len, reverse=True)
-    _COMPILED_PATTERNS = {
-        n: re.compile(r"\b" + re.escape(n) + r"\b") for n in _SORTED_NAMES
-    }
-    log.info("Lookup tables built: %d names indexed.", len(_SORTED_NAMES))
-
-
-def parse_prescription(text: str) -> List[str]:
-    """
-    Longest-match regex extraction of recognised drug names from prescription text.
-    Brand names are resolved to their generic equivalent.
-    """
-    text_lower = text.lower()
-    found:    List[str]             = []
-    consumed: List[Tuple[int, int]] = []
-
-    for name in _SORTED_NAMES:
-        for m in _COMPILED_PATTERNS[name].finditer(text_lower):
-            s, e = m.start(), m.end()
-            if not any(cs <= s < ce or cs < e <= ce for cs, ce in consumed):
-                generic = _BRAND_TO_GENERIC.get(name, name)
-                if generic not in found:
-                    found.append(generic)
-                consumed.append((s, e))
-    return found
+# Same reasoning as init_db() above: must run at import time so gunicorn
+# workers have the drug-name lookup table built before serving requests,
+# not only under `python app.py`. See prescription_parsing.py's docstring
+# for why this call matters — it used to exist but never actually run.
+init_lookups()
 
 
 # ── Flask error handler ───────────────────────────────────────────────────────
@@ -221,6 +186,23 @@ def query_api():
 # Role-gated actions (e.g. only pharmacists may assess findings) are Phase 6
 # RBAC work and not implemented here — this only enforces tenant boundaries.
 
+# Priority order for picking a single "worst" severity to badge a case with
+# in list views. UNKNOWN ranks above CAUTION/INFORMATIONAL deliberately —
+# per the architecture doc, missing/conflicting evidence is never treated
+# as lower-priority than a known-mild finding, only below an actually
+# confirmed MAJOR/CRITICAL signal.
+_SEVERITY_RANK = {
+    Severity.CRITICAL: 4, Severity.MAJOR: 3, Severity.UNKNOWN: 2,
+    Severity.CAUTION: 1, Severity.INFORMATIONAL: 0,
+}
+
+
+def _max_severity(findings) -> str | None:
+    if not findings:
+        return None
+    return max(findings, key=lambda f: _SEVERITY_RANK[f.severity]).severity.value
+
+
 def _authorized_case_or_error(session, case_id: str, caller_user_id: str):
     """Return (case, None) if case_id exists and belongs to the caller's
     organization, else (None, (body, status)) for the caller to return."""
@@ -238,21 +220,55 @@ def _authorized_case_or_error(session, case_id: str, caller_user_id: str):
 @flask_app.route("/v1/safety-cases/queue", methods=["GET"])
 @jwt_required()
 def safety_case_queue():
+    """
+    Batched to a fixed number of queries regardless of queue size — this
+    used to run 4 queries per case (prescription, medication, patient,
+    findings) in a Python loop, so a 50-case queue meant ~200 round trips.
+    Now: 1 (pharmacist_queue) + up to 4 batched IN-queries, total, no
+    matter how many cases are in the queue.
+    """
     with get_session() as session:
         user = session.get(User, get_jwt_identity())
         if not user:
             return {"error": "unknown user"}, 401
         cases = pharmacist_queue(session, user.organization_id)
+        if not cases:
+            return {"cases": []}, 200
+
+        case_ids = [c.id for c in cases]
+        prescription_ids = [c.prescription_id for c in cases]
+
+        prescriptions = {
+            p.id: p for p in
+            session.query(Prescription).filter(Prescription.id.in_(prescription_ids))
+        }
+        medication_ids = [p.medication_id for p in prescriptions.values()]
+        patient_ids = [p.patient_id for p in prescriptions.values()]
+
+        medications = {
+            m.id: m for m in session.query(Medication).filter(Medication.id.in_(medication_ids))
+        } if medication_ids else {}
+        patients = {
+            p.id: p for p in session.query(Patient).filter(Patient.id.in_(patient_ids))
+        } if patient_ids else {}
+
+        findings_by_case: Dict[str, list] = {}
+        for f in session.query(Finding).filter(Finding.case_id.in_(case_ids)):
+            findings_by_case.setdefault(f.case_id, []).append(f)
+
         result = []
         for c in cases:
-            prescription = session.get(Prescription, c.prescription_id)
-            medication = session.get(Medication, prescription.medication_id) if prescription else None
-            patient = session.get(Patient, prescription.patient_id) if prescription else None
+            prescription = prescriptions.get(c.prescription_id)
+            medication = medications.get(prescription.medication_id) if prescription else None
+            patient = patients.get(prescription.patient_id) if prescription else None
+            findings = findings_by_case.get(c.id, [])
             result.append({
                 "id": c.id, "state": c.state.value,
                 "created_at": c.created_at.isoformat() if c.created_at else None,
                 "patient_name": f"{patient.first_name} {patient.last_name}" if patient else None,
                 "medication": medication.display_name if medication else None,
+                "finding_count": len(findings),
+                "max_severity": _max_severity(findings),
             })
         return {"cases": result}, 200
 
@@ -375,20 +391,54 @@ def my_cases():
             .order_by(SafetyCase.created_at.desc())
             .all()
         )
+        if not rows:
+            return {"cases": []}, 200
+
+        # Batched: previously ran 2 queries per case (communications,
+        # findings) in a Python loop. Now 2 queries total, independent of
+        # how many cases the patient has.
+        case_ids = [case.id for case, _, _ in rows]
+
+        comms_by_case: Dict[str, list] = {}
+        for c in (
+            session.query(PatientCommunication)
+            .filter(PatientCommunication.case_id.in_(case_ids))
+            .order_by(PatientCommunication.created_at.desc())
+        ):
+            comms_by_case.setdefault(c.case_id, []).append(c)
+
+        findings_by_case: Dict[str, list] = {}
+        for f in session.query(Finding).filter(Finding.case_id.in_(case_ids)):
+            findings_by_case.setdefault(f.case_id, []).append(f)
 
         cases = []
         for case, prescription, medication in rows:
-            comms = (
-                session.query(PatientCommunication)
-                .filter_by(case_id=case.id)
-                .order_by(PatientCommunication.created_at.desc())
-                .all()
+            comms = comms_by_case.get(case.id, [])
+            # Deliberately coarse: has_findings is a plain yes/no, and
+            # interaction_review is only "pending" vs "reviewed" — never
+            # severity, type, or the underlying rule/evidence, which stay
+            # professional-facing (see this function's docstring).
+            # "pending" = at least one finding's underlying candidate rule
+            # is still DRAFT/unapproved (type UNKNOWN is exactly that
+            # signal — see services/clinical_rules.py:evaluate_ddi_pairs).
+            # This is deliberately independent of the case's own workflow
+            # state: a case can be fully dispensed and CLOSED while the
+            # interaction data behind it is still an unreviewed candidate
+            # — those are two different facts, not one.
+            findings = findings_by_case.get(case.id, [])
+            has_findings = bool(findings)
+            interaction_review = (
+                None if not findings else
+                "pending" if any(f.type == FindingType.UNKNOWN for f in findings) else
+                "reviewed"
             )
             cases.append({
                 "case_id": case.id,
                 "state": case.state.value,
                 "medication": medication.display_name,
                 "created_at": case.created_at.isoformat() if case.created_at else None,
+                "has_findings": has_findings,
+                "interaction_review": interaction_review,
                 "communications": [
                     {
                         "explanation": c.approved_explanation,
@@ -401,5 +451,6 @@ def my_cases():
 
 
 if __name__ == "__main__":
-    init_db()
+    # init_db() already ran at import time above — this block is now only
+    # the local-dev entry point (`python app.py`); gunicorn never reaches it.
     flask_app.run(host="0.0.0.0", port=PORT, use_reloader=False, debug=False)
