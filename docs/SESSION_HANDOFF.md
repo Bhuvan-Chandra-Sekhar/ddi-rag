@@ -4,12 +4,21 @@ Written during a long session to carry context forward (into a new chat, or
 past a context-window reset). Read this before doing anything else on this
 project.
 
-**Latest session (continuation):** built a second frontend — a
-pharmacist/prescriber-facing "Clinical Console" at `/clinical` — so you can
-verify the system's real answers yourself instead of taking my word for it.
-See §13 for what's new; the rest of this file is prior-session context and
-is still accurate except where §13 supersedes it (queue endpoint response
-shape, database engine config).
+**The app is live**: `https://ddi-rag.onrender.com` (Render, deployed
+2026-08-17, fully verified — see §17 for the deploy story, including a
+real Supabase-IPv6/Render infra bug found and fixed along the way).
+Sections §13-16 cover the Clinical Console build, DDInter ingestion,
+evidence-corpus expansion, and LLM evals from earlier in this same
+session — still accurate. §1-12 are prior-session context, still accurate
+except where later sections supersede specifics (queue endpoint response
+shape, database engine config — see §13 note below, still true).
+
+**Latest session (new chat): §18.** Built a guest self-check API + redesigned
+patient portal, found and fixed a real severity-suppression bug and a live
+Groq model-deprecation outage, and built a real golden-split RAG eval
+harness. **Action required on your end: `GROQ_MODEL` must be updated on
+Render's dashboard** (`openai/gpt-oss-20b`) — the code/local `.env` fix
+alone doesn't reach the deployed instance.
 
 ---
 
@@ -727,3 +736,474 @@ produces, scored honestly.
 time), same recurring pattern as before.
 
 Full test suite (67 tests) still passes after all of the above.
+
+---
+
+## 17. UI fixes, real optimizations (one exposed a dead-code bug), deploy prep, and an in-progress Render deployment
+
+Everything below is **committed and pushed** — `origin/master` is at
+`ce302de` (`f3d14f8` from §13-16 landed first, `ce302de` has everything in
+this section). Nothing here is uncommitted or stashed.
+
+### UI fixes (your feedback, live-tested against real data)
+- **Real bug**: the Clinical Console's "Review decision" dropdown always
+  displayed "pending" regardless of a finding's actual `review_status` —
+  none of its `<option>` elements were ever marked `selected`. Fixed in
+  `static/clinical/index.html`; verified against both a genuinely-pending
+  finding and an already-accepted one.
+- **Warning indicators added to both portals**, using real severity data:
+  - Clinical Console: a colored warning triangle on pharmacist-queue rows
+    with unreviewed findings (color = worst severity present, priority
+    order CRITICAL > MAJOR > **UNKNOWN** > CAUTION > INFORMATIONAL —
+    UNKNOWN deliberately outranks CAUTION/INFORMATIONAL, since "missing/
+    conflicting evidence" is never lower-priority than a confirmed-mild
+    finding per the architecture doc), plus a summary banner on case
+    detail pages.
+  - Patient portal: a small red "Pending clinical review" / green
+    "Reviewed" line, driven by a new `interaction_review` field on
+    `/v1/my/cases` (`"pending"` if any finding's underlying rule is still
+    DRAFT — i.e. `type == UNKNOWN` — else `"reviewed"`). Deliberately
+    coarse — no severity/type/evidence leaks to the patient side, same
+    boundary as always. **Kept "Complete" as the separate case-workflow
+    badge rather than replacing it** — a case can be fully dispensed and
+    closed while the interaction data behind it is still unreviewed; those
+    are two different true facts, both now visible instead of only one.
+
+### Optimizations — and a real, previously-invisible bug one of them exposed
+You asked for "optimized algorithms"; picked all three candidates offered:
+
+1. **N+1 queries in `/v1/safety-cases/queue` and `/v1/my/cases`** — was
+   2-4 separate queries per case in a Python loop. Batched to a fixed
+   number of queries via `IN (...)` regardless of case count. Verified
+   identical output against the live DB before/after.
+2. **`evaluate_ddi_pairs()`** — was one query per drug pair (quadratic
+   against a `clinical_rules` table now at 161K+ rows). Batched to one
+   `IN (...)` query for all pairs at once. Re-verified the same 4-drug
+   scenario from §16 returns identical findings.
+3. **Drug-name detection in `/api/query` — this one uncovered a real bug,
+   not just a slow path.** `init_lookups()` (which populates the name
+   list `parse_prescription()` scans against) was **never called from
+   anywhere in the codebase**. Confirmed empirically: `_SORTED_NAMES` was
+   always empty, `parse_prescription()` always returned `[]`. Because of
+   `query_api()`'s fallback (`detected if detected else [None]`), the
+   Query Console has been silently degrading to an unfiltered whole-
+   sentence semantic search this entire session — this is *why* an
+   earlier query for "warfarin" showed a result labeled "PATIENT IS
+   TAKING WARFARIN" instead of just "WARFARIN": semantic search papered
+   over the fact that per-drug detection was never actually running.
+   Fixed by:
+   - `ddi_rag/prescription_parsing.py` (new) — `init_lookups()` now
+     actually runs at import time, sourced from the **live
+     `evidence_chunks` table** (not the 240MB source CSV, which is
+     gitignored and wouldn't exist on Render anyway).
+   - `ddi_rag/aho_corasick.py` (new) — hand-written Aho-Corasick
+     automaton; one pass over the text finds every known drug name
+     (`O(text + matches)`) instead of one regex scan per name
+     (`O(n_names × text)`). **Verified correctness before wiring it in**:
+     ran old vs. new side-by-side against 16 adversarial test sentences
+     (substrings, overlaps, brand names, repeats, empty string). One
+     mismatch surfaced — an ordering difference between two equal-length
+     names — traced to Python's per-process randomized string hashing
+     making the *old* code's tie-break non-deterministic across runs
+     (empirically confirmed: 3 runs of the same tie-break, 2 different
+     orderings). The new version is strictly more deterministic, not a
+     regression.
+   - Live-verified through the real `/api/query` endpoint post-fix:
+     multi-drug detection, multi-word names ("aspirin and dipyridamole"),
+     and brand→generic mapping all work correctly together now.
+   - **Known limitation, not a bug**: brand names like "Coumadin"/"Advil"
+     currently don't resolve — the live evidence data happens to have
+     `brand_name = "warfarin sodium"` / `"ibuprofen"` (generic
+     manufacturer labels) for those two drugs, not consumer brand names.
+     Mechanism works; brand-name *coverage* depends on what's actually in
+     the ingested evidence data. Would need different source rows
+     ingested to fix, not a code change.
+   - Extracted into its own module (rather than growing `app.py` past the
+     project's 500-line convention — it briefly hit 543, now 456).
+
+### Deploy prep (Render), code side — done
+- `requirements.txt` — added `gunicorn` (the Flask dev server explicitly
+  warns against production use; nothing in requirements.txt provided a
+  real WSGI server before this).
+- **Real bug fixed**: `init_db()` was only called inside
+  `if __name__ == "__main__":` — a production WSGI server imports the
+  module directly and never executes that block, so this would have
+  silently never run under gunicorn. Moved to run at import time.
+  `create_all()` is idempotent, safe against the already-populated DB.
+- `render.yaml` (new, repo root) — build/start commands, health check
+  (`/api/health`), and the 4 required secret env vars declared (not
+  valued — Render prompts for them): `DATABASE_URL`, `COHERE_API_KEY`,
+  `GROQ_API_KEY`, `JWT_SECRET_KEY`. `COHERE_EMBED_MODEL`/`GROQ_MODEL`
+  deliberately not required — `config.py` already defaults both to
+  exactly what's been used all session; only set them if you actually
+  want to switch models (and if you do, remember the entire 10,915-chunk
+  `evidence_chunks` table was embedded with `embed-english-v3.0`
+  specifically — a different embedding model isn't just a config swap,
+  it's a "re-embed everything" decision, since different models produce
+  incomparable vector spaces).
+- Test runtime is a bit slower now (~7-18s vs. the original ~9-13s) since
+  3 test files import `app.py` directly, which now also triggers
+  `init_lookups()`/`init_db()` against the real live Supabase DB at
+  import time. Harmless (idempotent, no data touched), just a documented
+  minor tradeoff of the same fix gunicorn needs.
+- Couldn't locally dry-run the exact `gunicorn` start command — gunicorn
+  doesn't run on Windows (needs `os.fork`). First real test of that exact
+  command was always going to be on Render itself.
+
+### Deploy status — LIVE at https://ddi-rag.onrender.com (as of 2026-08-17)
+
+1. **Render's "New Web Service" flow does NOT read `render.yaml`** —
+   only Render's "Blueprint" flow does, and this Render account's UI
+   didn't show a Blueprint tile at all (may not be enabled on this
+   account/plan). Resolved by configuring manually instead — same values
+   `render.yaml` would have set:
+   - Build: `pip install -r requirements.txt`
+   - Start: `gunicorn --chdir ddi_rag app:flask_app --bind 0.0.0.0:$PORT`
+   - Branch: `master`, root directory: blank (repo root, NOT `ddi_rag/`)
+2. **Real infra bug, found and diagnosed, fix in progress**: Supabase's
+   *direct* Postgres hostname
+   (`db.ulgoxbclugsfjvbxjeeq.supabase.co`) resolves **IPv6-only** —
+   verified directly via `socket.getaddrinfo` (no IPv4 record at all).
+   Render's standard web services can't do outbound IPv6, so the
+   `DATABASE_URL` pointed at that hostname can never connect from Render
+   — `psycopg2.OperationalError: ... Network is unreachable`. This is a
+   known Supabase-changed-their-defaults issue, unrelated to any code
+   from this session — local dev has worked all along only because this
+   machine has IPv6/dual-stack connectivity, which Render's environment
+   lacks.
+   - **The fix** (given, not yet confirmed applied): switch `DATABASE_URL`
+     on Render to Supabase's **connection pooler** hostname instead of
+     the direct one — `postgresql://postgres.ulgoxbclugsfjvbxjeeq:<password>@aws-0-<region>.pooler.supabase.com:6543/postgres`
+     (note: username becomes `postgres.<project-ref>`, not just
+     `postgres`; port `6543` = transaction mode, recommended). Get the
+     exact string from Supabase dashboard → Project Settings → Database →
+     Connection pooling, don't hand-construct the region prefix. **Same
+     old placeholder-password bug is a real risk here again** — watch for
+     a stray `]` or an unreplaced `[YOUR-PASSWORD]` token, exactly like
+     the malformed-`DATABASE_URL` bug from earlier in this project's
+     history (§6 #7 in the earlier part of this file).
+   - **Fix confirmed applied and working** — pooler `DATABASE_URL` fixed
+     it. Build succeeded, gunicorn started cleanly (`Booting worker with
+     pid: 67`), service came up.
+3. **Two red herrings on the way to confirming it worked, neither a real
+   bug**: (a) the JSON 404 for bare `/` (Flask's own error handler,
+   proves the server was already up and DB-connected enough to boot —
+   same as every local dev run all session), and (b) trying the literal
+   placeholder text `your-app.onrender.com` instead of the real assigned
+   URL before the actual one (`ddi-rag.onrender.com`) was known.
+
+**Full verification pass completed against the live deployed instance**,
+all green:
+
+| Check | Result |
+|---|---|
+| `/api/health` | `{"status":"ok"}` |
+| `/patient` | renders correctly |
+| `/clinical` | renders correctly |
+| Login (JWT) | `pharmacist@demo.local` authenticated successfully |
+| Database via pooler | `/v1/safety-cases/queue` returned the same 3 cases as local — confirmed same live Supabase DB, connected correctly through the pooler |
+| Drug detection | `/api/query` on "patient is taking warfarin and ibuprofen" → `["ibuprofen","warfarin"]`, 2 separate results — the Aho-Corasick/`init_lookups` fix works in production, not just locally |
+| Cohere | 3 real evidence chunks retrieved |
+| Groq | real grounded FDA-sourced answer text returned |
+
+**Every fix from this session (gunicorn, `init_db()`/`init_lookups()` at
+import time, N+1 batching, drug-detection fix, both portals) is now
+confirmed live and working identically to localhost, against the real
+database, at `https://ddi-rag.onrender.com`.**
+
+### Known follow-ups — not done, deliberately out of scope so far
+- **No rate limiting on `/api/query`** — now that the URL is genuinely
+  public, this is the single most likely way the deployed app breaks
+  itself: repeated hits can burn through Cohere's free-trial cap
+  (1,000 calls/month) in minutes. Flagged repeatedly, never fixed.
+  `Flask-Limiter` is the standard, small addition if/when this becomes a
+  priority.
+- **CORS still wide open** (`CORS(flask_app)`, no origin restriction).
+  Lower risk than it looks — JWT bearer tokens in headers, not cookies,
+  so not CSRF-exploitable the usual way — but still worth tightening.
+- Render's free tier sleeps after 15 min idle — first request after a
+  quiet period will be slow (cold start), not an error.
+- Nothing in §11's original gap list changed — no MFA, no Alembic
+  migrations, no encryption-at-rest management, Phase 6 still not
+  started. Deploying to Render is a hosting change, not a security pass.
+
+---
+
+## 18. New session — guest self-check API, redesigned patient portal, a real
+severity-suppression bug fixed, a live Groq outage found and fixed, and a
+real golden-split RAG eval harness
+
+Fresh chat, no continuity with §1-17's session beyond reading this file.
+User asked for the patient portal to support anonymous use (no login/signup,
+no persistence — patient types their own history each time) with an
+upgraded design, then asked for a bug/gap review, then asked for a "council"
+(multi-agent independent review) on two follow-up questions, then asked to
+run a real eval harness. All of it is covered below in the order it happened.
+
+### New backend: `ddi_rag/routes_public.py` — unauthenticated guest endpoints
+- `POST /api/self-check` — `{medications, allergies}` → runs the real
+  deterministic rule engine (`services/clinical_rules.evaluate_case`) only.
+  No LLM/embedding calls, so it's cheap and safe to be fully public. Capped
+  at `MAX_SELF_CHECK_ITEMS=8` medications/allergies, `MAX_ITEM_LEN=200`
+  chars each (new `config.py` constants) — bounds worst-case cost of an
+  unauthenticated request (sequential RxNorm lookups). No persistence:
+  nothing here ever writes a Patient/Prescription/SafetyCase row.
+- `POST /api/explain` — on-demand plain-language explanation for one
+  finding from a prior self-check. **Re-derives the findings server-side
+  from `{medications, allergies, finding_index}`** rather than trusting
+  client-supplied `clinical_effect`/`severity` fields directly — otherwise
+  a public endpoint would let anyone get a free Groq/Cohere call to
+  "explain" a fabricated finding the rule engine never produced. Covered by
+  `tests/test_public_routes.py::test_explain_rejects_out_of_range_index_instead_of_trusting_client_fields`.
+- Both registered in `app.py` via `flask_app.register_blueprint(public_bp)`.
+- `services/evidence.explain_finding()` gained `audience: "clinician"|"patient"`
+  and `patient_notes: str` params (backward compatible, existing callers
+  unaffected, output-dict shape unchanged — `tests/test_evidence.py`'s
+  exact-key-set assertion still passes). `audience="patient"` uses a
+  separate system prompt: plain language, explicit "not reviewed by a
+  pharmacist" framing, and instructs the model to treat `patient_notes` as
+  unverified background only, never as something that changes the frozen
+  finding.
+
+### Redesigned patient frontend (`static/patient/index.html`)
+Full rebuild via `/frontend-design`-style work: warm "paper record" look
+(Fraunces display serif + Public Sans body, parchment background, amber/
+terracotta accent, distinct violet for "not yet clinically reviewed" so it
+never reads as safe/green). New guest flow: home → checker (two separate
+tag-input lists — "the drug you're checking" vs "what else you're
+currently taking", both feed one combined list to the API but are
+presented with distinct role framing in the results) → results (severity
+badges, auto-fetched plain-language explanations, on-demand FDA-label
+lookup per drug). Existing login/register/dashboard flow kept, reskinned,
+reachable via nav — guest mode is additive, not a replacement.
+
+Real bugs found and fixed during this build:
+1. **`/api/query`'s drug-name detection silently falls back to an
+   unfiltered answer** when the typed name isn't in the indexed evidence
+   corpus (pre-existing, not introduced this session) — was surfacing
+   confusing, unrelated-drug text (e.g. asking about "penicillin" returned
+   ketoconazole/Ninlaro interaction text) instead of saying "not found."
+   Fixed at the new frontend's call site only (checks `detected_drugs`
+   before trusting the answer) — the underlying `/api/query` behavior
+   itself was left alone, out of scope.
+2. Chip "×" remove buttons had **zero padding** — bare 15px glyph as the
+   entire click target. Enlarged to a real 18×18px hit area with explicit
+   `cursor: pointer`. Found via direct DOM measurement after the user
+   reported being unable to click "options below search bars"; several
+   other hypotheses (CSS overlay, native browser autofill dropdown, the
+   organization `<select>`) were tested and ruled out first via
+   `elementFromPoint` hit-testing before landing on this one.
+3. LLM output occasionally contained literal markdown (`**bold**`) that
+   rendered as raw asterisks — added a small `mdLite()` client-side
+   formatter (escape first, then re-introduce `<strong>`/`<p>` — safe,
+   since only the function's own inserted tags are ever real HTML).
+
+### The real gap: DDI severity was being thrown away for every unreviewed rule
+User asked for a bug/gap review. Root cause, confirmed by re-reading
+`evaluate_ddi_pairs()`: for any `ClinicalRule` still `status=DRAFT` — which
+is **all 161,290 of them, zero approved** (§15) — the finding's severity
+was hardcoded to `UNKNOWN`, discarding the rule's real stored severity
+(e.g. DDInter's own "major" rating) entirely. Checking aspirin+warfarin (a
+textbook interaction) surfaced the identical vague "not yet reviewed" as
+checking two unrelated drugs with no data at all.
+
+Fixed, without weakening governance: `evaluate_ddi_pairs()` now also
+carries `patient_factors.reported_severity` (the rule's real stored
+severity) on every DDI finding, DRAFT or APPROVED — **the finding's actual
+`severity` field, `review_status`, and `recommended_action` are completely
+unchanged**, so nothing here lets an unreviewed rule masquerade as
+confirmed. Put in `patient_factors` (existing JSON column) rather than a
+new top-level dict key specifically because `services/professional_workflow.py`'s
+`run_case_analysis()` does `Finding(case_id=case.id, **fd)` directly from
+this dict — a new top-level key would have raised `TypeError` there
+(`Finding` has no matching column) and broken the real clinical
+case-creation pipeline. Caught before it shipped; regression-tested via
+`tests/test_clinical_rules.py::test_draft_finding_dict_constructs_a_real_finding_row`,
+which constructs a real `Finding` ORM row from a DRAFT finding dict and
+asserts it doesn't raise.
+
+`routes_public.py` also gained `patient_guidance` (a patient-facing
+rewrite of `recommended_action`, which is pharmacist-operational language
+— "do not dispense without prescriber confirmation" was previously shown
+to guests verbatim) and `see_a_doctor: bool` (true when confirmed severity
+*or* `reported_severity` is critical/major) — drives an unmissable red
+"see a doctor" banner in the frontend instead of the small muted text it
+had before.
+
+### Council review #1 — should you spend money embedding the full corpus?
+User was considering paying Cohere to embed the full ~930K-chunk/~66,695-
+row openFDA corpus (up from the current ~800 drugs / 10,915 chunks) and
+asked for a multi-agent "council" review plus a broader view from bio
+research (no bio-research plugin was installed at the time — used
+WebSearch instead; the plugin *is* now installed, see §19 note below if a
+future session wants to redo this with it). Three independent agents
+(data-architecture code trace, clinical-literature review, cost/ROI)
+converged:
+- **The spend would not fix anything.** Traced precisely: `/api/self-check`
+  and the whole DDI-finding path never touch embeddings — severity comes
+  100% from `ClinicalRule`, gated on `status=APPROVED` (§ above, 0 approved
+  rows). Embeddings only feed `/api/query`'s single-drug lookup and
+  `/api/explain`'s citation text.
+- **New finding worth acting on, not yet applied**: DDInter 2.0 is itself
+  a peer-reviewed database (*Nucleic Acids Research*,
+  doi:10.1093/nar/gkae726) with severity assigned by its own clinical
+  pharmacist team pre-publication. So labeling DDInter-sourced findings
+  "not yet clinically reviewed" slightly overstates the uncertainty — more
+  accurate would be "reviewed by DDInter's pharmacist team, pending your
+  own care team's local confirmation." **Deliberately not changed this
+  session** — flagged as a safety-copy decision needing explicit sign-off,
+  not something to push through unilaterally.
+- The embedding-scoping work that made the current 800-drug corpus free
+  (matching embeddings to drugs actually referenced by ingested DDI rules)
+  was already done in the §16 session — confirmed still true, still the
+  right call.
+- Verdict from all three: skip/defer the spend; redirect effort toward
+  getting a curated high-confidence subset of DRAFT rules (e.g. DDInter
+  "Major" pairs) approved instead — see the harness/loop discussion below,
+  which follows directly from this.
+
+### Council review #2 — "Harness and Loop Engineering"
+User asked to implement this in the project without defining the term (it
+isn't a single standardized methodology). Two agents grounded it: no exact
+combined phrase found as an established methodology, but both halves are
+real current terms with two plausible readings — agentic (harness =
+scaffolding/guardrails around a model; loop = a system that keeps
+running/deciding beyond one session) vs. eval-engineering (harness =
+automated infra that runs a pipeline against a test set and scores it;
+loop = continuous regression feedback). For a solo dev with a live
+RAG pipeline *and* a deterministic rule engine in a clinical-safety
+context, the eval-engineering reading was judged higher-value, lower-risk.
+
+Codebase audit (grep-confirmed) found: `RuleStatus.APPROVED` is set *only*
+in test fixtures anywhere in the repo — no script/endpoint/CLI in
+production code has ever moved a rule out of DRAFT. Ranked opportunities
+(not yet built, this was a planning/advisory pass only):
+1. DRAFT→APPROVED review harness+loop (LLM-assisted triage, human
+   sign-off required — never auto-approve) — highest value, ~1-2 days.
+2. CI gate for the existing 76-test pytest suite (no `.github/workflows`
+   exist yet; tests already run against a disposable temp-file SQLite DB,
+   no live secrets needed) — a few hours.
+3. Scheduled regression-diffing loop for the eval harness (see below) —
+   a few hours once #2 exists.
+4. Approval→gold-case feedback loop (`tests/eval_fixtures/gold_cases.py`
+   currently synthetic) — trivial once #1 exists.
+Not recommended near-term: reviving `fda_sync.py`'s disabled nightly sync
+— multi-day pgvector rebuild for lower value than #1.
+
+### A real golden-split RAG eval harness — built and run, not just planned
+User pointed out no real golden dataset exists and asked to build one from
+real data via an 80/20 split, then run the live pipeline against the held-
+out 20% — effectively opportunity #3 above, done immediately rather than
+deferred. New: `scripts/run_golden_split_eval.py`.
+
+- **Population**: every drug with BOTH real FDA label text
+  (`data/datasets/clean_ddi_dataset.csv` — the actual openFDA source, 66,695
+  rows but only **2,481 truly distinct drugs** once near-duplicate
+  manufacturer resubmissions are deduped — e.g. gabapentin alone has 382
+  rows) AND real Cohere embeddings already in `evidence_chunks` (800
+  drugs). Loaded via the SAME `data_preprocessing.load_and_clean_data()`
+  used at original ingestion time, so drug-name normalization is
+  guaranteed to match `evidence_chunks.generic_name` exactly — evaluating
+  against unembedded drugs would just restate the known coverage gap, not
+  measure RAG quality.
+- **Split**: `sklearn.train_test_split(test_size=0.2, random_state=42)` by
+  drug → 640 train (unused by anything, exists so this is a real held-out
+  methodology) / 160 test. Deterministic — re-running the script always
+  evaluates the same 160 drugs, so results are comparable run over run,
+  not a fresh random sample each time.
+- **Two faithfulness scores per drug**, both via the existing
+  `services/llm_eval.score_faithfulness()` lexical-overlap heuristic (still
+  v1, still not validated — same caveat as always): `retrieval_faithfulness`
+  (answer vs. what `answer_ddi()` itself retrieved — self-consistency) and
+  new `golden_faithfulness` (answer vs. the drug's real held-out label
+  text, concatenated across all its source rows — accuracy against ground
+  truth the model never saw).
+- Config fix needed to run it at all: `config.DATA_CSV`'s default path was
+  stale (`./data/clean_ddi_dataset.csv`, missing the `datasets/`
+  subdirectory the file actually lives in) — `scripts/ingest_evidence.py`
+  already worked around this by hardcoding the real path; matched that
+  pattern in the new script rather than touching the stale default.
+
+**Result — 160/160 test-split drugs evaluated, zero API errors:**
+
+| | |
+|---|---|
+| avg retrieval_faithfulness | 0.332 |
+| avg golden_faithfulness | 0.340 (median 0.311, σ=0.172) |
+| crag_status distribution | correct: 105 (65.6%), ambiguous:broadened: 55 (34.4%) |
+
+The real finding: **`crag_status` is a validated predictor of real answer
+quality**, not just an internal bookkeeping label — mean
+`golden_faithfulness` for `crag_status=correct` is 0.400 vs. 0.224 for
+`ambiguous:broadened` (roughly 2x). Every one of the worst-aligned drugs
+(secukinumab, omadacycline, porfimer sodium, brodalumab, binimetinib —
+full list in the output) has `crag_status=ambiguous:broadened`. Actionable:
+34% of real queries land in that measurably-worse bucket; worth checking
+whether `_rewrite_query()`'s broadening step is actually helping those
+cases or just papering over genuinely thin corpus coverage for those
+specific drugs. Full per-drug results + exact train/test drug lists:
+`outputs/golden_split_eval_results.json` (committed — the whole point of
+the fixed split is a real baseline other sessions can diff against).
+
+### A live production outage found and fixed as a side effect
+First eval smoke-test run: every single Groq call failed with a 404. Not a
+script bug — **Groq had decommissioned `llama-3.1-8b-instant`** (the
+model this whole project was built against) from their catalog entirely
+at some point since it was last verified working earlier in this same
+conversation. Confirmed live via `GET https://api.groq.com/openai/v1/models`
+— gone, replaced by an entirely different lineup (`openai/gpt-oss-20b`,
+`openai/gpt-oss-120b`, `qwen/qwen3.6-27b`, `groq/compound`, and some
+narrower audio/classifier models). **This means the live deployed app's
+LLM generation (explanations, `/api/query` answers) has been silently
+broken in production**, not just in this eval script.
+
+Fixed:
+- `config.py`: `GROQ_MODEL` default → `openai/gpt-oss-20b` (verified
+  live, currently active).
+- Local `.env`: updated to match (it explicitly set the old model name,
+  so the code-default change alone wouldn't have fixed local runs).
+- **`services/rag_pipeline.py`'s `_call_groq_api()`: added
+  `"reasoning_effort": "low"` to the payload.** Without this,
+  `openai/gpt-oss-20b` (a reasoning model) can spend its entire
+  `max_tokens` budget on an internal chain-of-thought field and return an
+  **empty `content` string with `finish_reason="length"` and no error at
+  all** — confirmed reproducing this live at `max_tokens=20`. The
+  smallest real `max_tokens` value used anywhere in this codebase is 80
+  (`_rewrite_query`) — verified working correctly with `reasoning_effort:
+  "low"` before treating the fix as sufficient.
+- All 76 tests still pass; no test asserts the exact Groq payload shape,
+  so the new key didn't break anything.
+
+**Still needs action from you**: `GROQ_MODEL` must also be updated on
+Render's dashboard (Environment tab) to `openai/gpt-oss-20b` — the local
+`.env` fix and the code default only cover local runs and any Render
+deploy that was relying on the code default rather than an explicit
+override. If Render has an explicit `GROQ_MODEL` env var set to the old
+name, it will keep 404ing until you change it there directly — I have no
+access to Render's dashboard from here.
+
+### What's committed vs. not, end of this session
+Everything in this section (§18) — routes_public.py, the patient portal
+redesign, the clinical_rules.py/evidence.py/rag_pipeline.py/config.py
+fixes, the new tests, the golden-split eval script and its results — was
+built, tested, and run live against the real database/Groq/Cohere this
+session, then committed and pushed in one commit at the user's explicit
+request at the end of the session. Check `git log --oneline -5` for the
+actual commit rather than assuming from this doc if time has passed.
+
+### Open items carried forward, unchanged
+- The escalation-routing bug (§6 #11, §11, §13) — still unfixed, still
+  needs a decision. Not touched this session.
+- DDInter-provenance wording change (see Council #1 above) — proposed,
+  not applied, needs your sign-off.
+- Rate limiting on `/api/query` **and now also `/api/self-check` /
+  `/api/explain`** — still not implemented. The new guest endpoints are
+  bounded per-request (item-count caps) but there's still no per-IP
+  throttle; a public self-check endpoint is a real new surface for
+  quota-burning abuse that didn't exist before this session.
+- Groq/Cohere/JWT secrets from the original leak incident (§6) — still
+  not confirmed rotated as far as this session knows.
+- Full clinical rule review/approval (161,290 DRAFT rows, 0 approved) —
+  the single biggest lever on real answer quality per both council
+  reviews this session. Nothing built for it yet beyond the plan in
+  Council #2 above.

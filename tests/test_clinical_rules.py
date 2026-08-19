@@ -69,6 +69,7 @@ def test_ddi_pair_lookup_is_order_independent(session):
 
     assert len(forward) == 1 == len(backward)
     assert forward[0]["severity"] == backward[0]["severity"] == Severity.MAJOR
+    assert forward[0]["patient_factors"]["reported_severity"] == "major"
 
 
 def test_draft_rule_produces_unknown_pending_finding_not_a_cleared_pair(session):
@@ -86,6 +87,35 @@ def test_draft_rule_produces_unknown_pending_finding_not_a_cleared_pair(session)
     assert findings[0]["type"] == FindingType.UNKNOWN
     assert findings[0]["review_status"] == ReviewStatus.PENDING
     assert "clinical_review" in findings[0]["missing_factors"]
+    # The finding's own severity stays UNKNOWN (no reviewer has confirmed
+    # this rule), but the source dataset's real severity rating must still
+    # be reachable — otherwise every unreviewed interaction looks identical
+    # regardless of how well-documented the underlying data actually is.
+    assert findings[0]["severity"] == Severity.UNKNOWN
+    assert findings[0]["patient_factors"]["reported_severity"] == "unknown"
+
+
+def test_draft_finding_dict_constructs_a_real_finding_row(session):
+    """reported_severity lives inside patient_factors (a JSON column), not
+    as a top-level dict key — this is what makes that safe: professional_workflow.py's
+    run_case_analysis() does `Finding(case_id=case.id, **fd)` directly from
+    this dict, and Finding has no reported_severity column. A top-level key
+    would raise TypeError there; patient_factors already accepts arbitrary
+    JSON so this must not."""
+    from models import Finding
+
+    session.add(ClinicalRule(
+        rule_type=FindingType.DDI, pair_key="drugp||drugq",
+        ingredient_a="drugp", ingredient_b="drugq",
+        clinical_effect="candidate interaction", severity=Severity.CRITICAL,
+        status=RuleStatus.DRAFT, rule_version="v1-draft-unreviewed",
+    ))
+    session.flush()
+
+    fd = evaluate_ddi_pairs(session, ["drugp", "drugq"])[0]
+    finding = Finding(case_id="fake-case-id", **fd)  # must not raise TypeError
+    assert finding.patient_factors["reported_severity"] == "critical"
+    assert finding.severity == Severity.UNKNOWN
 
 
 def test_no_matching_rule_produces_no_finding(session):

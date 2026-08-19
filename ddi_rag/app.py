@@ -8,6 +8,11 @@ Endpoints:
     POST /api/query           — { prescription: str, top_k?: int }
                                  -> { detected_drugs: list, results: list }
                                  (JWT optional — works for anonymous callers too)
+    POST /api/self-check      — routes_public.py: unauthenticated guest
+                                 medication check, deterministic rule engine,
+                                 no persistence (see that module's docstring)
+    POST /api/explain         — routes_public.py: on-demand plain-language
+                                 explanation for one /api/self-check finding
 
 This API intentionally does not expose a pharmacy-finder or general-chatbot
 endpoint — this app answers drug-interaction queries only. (Pharmacy lookup
@@ -47,6 +52,7 @@ from services.professional_workflow import (
     pharmacist_queue, record_prescriber_response,
 )
 from routes_clinical import clinical_bp
+from routes_public import public_bp
 
 log = logging.getLogger("ddi.app")
 
@@ -54,6 +60,7 @@ flask_app = Flask("ddi")
 CORS(flask_app)
 configure_jwt(flask_app)
 flask_app.register_blueprint(clinical_bp)
+flask_app.register_blueprint(public_bp)
 
 # Runs at import time, not just under `python app.py` — a production WSGI
 # server (gunicorn) imports this module directly and never executes the

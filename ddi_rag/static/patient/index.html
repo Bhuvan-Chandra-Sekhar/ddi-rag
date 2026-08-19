@@ -3,41 +3,83 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MedTrust Connect — Your medications</title>
+<title>MedTrust Connect — Check your medications</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   :root {
-    --primary: #00355F;
-    --primary-container: #0F4C81;
-    --primary-fixed-dim: #A0C9FF;
-    --secondary: #006C50;
-    --secondary-container: #93F2CD;
-    --background: #F9F9FF;
-    --surface: #FFFFFF;
-    --error: #BA1A1A;
-    --border: #E2E8F0;
-    --safe: #1B8A5A;
-    --caution: #B7791F;
-    --warning: #C2410C;
+    --paper:        #F5EFE1;
+    --paper-raised: #FFFCF4;
+    --ink:          #17262A;
+    --ink-soft:     #52625F;
+    --ink-faint:    #8B968E;
+    --primary:      #163A34;
+    --primary-tint: #1F4E45;
+    --accent:       #BE6A2C;
+    --accent-tint:  #EFDCBE;
+    --line:         #DFD4B8;
+    --line-soft:    #EAE1CB;
+    --critical:     #97281F;
+    --major:        #B15A1E;
+    --caution:      #9A7517;
+    --informational:#3C5A63;
+    --unknown:      #5C4A85;
+    --safe:         #2E6E4E;
   }
   * { font-family: 'Public Sans', sans-serif; }
-  .font-label { font-family: 'Manrope', sans-serif; }
-  body { background: var(--background); }
-  .card-shadow { box-shadow: 0px 4px 12px rgba(15, 76, 129, 0.08); }
-  .reveal { opacity: 0; transform: translateY(10px); animation: reveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  .font-display { font-family: 'Fraunces', serif; font-optical-sizing: auto; }
+  body { background: var(--paper); color: var(--ink); }
+  .paper-grain {
+    position: relative;
+  }
+  .paper-grain::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.5; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.025 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .card { background: var(--paper-raised); border: 1px solid var(--line); }
+  .card-shadow { box-shadow: 0 1px 2px rgba(23,38,42,0.04), 0 8px 24px rgba(23,38,42,0.06); }
+  .reveal { opacity: 0; transform: translateY(12px); animation: reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
-  .pulse-dot { animation: pulse 2.2s ease-in-out infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
-  .field { transition: border-color 0.15s ease, box-shadow 0.15s ease; }
-  .field:focus { outline: none; border-color: var(--primary-container); box-shadow: 0 0 0 3px rgba(15,76,129,0.12); }
-  .btn-primary { background: var(--primary); transition: background 0.15s ease, transform 0.1s ease; }
-  .btn-primary:hover { background: var(--primary-container); }
-  .btn-primary:active { transform: scale(0.98); }
-  .btn-primary:disabled { background: #9CA9B8; cursor: not-allowed; }
-  ::selection { background: var(--secondary-container); }
+  .pulse-dot { animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+  .field { transition: border-color 0.15s ease, box-shadow 0.15s ease; background: var(--paper-raised); }
+  .field:focus { outline: none; border-color: var(--primary-tint); box-shadow: 0 0 0 3px rgba(22,58,52,0.10); }
+  .btn-primary { background: var(--primary); transition: background 0.15s ease, transform 0.08s ease; }
+  .btn-primary:hover { background: var(--primary-tint); }
+  .btn-primary:active { transform: scale(0.985); }
+  .btn-primary:disabled { background: #A9A093; cursor: not-allowed; }
+  .btn-accent { background: var(--accent); transition: background 0.15s ease, transform 0.08s ease; }
+  .btn-accent:hover { background: #A85C25; }
+  .btn-accent:active { transform: scale(0.985); }
+  .btn-accent:disabled { background: #C9B79B; cursor: not-allowed; }
+  .chip { background: var(--accent-tint); color: #6B3E14; border: 1px solid #E0BE8E; }
+  /* The visible × glyph is small — the button's actual hit area is padded
+     out to a real touch/click target (WCAG 2.5.5 recommends 24x24px min)
+     well beyond the glyph itself, so clicking near it (not just exactly on
+     the character) reliably registers. */
+  .chip-remove {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 18px; height: 18px; margin: -2px -4px -2px 0;
+    border-radius: 999px; cursor: pointer; transition: background 0.12s ease, opacity 0.12s ease;
+  }
+  .chip-remove:hover { opacity: 0.7; background: rgba(0,0,0,0.08); }
+  .underline-link { text-underline-offset: 3px; text-decoration-color: var(--line); }
+  .underline-link:hover { text-decoration-color: currentColor; }
+  ::selection { background: var(--accent-tint); }
+  .scan-track { position: relative; overflow: hidden; }
+  .scan-bar {
+    position: absolute; top: 0; left: -30%; width: 30%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(190,106,44,0.35), transparent);
+    animation: scan 1.6s ease-in-out infinite;
+  }
+  @keyframes scan { 0% { left: -30%; } 100% { left: 100%; } }
+  .fade-in { animation: fadeIn 0.35s ease forwards; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .spinner { border: 2px solid rgba(22,58,52,0.15); border-top-color: var(--primary); border-radius: 999px; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  textarea.field { resize: vertical; }
 </style>
 </head>
 <body class="min-h-screen">
@@ -47,7 +89,20 @@
 <script>
 const API = window.location.origin;
 const $ = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
 const app = $('#app');
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// The LLM-generated explanation text sometimes comes back with markdown
+// (**bold**, blank-line paragraphs) even though nothing renders it — this
+// turns that into real HTML instead of showing literal asterisks. Input is
+// escaped first, so only the tags this function inserts itself are real.
+function mdLite(raw) {
+  const bolded = esc(raw).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  const paras = bolded.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+  if (paras.length > 1) return paras.map(p => `<p class="mb-2.5 last:mb-0">${p.replace(/\n/g, '<br/>')}</p>`).join('');
+  return bolded.replace(/\n/g, '<br/>');
+}
 
 function token() { return sessionStorage.getItem('medtrust_token'); }
 function setToken(t) { t ? sessionStorage.setItem('medtrust_token', t) : sessionStorage.removeItem('medtrust_token'); }
@@ -63,44 +118,507 @@ async function api(path, opts = {}) {
   return data;
 }
 
-const STATE_META = {
-  draft:                        { label: 'Getting started',        badge: 'bg-slate-100 text-slate-700',   dot: 'bg-slate-400' },
-  awaiting_analysis:             { label: 'Reviewing your prescription', badge: 'bg-slate-100 text-slate-700', dot: 'bg-slate-400' },
-  awaiting_pharmacist_review:    { label: 'Your pharmacist is reviewing this', badge: 'bg-blue-50 text-blue-800', dot: 'bg-blue-500' },
-  awaiting_prescriber_response:  { label: 'Checking with your prescriber', badge: 'bg-amber-50 text-amber-800', dot: 'bg-amber-500' },
-  escalated:                     { label: 'Under urgent review',    badge: 'bg-red-50 text-red-800',        dot: 'bg-red-500' },
-  ready_to_dispense:             { label: 'Reviewed and ready',     badge: 'bg-emerald-50 text-emerald-800', dot: 'bg-emerald-500' },
-  held_or_cancelled:             { label: 'On hold — contact your pharmacy', badge: 'bg-red-50 text-red-800', dot: 'bg-red-500' },
-  closed:                        { label: 'Complete',               badge: 'bg-emerald-50 text-emerald-800', dot: 'bg-emerald-500' },
-};
+// ── Shared shell / nav ───────────────────────────────────────────────────────
 
-function renderAuth() {
+function shell(active, bodyHtml, { tight = false } = {}) {
+  const user = getUser();
   app.innerHTML = `
-    <div class="min-h-screen flex flex-col lg:flex-row">
-      <div class="lg:w-[42%] px-8 py-14 lg:px-16 lg:py-20 flex flex-col justify-between" style="background: var(--primary);">
-        <div>
-          <div class="flex items-center gap-2 mb-1">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 pulse-dot"></span>
-            <span class="font-label text-[11px] tracking-[0.14em] uppercase text-blue-200">System online</span>
-          </div>
-          <h1 class="text-white text-4xl lg:text-5xl font-semibold leading-tight mt-6">MedTrust<br/><span style="color:var(--primary-fixed-dim)">Connect</span></h1>
-          <p class="font-label text-blue-100 text-sm mt-4 max-w-xs leading-relaxed">A closer look at what's in your medication list, reviewed by a licensed pharmacist before anything reaches you.</p>
+    <div class="min-h-screen flex flex-col">
+      <header class="border-b" style="border-color: var(--line); background: var(--paper);">
+        <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+          <button data-nav="home" class="flex items-center gap-2 group">
+            <span class="w-2 h-2 rounded-full" style="background: var(--accent);"></span>
+            <span class="font-display text-[17px] font-semibold tracking-tight" style="color: var(--primary);">MedTrust <span style="color: var(--accent);">Connect</span></span>
+          </button>
+          <nav class="flex items-center gap-1 text-[13px] font-medium">
+            <button data-nav="check" class="px-3 py-1.5 rounded-full transition-colors ${active==='check' ? 'text-white' : ''}" style="${active==='check' ? `background: var(--primary);` : `color: var(--ink-soft);`}">Quick check</button>
+            ${user ? `
+              <button data-nav="dashboard" class="px-3 py-1.5 rounded-full transition-colors ${active==='dashboard' ? 'text-white' : ''}" style="${active==='dashboard' ? `background: var(--primary);` : `color: var(--ink-soft);`}">My prescriptions</button>
+              <button data-nav="signout" class="ml-2 px-3 py-1.5 rounded-full border text-[12.5px]" style="border-color: var(--line); color: var(--ink-soft);">Sign out</button>
+            ` : `
+              <button data-nav="signin" class="ml-2 px-3.5 py-1.5 rounded-full border text-[12.5px] font-semibold" style="border-color: var(--primary); color: var(--primary);">Sign in</button>
+            `}
+          </nav>
         </div>
-        <p class="font-label text-blue-300 text-[11px] max-w-xs leading-relaxed">This is a support tool, not a diagnosis. Always follow your care team's direction.</p>
+      </header>
+      <main class="flex-1 w-full ${tight ? 'max-w-3xl' : 'max-w-3xl'} mx-auto px-6 py-10">${bodyHtml}</main>
+      <footer class="border-t py-6" style="border-color: var(--line);">
+        <p class="max-w-3xl mx-auto px-6 text-[11.5px] leading-relaxed" style="color: var(--ink-faint);">
+          MedTrust Connect is a support tool, not a diagnosis. Quick-check results are informational only,
+          generated from FDA label data and a deterministic rule engine — they have <strong>not</strong> been
+          reviewed by a licensed pharmacist. Always follow your care team's direction, and call emergency
+          services for anything urgent.
+        </p>
+      </footer>
+    </div>
+  `;
+  $('header').addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-nav]');
+    if (!btn) return;
+    const target = btn.dataset.nav;
+    if (target === 'home') renderHome();
+    else if (target === 'check') renderChecker();
+    else if (target === 'dashboard') renderDashboard();
+    else if (target === 'signin') renderAuth();
+    else if (target === 'signout') { setToken(null); setUser(null); renderHome(); }
+  });
+}
+
+// ── Home / landing ───────────────────────────────────────────────────────────
+
+function renderHome() {
+  const user = getUser();
+  shell('home', `
+    <div class="reveal">
+      <p class="font-label text-[11px] uppercase tracking-[0.16em] mb-4" style="color: var(--accent);">Medication safety, in plain language</p>
+      <h1 class="font-display text-[40px] sm:text-[52px] leading-[1.05] font-semibold mb-5" style="color: var(--primary);">
+        Know what's in<br/>your medicine cabinet.
+      </h1>
+      <p class="text-[15.5px] leading-relaxed max-w-lg mb-9" style="color: var(--ink-soft);">
+        Type in what you're taking — no account needed — and see what our FDA-grounded
+        interaction checker finds. If you already have prescriptions on file with a
+        care team, sign in to see what your pharmacist has reviewed.
+      </p>
+      <div class="flex flex-wrap gap-3 mb-14">
+        <button id="cta-check" class="btn-accent text-white font-semibold text-[14.5px] px-6 py-3 rounded-full">Check my medications →</button>
+        ${user
+          ? `<button data-nav="dashboard" class="text-[14.5px] font-semibold px-6 py-3 rounded-full border" style="border-color: var(--line); color: var(--primary);">Go to my prescriptions</button>`
+          : `<button data-nav="signin" class="text-[14.5px] font-semibold px-6 py-3 rounded-full border" style="border-color: var(--line); color: var(--primary);">Sign in instead</button>`}
       </div>
 
-      <div class="flex-1 flex items-center justify-center px-6 py-14 lg:py-0">
-        <div class="w-full max-w-sm reveal">
-          <div class="flex gap-1 p-1 rounded-lg bg-slate-100 mb-8 font-label text-sm font-medium">
-            <button id="tab-login" class="flex-1 py-2 rounded-md transition-colors">Sign in</button>
-            <button id="tab-register" class="flex-1 py-2 rounded-md transition-colors">Create account</button>
-          </div>
-          <div id="auth-forms"></div>
-          <p id="auth-error" class="text-sm mt-4 hidden" style="color: var(--error);"></p>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="card card-shadow rounded-2xl p-5">
+          <p class="font-display text-[22px] mb-1" style="color: var(--accent);">01</p>
+          <p class="text-[13.5px] font-semibold mb-1">No sign-up required</p>
+          <p class="text-[12.5px] leading-relaxed" style="color: var(--ink-soft);">Type your medications and go — nothing is saved to an account, so nothing about you has to be.</p>
+        </div>
+        <div class="card card-shadow rounded-2xl p-5">
+          <p class="font-display text-[22px] mb-1" style="color: var(--accent);">02</p>
+          <p class="text-[13.5px] font-semibold mb-1">You bring the history</p>
+          <p class="text-[12.5px] leading-relaxed" style="color: var(--ink-soft);">Since nothing's stored between visits, just type any allergies or past reactions in each time — takes a few seconds.</p>
+        </div>
+        <div class="card card-shadow rounded-2xl p-5">
+          <p class="font-display text-[22px] mb-1" style="color: var(--accent);">03</p>
+          <p class="text-[13.5px] font-semibold mb-1">Honest about limits</p>
+          <p class="text-[12.5px] leading-relaxed" style="color: var(--ink-soft);">Unreviewed findings are always labeled as such — we never call something safe just because we don't know.</p>
         </div>
       </div>
     </div>
+  `);
+  $('#cta-check').addEventListener('click', renderChecker);
+}
+
+// ── Guest self-checker ────────────────────────────────────────────────────────
+
+// "checking" (the new drug/prescription) and "current" (what they already
+// take) are kept as separate lists purely for how the form and results are
+// framed — both get combined into one list for /api/self-check, since the
+// rule engine checks every pair regardless of which side of the form a
+// name came from. Splitting them is what lets the results read as "your
+// new drug X may interact with your current Y" instead of one flat list.
+const _draft = { checking: [], current: [], allergies: [], notes: '' };
+
+function tagInputHtml(id, label, placeholder, items) {
+  return `
+    <div>
+      <label class="font-label text-[12.5px] font-semibold block mb-2" style="color: var(--ink);">${label}</label>
+      <div class="flex gap-2 mb-2">
+        <input id="${id}-input" type="text" autocomplete="off" placeholder="${placeholder}" class="field flex-1 border rounded-lg px-3.5 py-2.5 text-[13.5px]" style="border-color: var(--line);" />
+        <button id="${id}-add" type="button" class="px-4 rounded-lg border text-[13px] font-semibold" style="border-color: var(--line); color: var(--primary);">Add</button>
+      </div>
+      <div id="${id}-chips" class="flex flex-wrap gap-2 min-h-[2px]">
+        ${items.map((v, i) => `<span class="chip inline-flex items-center gap-1.5 text-[12.5px] font-medium pl-3 pr-2 py-1 rounded-full">${esc(v)}<button type="button" data-remove="${i}" class="chip-remove text-[15px] leading-none">×</button></span>`).join('')}
+      </div>
+    </div>
   `;
+}
+
+// The backend caps the *combined* medications list at 8 (MAX_SELF_CHECK_ITEMS
+// in config.py) regardless of how the form splits it into two fields — this
+// mirrors that cap client-side so entries never silently vanish on submit.
+const MAX_MEDS_TOTAL = 8;
+
+function wireTagInput(id, list, rerender, canAdd = () => list.length < MAX_MEDS_TOTAL) {
+  const input = $(`#${id}-input`);
+  const addBtn = $(`#${id}-add`);
+  const commit = () => {
+    const v = input.value.trim();
+    if (v && canAdd()) { list.push(v); input.value = ''; rerender(); }
+  };
+  addBtn.addEventListener('click', commit);
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); commit(); }
+  });
+  $(`#${id}-chips`).addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-remove]');
+    if (!btn) return;
+    list.splice(Number(btn.dataset.remove), 1);
+    rerender();
+  });
+}
+
+function renderChecker() {
+  shell('check', `
+    <div class="reveal">
+      <p class="font-label text-[11px] uppercase tracking-[0.16em] mb-3" style="color: var(--accent);">Quick check · no account needed</p>
+      <h1 class="font-display text-[32px] font-semibold mb-2" style="color: var(--primary);">What are you checking?</h1>
+      <p class="text-[14px] mb-8" style="color: var(--ink-soft); max-width: 34rem;">
+        Tell us the drug or prescription you want checked, and what else you're already
+        taking. Nothing here is sent to a care team or saved to an account — it stays in
+        this browser tab, and disappears when you leave.
+      </p>
+
+      <form id="checker-form" class="card card-shadow rounded-2xl p-6 sm:p-8 space-y-7">
+        <div id="checking-field"></div>
+        <div id="current-field"></div>
+        <div id="allergy-field"></div>
+        <div>
+          <label class="font-label text-[12.5px] font-semibold block mb-2">Anything else about your history you'd like to mention? <span class="font-normal" style="color: var(--ink-faint);">(optional)</span></label>
+          <textarea id="notes-input" rows="3" maxlength="600" placeholder="Past reactions, other conditions, how you're feeling — anything that might matter here. This isn't saved anywhere; it's just used to help explain your results." class="field w-full border rounded-lg px-3.5 py-2.5 text-[13.5px]" style="border-color: var(--line);"></textarea>
+        </div>
+
+        <div id="checker-error" class="hidden text-[13px] font-medium" style="color: var(--critical);"></div>
+
+        <div class="flex items-center justify-between pt-1">
+          <p class="text-[11.5px] max-w-xs leading-relaxed" style="color: var(--ink-faint);">Not reviewed by a pharmacist. Not a substitute for professional medical advice.</p>
+          <button id="checker-submit" type="submit" class="btn-accent text-white font-semibold text-[14px] px-6 py-3 rounded-full whitespace-nowrap">Check now →</button>
+        </div>
+      </form>
+    </div>
+  `);
+
+  const totalMedsCanAdd = () => _draft.checking.length + _draft.current.length < MAX_MEDS_TOTAL;
+  function rerenderChecking() { $('#checking-field').innerHTML = tagInputHtml('checking', 'The drug or prescription you want checked', 'e.g. the new prescription you just got', _draft.checking); wireTagInput('checking', _draft.checking, rerenderChecking, totalMedsCanAdd); }
+  function rerenderCurrent() { $('#current-field').innerHTML = tagInputHtml('current', "What else are you currently taking? — your history", 'e.g. warfarin', _draft.current); wireTagInput('current', _draft.current, rerenderCurrent, totalMedsCanAdd); }
+  function rerenderAllergies() { $('#allergy-field').innerHTML = tagInputHtml('allergy', 'Any known allergies or past bad reactions?', 'e.g. penicillin', _draft.allergies); wireTagInput('allergy', _draft.allergies, rerenderAllergies); }
+  rerenderChecking();
+  rerenderCurrent();
+  rerenderAllergies();
+  $('#notes-input').value = _draft.notes;
+  $('#notes-input').addEventListener('input', (e) => { _draft.notes = e.target.value; });
+
+  $('#checker-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    // Commit any text still sitting in the tag inputs that the user didn't press Enter/Add on.
+    const checkingLeft = $('#checking-input').value.trim();
+    if (checkingLeft && _draft.checking.length + _draft.current.length < MAX_MEDS_TOTAL) _draft.checking.push(checkingLeft);
+    const currentLeft = $('#current-input').value.trim();
+    if (currentLeft && _draft.checking.length + _draft.current.length < MAX_MEDS_TOTAL) _draft.current.push(currentLeft);
+    const allergyLeft = $('#allergy-input').value.trim();
+    if (allergyLeft && _draft.allergies.length < MAX_MEDS_TOTAL) _draft.allergies.push(allergyLeft);
+
+    const errorEl = $('#checker-error');
+    if (!_draft.checking.length && !_draft.current.length) {
+      errorEl.textContent = 'Add at least one drug to check.';
+      errorEl.classList.remove('hidden');
+      return;
+    }
+    errorEl.classList.add('hidden');
+    runCheck();
+  });
+}
+
+async function runCheck() {
+  shell('check', `
+    <div class="reveal max-w-lg mx-auto text-center py-16">
+      <div class="scan-track card card-shadow rounded-2xl p-10 mb-6">
+        <div class="scan-bar"></div>
+        <p class="font-display text-[22px] mb-2" style="color: var(--primary);">Reading the evidence</p>
+        <p id="scan-status" class="text-[13px]" style="color: var(--ink-soft);">Resolving medication identities…</p>
+      </div>
+      <p class="text-[12px]" style="color: var(--ink-faint);">This runs the same deterministic rule engine your pharmacist's console uses.</p>
+    </div>
+  `);
+  const phrases = ['Resolving medication identities…', 'Cross-referencing known interactions…', 'Checking allergy conflicts…', 'Compiling your report…'];
+  let i = 0;
+  const statusTimer = setInterval(() => {
+    i = (i + 1) % phrases.length;
+    const el = $('#scan-status');
+    if (el) el.textContent = phrases[i];
+  }, 1100);
+
+  // "checking" drugs first, then "current" — resolved_medications comes
+  // back in the same order, so renderResults() can slice it by count to
+  // label which chip is which without any backend change.
+  const medications = [..._draft.checking, ..._draft.current];
+  try {
+    const data = await api('/api/self-check', {
+      method: 'POST',
+      body: JSON.stringify({ medications, allergies: _draft.allergies }),
+    });
+    clearInterval(statusTimer);
+    renderResults(data, _draft.checking.length);
+  } catch (err) {
+    clearInterval(statusTimer);
+    renderChecker();
+    setTimeout(() => {
+      const errorEl = $('#checker-error');
+      if (errorEl) { errorEl.textContent = err.message; errorEl.classList.remove('hidden'); }
+    }, 0);
+  }
+}
+
+// ── Results ───────────────────────────────────────────────────────────────────
+
+const SEVERITY_META = {
+  critical:      { label: 'Critical',              color: 'var(--critical)',      bg: '#F6E4E1' },
+  major:         { label: 'Major',                 color: 'var(--major)',         bg: '#F8E9DC' },
+  caution:       { label: 'Caution',                color: 'var(--caution)',       bg: '#F5EDD6' },
+  informational: { label: 'Informational',          color: 'var(--informational)', bg: '#E3EBEC' },
+  unknown:       { label: 'Not yet clinically reviewed', color: 'var(--unknown)',  bg: '#E9E3F3' },
+};
+
+const SEVERITY_RANK = { critical: 4, major: 3, unknown: 2, caution: 1, informational: 0 };
+// How urgently a finding deserves attention — takes the higher of its
+// confirmed severity and its (unreviewed) reported_severity, so a
+// well-documented-but-unapproved MAJOR interaction still sorts and reads
+// as important instead of blending in with a truly informational one.
+const findingUrgency = (f) => Math.max(SEVERITY_RANK[f.severity] ?? 0, SEVERITY_RANK[f.reported_severity] ?? 0);
+
+function findingTitle(f) {
+  const factors = f.patient_factors || {};
+  if (f.type === 'allergy') return `Matches a known allergy — ${factors.ingredient || ''}`;
+  if (f.type === 'duplicate') return `Duplicate ingredient — ${factors.ingredient || ''} appears ${factors.occurrence_count || 2}×`;
+  if (f.type === 'ddi') return `Interaction: ${factors.ingredient_a || '?'} + ${factors.ingredient_b || '?'}`;
+  if (f.type === 'unknown') return `Unreviewed pairing: ${factors.ingredient_a || '?'} + ${factors.ingredient_b || '?'}`;
+  return 'Finding';
+}
+
+function overallBanner(overallSeverity, seeADoctor) {
+  if (seeADoctor) {
+    return `
+      <div class="card card-shadow rounded-2xl p-6 flex items-start gap-4" style="border-left: 4px solid var(--critical); background: #FBF1EF;">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background: #F6E4E1;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3.5 L22 20.5 L2 20.5 Z" stroke="var(--critical)" stroke-width="2" stroke-linejoin="round"/><path d="M12 9.5 V14.5" stroke="var(--critical)" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1.1" fill="var(--critical)"/></svg>
+        </div>
+        <div>
+          <p class="font-display text-[19px] font-semibold mb-1" style="color: var(--critical);">Please talk to a doctor or pharmacist before taking these together</p>
+          <p class="text-[13px] leading-relaxed" style="color: var(--ink-soft);">Something below looks serious enough to check first — see which finding triggered this and why in the details below.</p>
+        </div>
+      </div>`;
+  }
+  if (!overallSeverity) {
+    return `
+      <div class="card card-shadow rounded-2xl p-6 flex items-start gap-4" style="border-left: 4px solid var(--safe);">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background: #E1EFE7;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 L9.5 17 L19 7" stroke="var(--safe)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <p class="font-display text-[19px] font-semibold mb-1">Nothing flagged in our data</p>
+          <p class="text-[13px] leading-relaxed" style="color: var(--ink-soft);">No duplicate ingredients, recorded allergy conflicts, or known interaction rules matched what you entered. That's reassuring, but it isn't a guarantee — it only reflects what's in this dataset, and no pharmacist has reviewed it.</p>
+        </div>
+      </div>`;
+  }
+  const meta = SEVERITY_META[overallSeverity] || SEVERITY_META.unknown;
+  return `
+    <div class="card card-shadow rounded-2xl p-6 flex items-start gap-4" style="border-left: 4px solid ${meta.color};">
+      <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background: ${meta.bg};">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3.5 L22 20.5 L2 20.5 Z" stroke="${meta.color}" stroke-width="2" stroke-linejoin="round"/><path d="M12 9.5 V14.5" stroke="${meta.color}" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1.1" fill="${meta.color}"/></svg>
+      </div>
+      <div>
+        <p class="font-display text-[19px] font-semibold mb-1">We found something to review — highest priority: <span style="color: ${meta.color};">${meta.label}</span></p>
+        <p class="text-[13px] leading-relaxed" style="color: var(--ink-soft);">See the findings below. None of this has been confirmed by a pharmacist — treat anything above "Informational" as worth a real conversation with one, especially "Critical" or "Major".</p>
+      </div>
+    </div>`;
+}
+
+function medChipsHtml(meds, offset) {
+  return meds.map((m, i) => `
+    <button data-drug-info="${offset + i}" class="chip inline-flex items-center gap-1.5 text-[12.5px] font-medium pl-3 pr-3 py-1.5 rounded-full">
+      ${esc(m.input)}
+      ${!m.identity_confirmed ? `<span title="Matched approximately — for best results use the name printed on the label" style="color: #A85C25;">·approx</span>` : ''}
+    </button>
+  `).join('');
+}
+
+function renderResults(data, checkingCount) {
+  const { resolved_medications = [], findings: rawFindings = [], overall_severity, see_a_doctor } = data;
+  const checkingMeds = resolved_medications.slice(0, checkingCount);
+  const currentMeds = resolved_medications.slice(checkingCount);
+  const inputsSnapshot = {
+    medications: [..._draft.checking, ..._draft.current],
+    allergies: [..._draft.allergies], notes: _draft.notes,
+  };
+  // Most urgent first — the on-demand explanations auto-fetch in this
+  // order too, so the thing most worth reading loads first.
+  const findings = [...rawFindings].sort((a, b) => findingUrgency(b) - findingUrgency(a));
+
+  shell('check', `
+    <div class="reveal space-y-6">
+      <div class="flex items-center justify-between">
+        <p class="font-label text-[11px] uppercase tracking-[0.16em]" style="color: var(--accent);">Your results</p>
+        <button id="new-check" class="text-[12.5px] font-semibold underline underline-link" style="color: var(--ink-soft);">Start a new check</button>
+      </div>
+
+      ${overallBanner(overall_severity, see_a_doctor)}
+
+      ${checkingMeds.length ? `
+      <div>
+        <p class="text-[12px] font-semibold uppercase tracking-wide mb-2.5" style="color: var(--ink-faint);">You're checking</p>
+        <div class="flex flex-wrap gap-2">${medChipsHtml(checkingMeds, 0)}</div>
+      </div>` : ''}
+
+      ${currentMeds.length ? `
+      <div>
+        <p class="text-[12px] font-semibold uppercase tracking-wide mb-2.5" style="color: var(--ink-faint);">Against what you're already taking</p>
+        <div class="flex flex-wrap gap-2">${medChipsHtml(currentMeds, checkingCount)}</div>
+      </div>` : ''}
+      <div id="drug-info-panel"></div>
+
+      <div>
+        <p class="text-[12px] font-semibold uppercase tracking-wide mb-2.5" style="color: var(--ink-faint);">Findings ${findings.length ? `(${findings.length})` : ''}</p>
+        <div id="findings-list" class="space-y-3">
+          ${findings.length ? findings.map((f, i) => findingCard(f, i < AUTO_EXPLAIN_LIMIT)).join('') : `
+            <div class="card rounded-2xl p-6 text-center" style="border-style: dashed;">
+              <p class="text-[13px]" style="color: var(--ink-soft);">No findings to show.</p>
+            </div>`}
+        </div>
+      </div>
+    </div>
+  `);
+
+  $('#new-check').addEventListener('click', () => { _draft.checking = []; _draft.current = []; _draft.allergies = []; _draft.notes = ''; renderChecker(); });
+
+  $$('[data-drug-info]').forEach(btn => {
+    btn.addEventListener('click', () => toggleDrugInfo(btn, resolved_medications[Number(btn.dataset.drugInfo)]));
+  });
+
+  $$('[data-explain]').forEach(btn => {
+    btn.addEventListener('click', () => runExplain(btn, Number(btn.dataset.explain), inputsSnapshot));
+  });
+
+  // Auto-fetch the plain-language explanation for the most urgent findings
+  // as soon as results land — this used to be gated behind a click per
+  // finding, which meant the actual "here's what this means for you"
+  // answer wasn't the thing patients saw first. Capped at AUTO_EXPLAIN_LIMIT
+  // (findings are already sorted most-urgent-first) so a large multi-drug
+  // check with many real matches can't burst past Groq's rate limit —
+  // anything beyond the cap keeps the manual button instead.
+  findings.slice(0, AUTO_EXPLAIN_LIMIT).forEach(f => {
+    const slot = document.querySelector(`[data-explain-slot="${f.index}"]`);
+    if (slot) runExplain(slot, f.index, inputsSnapshot);
+  });
+}
+
+const AUTO_EXPLAIN_LIMIT = 5;
+
+function findingCard(f, autoExplain) {
+  const meta = SEVERITY_META[f.severity] || SEVERITY_META.unknown;
+  // reported_severity "unknown" here means the source dataset itself has no
+  // severity rating for this pairing — a different thing from our own
+  // governance status (which is also, confusingly, called "unknown"). Only
+  // show the hint when there's an actual rating to report.
+  const hasRealReportedSeverity = f.reported_severity && f.reported_severity !== 'unknown';
+  const reportedMeta = hasRealReportedSeverity ? SEVERITY_META[f.reported_severity] : null;
+  const reportedHint = (f.type === 'unknown' && reportedMeta) ? `
+    <p class="text-[11.5px] font-semibold mb-3" style="color: ${reportedMeta.color};">Our data suggests: ${reportedMeta.label} (not yet confirmed by a pharmacist)</p>
+  ` : (f.type === 'unknown' ? `
+    <p class="text-[11.5px] mb-3" style="color: var(--ink-faint);">No severity rating available in our data for this pairing.</p>
+  ` : '');
+  const doctorCallout = f.see_a_doctor ? `
+    <div class="flex items-center gap-2 text-[12.5px] font-bold px-3 py-2 rounded-lg mb-3" style="background: #F6E4E1; color: var(--critical);">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0"><path d="M12 3.5 L22 20.5 L2 20.5 Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9.5 V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1.1" fill="currentColor"/></svg>
+      See a doctor or pharmacist before taking these together
+    </div>` : '';
+  return `
+    <div class="card card-shadow rounded-2xl p-5" style="border-left: 3px solid ${meta.color};">
+      <div class="flex items-start justify-between gap-3 mb-2">
+        <p class="text-[14px] font-semibold leading-snug">${esc(findingTitle(f))}</p>
+        <span class="inline-flex items-center gap-1.5 text-[10.5px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full whitespace-nowrap" style="background: ${meta.bg}; color: ${meta.color};">${meta.label}</span>
+      </div>
+      ${reportedHint}
+      <p class="text-[13px] leading-relaxed mb-3" style="color: var(--ink-soft);">${esc(f.clinical_effect || '')}</p>
+      ${doctorCallout}
+      <p class="text-[12px] mb-3" style="color: var(--ink-faint);">${esc(f.patient_guidance || f.recommended_action || '')}</p>
+      <div data-explain-slot="${f.index}">
+        ${autoExplain
+          ? `<div class="flex items-center gap-2 text-[12.5px]" style="color: var(--ink-soft);"><span class="spinner w-3.5 h-3.5"></span>Working out what this means for you…</div>`
+          : `<button data-explain="${f.index}" class="text-[12.5px] font-semibold px-3.5 py-1.5 rounded-full border" style="border-color: var(--line); color: var(--primary);">Get a plain-language explanation →</button>`}
+      </div>
+    </div>
+  `;
+}
+
+async function runExplain(btn, findingIndex, inputs) {
+  const slot = btn.closest('[data-explain-slot]') || document.querySelector(`[data-explain-slot="${findingIndex}"]`);
+  try {
+    const data = await api('/api/explain', {
+      method: 'POST',
+      body: JSON.stringify({
+        medications: inputs.medications, allergies: inputs.allergies,
+        finding_index: findingIndex, patient_notes: inputs.notes,
+      }),
+    });
+    const sources = data.citations && data.citations.length
+      ? `<details class="mt-2"><summary class="text-[11.5px] font-semibold cursor-pointer" style="color: var(--ink-faint);">Show ${data.citations.length} source${data.citations.length>1?'s':''}</summary>
+          <div class="mt-2 space-y-2">${data.citations.map(c => `<div class="text-[11.5px] leading-relaxed p-2.5 rounded-lg" style="background: var(--paper); color: var(--ink-soft);"><span class="font-semibold">${esc(c.generic_name||'')} — ${esc((c.section||'').replace(/_/g,' '))}:</span> ${esc((c.text||'').slice(0,280))}${(c.text||'').length>280?'…':''}</div>`).join('')}</div>
+        </details>`
+      : '';
+    slot.innerHTML = `
+      <div class="fade-in pt-2 border-t" style="border-color: var(--line-soft);">
+        <div class="text-[13px] leading-relaxed mt-3" style="color: var(--ink);">${mdLite(data.explanation)}</div>
+        ${sources}
+      </div>
+    `;
+  } catch (err) {
+    slot.innerHTML = `
+      <p class="text-[12.5px] mb-2" style="color: var(--critical);">Couldn't load an explanation: ${esc(err.message)}</p>
+      <button data-explain="${findingIndex}" class="text-[12.5px] font-semibold px-3.5 py-1.5 rounded-full border" style="border-color: var(--line); color: var(--primary);">Try again →</button>
+    `;
+    const retryBtn = slot.querySelector('[data-explain]');
+    if (retryBtn) retryBtn.addEventListener('click', () => runExplain(retryBtn, findingIndex, inputs));
+  }
+}
+
+async function toggleDrugInfo(btn, resolvedMed) {
+  const panel = $('#drug-info-panel');
+  if (panel.dataset.open === resolvedMed.input) { panel.innerHTML = ''; panel.dataset.open = ''; return; }
+  panel.dataset.open = resolvedMed.input;
+  panel.innerHTML = `<div class="flex items-center gap-2 text-[12.5px] card rounded-xl p-4" style="color: var(--ink-soft);"><span class="spinner w-3.5 h-3.5"></span>Looking up ${esc(resolvedMed.input)}…</div>`;
+  try {
+    const data = await api('/api/query', { method: 'POST', body: JSON.stringify({ prescription: resolvedMed.input, top_k: 3 }) });
+    // An empty detected_drugs means the typed name wasn't recognized against
+    // our indexed FDA label data — answer_ddi() falls back to an unfiltered
+    // search in that case, which can surface text about unrelated drugs.
+    // Say so plainly rather than show a summary that looks like it's about
+    // this medication when it isn't.
+    if (!data.detected_drugs || !data.detected_drugs.length) {
+      panel.innerHTML = `
+        <div class="fade-in card rounded-xl p-4" style="border-style: dashed;">
+          <p class="text-[13px] leading-relaxed" style="color: var(--ink-soft);">We don't have FDA label data indexed for "${esc(resolvedMed.input)}" under that exact name yet. Try the generic ingredient name printed on the label.</p>
+        </div>
+      `;
+      return;
+    }
+    const first = (data.results || [])[0];
+    panel.innerHTML = `
+      <div class="fade-in card card-shadow rounded-xl p-4">
+        <p class="text-[12px] font-semibold uppercase tracking-wide mb-2" style="color: var(--ink-faint);">FDA label summary — ${esc(resolvedMed.input)}</p>
+        <div class="text-[13px] leading-relaxed" style="color: var(--ink);">${mdLite((first && first.answer) || 'No information found.')}</div>
+      </div>
+    `;
+  } catch (err) {
+    panel.innerHTML = `<p class="text-[12.5px]" style="color: var(--critical);">${esc(err.message)}</p>`;
+  }
+}
+
+// ── Auth (sign in / create account) — existing flow, reskinned ───────────────
+
+function renderAuth() {
+  shell('auth', `
+    <div class="reveal max-w-sm mx-auto">
+      <p class="font-label text-[11px] uppercase tracking-[0.16em] mb-3" style="color: var(--accent);">Care team account</p>
+      <h1 class="font-display text-[28px] font-semibold mb-6" style="color: var(--primary);">Welcome back</h1>
+      <div class="flex gap-1 p-1 rounded-full mb-7 text-[13px] font-medium" style="background: var(--line-soft);">
+        <button id="tab-login" class="flex-1 py-2 rounded-full transition-colors">Sign in</button>
+        <button id="tab-register" class="flex-1 py-2 rounded-full transition-colors">Create account</button>
+      </div>
+      <div id="auth-forms"></div>
+      <p id="auth-error" class="text-sm mt-4 hidden" style="color: var(--critical);"></p>
+      <p class="text-[12px] mt-8 text-center" style="color: var(--ink-faint);">Don't have prescriptions on file yet? <button id="skip-to-check" class="underline underline-link font-semibold" style="color: var(--primary);">Try the quick check instead</button></p>
+    </div>
+  `);
+  $('#skip-to-check').addEventListener('click', renderChecker);
 
   const forms = $('#auth-forms');
   const errorEl = $('#auth-error');
@@ -112,14 +630,14 @@ function renderAuth() {
     forms.innerHTML = `
       <form id="login-form" class="space-y-4">
         <div>
-          <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">Email</label>
-          <input type="email" name="email" required class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm" placeholder="you@example.com" />
+          <label class="font-label text-xs font-semibold block mb-1.5">Email</label>
+          <input type="email" name="email" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);" placeholder="you@example.com" />
         </div>
         <div>
-          <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">Password</label>
-          <input type="password" name="password" required class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm" placeholder="••••••••" />
+          <label class="font-label text-xs font-semibold block mb-1.5">Password</label>
+          <input type="password" name="password" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);" placeholder="••••••••" />
         </div>
-        <button type="submit" class="btn-primary font-label w-full text-white text-sm font-semibold py-2.5 rounded mt-2">Sign in</button>
+        <button type="submit" class="btn-primary font-label w-full text-white text-sm font-semibold py-2.5 rounded-lg mt-2">Sign in</button>
       </form>
     `;
     $('#login-form').addEventListener('submit', async (e) => {
@@ -142,7 +660,7 @@ function renderAuth() {
 
   async function renderRegister() {
     clearError();
-    forms.innerHTML = `<p class="font-label text-sm text-slate-400">Loading care organizations…</p>`;
+    forms.innerHTML = `<p class="font-label text-sm" style="color: var(--ink-faint);">Loading care organizations…</p>`;
     let orgs = [];
     try {
       const data = await api('/v1/organizations');
@@ -150,34 +668,34 @@ function renderAuth() {
     } catch { /* fall through with empty list */ }
 
     const orgOptions = orgs.length
-      ? orgs.map(o => `<option value="${o.id}">${o.name}</option>`).join('')
+      ? orgs.map(o => `<option value="${o.id}">${esc(o.name)}</option>`).join('')
       : `<option value="">No organizations available yet</option>`;
 
     forms.innerHTML = `
       <form id="register-form" class="space-y-4">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">First name</label>
-            <input type="text" name="first_name" required class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm" />
+            <label class="font-label text-xs font-semibold block mb-1.5">First name</label>
+            <input type="text" name="first_name" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);" />
           </div>
           <div>
-            <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">Last name</label>
-            <input type="text" name="last_name" required class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm" />
+            <label class="font-label text-xs font-semibold block mb-1.5">Last name</label>
+            <input type="text" name="last_name" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);" />
           </div>
         </div>
         <div>
-          <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">Care organization</label>
-          <select name="organization_id" required class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm bg-white">${orgOptions}</select>
+          <label class="font-label text-xs font-semibold block mb-1.5">Care organization</label>
+          <select name="organization_id" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm bg-white" style="border-color: var(--line);">${orgOptions}</select>
         </div>
         <div>
-          <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">Email</label>
-          <input type="email" name="email" required class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm" placeholder="you@example.com" />
+          <label class="font-label text-xs font-semibold block mb-1.5">Email</label>
+          <input type="email" name="email" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);" placeholder="you@example.com" />
         </div>
         <div>
-          <label class="font-label text-xs font-medium text-slate-600 block mb-1.5">Password</label>
-          <input type="password" name="password" required minlength="8" class="field w-full border border-slate-200 rounded px-3.5 py-2.5 text-sm" placeholder="At least 8 characters" />
+          <label class="font-label text-xs font-semibold block mb-1.5">Password</label>
+          <input type="password" name="password" required minlength="8" class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);" placeholder="At least 8 characters" />
         </div>
-        <button type="submit" class="btn-primary font-label w-full text-white text-sm font-semibold py-2.5 rounded mt-2">Create account</button>
+        <button type="submit" class="btn-primary font-label w-full text-white text-sm font-semibold py-2.5 rounded-lg mt-2">Create account</button>
       </form>
     `;
     $('#register-form').addEventListener('submit', async (e) => {
@@ -209,11 +727,11 @@ function renderAuth() {
 
   function setTab(active) {
     const login = $('#tab-login'), register = $('#tab-register');
-    login.style.background = active === 'login' ? 'white' : 'transparent';
-    login.style.color = active === 'login' ? 'var(--primary)' : '#64748b';
+    login.style.background = active === 'login' ? 'var(--paper-raised)' : 'transparent';
+    login.style.color = active === 'login' ? 'var(--primary)' : 'var(--ink-soft)';
     login.style.boxShadow = active === 'login' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none';
-    register.style.background = active === 'register' ? 'white' : 'transparent';
-    register.style.color = active === 'register' ? 'var(--primary)' : '#64748b';
+    register.style.background = active === 'register' ? 'var(--paper-raised)' : 'transparent';
+    register.style.color = active === 'register' ? 'var(--primary)' : 'var(--ink-soft)';
     register.style.boxShadow = active === 'register' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none';
   }
 
@@ -222,27 +740,40 @@ function renderAuth() {
   setTab('login'); renderLogin();
 }
 
+// ── Signed-in dashboard — existing prescriber-issued cases ────────────────────
+
+const STATE_META = {
+  draft:                        { label: 'Getting started',        badge: 'bg-slate-100 text-slate-700',   dot: 'bg-slate-400' },
+  awaiting_analysis:             { label: 'Reviewing your prescription', badge: 'bg-slate-100 text-slate-700', dot: 'bg-slate-400' },
+  awaiting_pharmacist_review:    { label: 'Your pharmacist is reviewing this', badge: 'bg-blue-50 text-blue-800', dot: 'bg-blue-500' },
+  awaiting_prescriber_response:  { label: 'Checking with your prescriber', badge: 'bg-amber-50 text-amber-800', dot: 'bg-amber-500' },
+  escalated:                     { label: 'Under urgent review',    badge: 'bg-red-50 text-red-800',        dot: 'bg-red-500' },
+  ready_to_dispense:             { label: 'Reviewed and ready',     badge: 'bg-emerald-50 text-emerald-800', dot: 'bg-emerald-500' },
+  held_or_cancelled:             { label: 'On hold — contact your pharmacy', badge: 'bg-red-50 text-red-800', dot: 'bg-red-500' },
+  closed:                        { label: 'Complete',               badge: 'bg-emerald-50 text-emerald-800', dot: 'bg-emerald-500' },
+};
+
 function caseCard(c, i) {
   const meta = STATE_META[c.state] || STATE_META.draft;
   const comm = (c.communications && c.communications[0]) || null;
   const body = comm
     ? comm.explanation
-    : `We're working through your ${c.medication} prescription. This isn't a guarantee of safety or risk — it means your pharmacist hasn't finished reviewing it yet.`;
+    : `We're working through your ${esc(c.medication)} prescription. This isn't a guarantee of safety or risk — it means your pharmacist hasn't finished reviewing it yet.`;
   const dateStr = c.created_at ? new Date(c.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '';
 
   return `
-    <div class="bg-white rounded-xl border border-slate-100 card-shadow p-5 reveal" style="animation-delay: ${i * 70}ms">
+    <div class="card card-shadow rounded-2xl p-5 reveal" style="animation-delay: ${i * 70}ms">
       <div class="flex items-start justify-between gap-3 mb-3">
         <div>
-          <p class="font-label text-[11px] uppercase tracking-wide text-slate-400 mb-1">${dateStr}</p>
-          <h3 class="text-[15px] font-semibold text-slate-900">${c.medication}</h3>
+          <p class="font-label text-[11px] uppercase tracking-wide mb-1" style="color: var(--ink-faint);">${dateStr}</p>
+          <h3 class="text-[15px] font-semibold">${esc(c.medication)}</h3>
         </div>
         <span class="font-label inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${meta.badge}">
           <span class="w-1.5 h-1.5 rounded-full ${meta.dot}"></span>${meta.label}
         </span>
       </div>
       ${c.has_findings ? (c.interaction_review === 'pending' ? `
-        <div class="flex items-center gap-1.5 mb-2.5 font-label text-[11.5px] font-semibold" style="color: var(--error)">
+        <div class="flex items-center gap-1.5 mb-2.5 font-label text-[11.5px] font-semibold" style="color: var(--critical)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="flex-shrink:0">
             <path d="M12 3.5 L22 20.5 L2 20.5 Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
             <path d="M12 9.5 V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -259,53 +790,45 @@ function caseCard(c, i) {
           Reviewed — your pharmacist has confirmed this
         </div>
       `) : ''}
-      <p class="text-[13.5px] text-slate-600 leading-relaxed">${body}</p>
+      <p class="text-[13.5px] leading-relaxed" style="color: var(--ink-soft);">${esc(body)}</p>
     </div>
   `;
 }
 
 async function renderDashboard() {
+  if (!token()) { renderAuth(); return; }
   const user = getUser();
-  app.innerHTML = `
-    <div class="min-h-screen">
-      <header class="border-b border-slate-100 bg-white">
-        <div class="max-w-2xl mx-auto px-6 py-5 flex items-center justify-between">
-          <div>
-            <p class="font-label text-[11px] uppercase tracking-[0.12em] text-slate-400">MedTrust Connect</p>
-            <h1 class="text-lg font-semibold text-slate-900 mt-0.5">Hi, ${(user && user.full_name) || 'there'}</h1>
-          </div>
-          <button id="logout" class="font-label text-xs font-medium text-slate-500 hover:text-slate-700 border border-slate-200 rounded px-3 py-1.5">Sign out</button>
-        </div>
-      </header>
-      <main class="max-w-2xl mx-auto px-6 py-8">
-        <p class="font-label text-xs text-slate-400 mb-5">Your medications, and where each one stands with your care team.</p>
-        <div id="cases" class="space-y-3"></div>
-      </main>
+  shell('dashboard', `
+    <div class="reveal">
+      <p class="font-label text-[11px] uppercase tracking-[0.16em] mb-2" style="color: var(--accent);">Your care team</p>
+      <h1 class="font-display text-[28px] font-semibold mb-1" style="color: var(--primary);">Hi, ${esc((user && user.full_name) || 'there')}</h1>
+      <p class="font-label text-[13px] mb-6" style="color: var(--ink-soft);">Your prescriptions, and where each one stands with your care team.</p>
+      <div id="cases" class="space-y-3"></div>
     </div>
-  `;
-
-  $('#logout').addEventListener('click', () => { setToken(null); setUser(null); renderAuth(); });
+  `);
 
   const casesEl = $('#cases');
-  casesEl.innerHTML = `<p class="font-label text-sm text-slate-400">Loading…</p>`;
+  casesEl.innerHTML = `<p class="font-label text-sm" style="color: var(--ink-faint);">Loading…</p>`;
   try {
     const data = await api('/v1/my/cases');
     const cases = data.cases || [];
     casesEl.innerHTML = cases.length
       ? cases.map(caseCard).join('')
-      : `<div class="bg-white rounded-xl border border-dashed border-slate-200 p-8 text-center reveal">
-           <p class="text-sm font-medium text-slate-700">No prescriptions on file yet</p>
-           <p class="font-label text-[13px] text-slate-400 mt-1.5 max-w-xs mx-auto">Once your prescriber sends a prescription to your pharmacy, it'll show up here after review.</p>
+      : `<div class="card rounded-2xl p-8 text-center reveal" style="border-style: dashed;">
+           <p class="text-sm font-semibold">No prescriptions on file yet</p>
+           <p class="font-label text-[13px] mt-1.5 max-w-xs mx-auto" style="color: var(--ink-faint);">Once your prescriber sends a prescription to your pharmacy, it'll show up here after review. In the meantime, try the quick check.</p>
          </div>`;
   } catch (err) {
     if (err.message.includes('401') || err.message.toLowerCase().includes('token')) {
       setToken(null); setUser(null); renderAuth(); return;
     }
-    casesEl.innerHTML = `<p class="text-sm" style="color: var(--error)">${err.message}</p>`;
+    casesEl.innerHTML = `<p class="text-sm" style="color: var(--critical);">${esc(err.message)}</p>`;
   }
 }
 
-(token() ? renderDashboard() : renderAuth());
+// ── Boot ──────────────────────────────────────────────────────────────────────
+
+(token() ? renderDashboard() : renderHome());
 </script>
 </body>
 </html>

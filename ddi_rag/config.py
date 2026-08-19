@@ -36,7 +36,14 @@ COHERE_TIMEOUT     = 15
 
 # ── LLM (Groq) ────────────────────────────────────────────────────────────────
 GROQ_API_KEY       = os.getenv("GROQ_API_KEY", "")
-GROQ_MODEL         = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+# llama-3.1-8b-instant was decommissioned from Groq's catalog at some point
+# after this project was first built — confirmed live via GET /openai/v1/models
+# (2026-08-17): it's no longer in the list, and every chat completion against
+# it now 404s. openai/gpt-oss-20b is Groq's current closest equivalent (small,
+# fast, general-purpose instruct model) — verified working live before this
+# default was changed. If Groq's catalog changes again, GET
+# https://api.groq.com/openai/v1/models with your key to see what's current.
+GROQ_MODEL         = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
 GROQ_TIMEOUT       = 30
 GENERATION_MAX_NEW = 512
 
@@ -57,6 +64,14 @@ PORT                 = int(os.getenv("PORT", 5000))
 MAX_PRESCRIPTION_LEN = 1_000
 DEFAULT_TOP_K        = 5
 MAX_TOP_K            = 10
+
+# ── Guest self-check (routes_public.py) — no login required, so these bound
+# the worst case cost of a single unauthenticated request (RxNorm lookups
+# are sequential/network-bound; each finding explanation is one Cohere +
+# one Groq call) ────────────────────────────────────────────────────────────
+MAX_SELF_CHECK_ITEMS = 8     # max medications, and separately max allergies
+MAX_ITEM_LEN         = 200   # max chars per medication/allergy name
+MAX_NOTES_LEN        = 600   # max chars in the free-text "anything else" field
 
 # ── Auth ──────────────────────────────────────────────────────────────────────
 JWT_SECRET_KEY        = os.getenv("JWT_SECRET_KEY", "")

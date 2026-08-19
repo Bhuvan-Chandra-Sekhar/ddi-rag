@@ -290,7 +290,11 @@ def evaluate_ddi_pairs(session, ingredient_names: Sequence[str]) -> List[dict]:
                 "recommended_action": "Follow hospital-approved action for this severity level.",
                 "evidence_refs": [{"rule_id": rule.id, "rule_version": rule.rule_version,
                                     "source_dataset": rule.source_dataset}],
-                "patient_factors": {"ingredient_a": a, "ingredient_b": b},
+                # reported_severity mirrors severity here (APPROVED means
+                # severity is already authoritative) — present on every DDI
+                # finding uniformly so callers can read patient_factors
+                # without branching on review status (see DRAFT below).
+                "patient_factors": {"ingredient_a": a, "ingredient_b": b, "reported_severity": rule.severity.value},
                 "missing_factors": [],
                 "review_status": ReviewStatus.PENDING,
             })
@@ -302,7 +306,15 @@ def evaluate_ddi_pairs(session, ingredient_names: Sequence[str]) -> List[dict]:
                 "recommended_action": "Manual review required — candidate interaction not yet clinically approved.",
                 "evidence_refs": [{"rule_id": rule.id, "rule_version": rule.rule_version,
                                     "source_dataset": rule.source_dataset, "status": "draft"}],
-                "patient_factors": {"ingredient_a": a, "ingredient_b": b},
+                # The finding's own severity above MUST stay UNKNOWN — no
+                # reviewer has confirmed this rule, so it carries no clinical
+                # authority (see module docstring). But the source dataset's
+                # own severity rating (e.g. DDInter's "major") is real
+                # information that was previously discarded here entirely.
+                # Carrying it in patient_factors (not as the finding's
+                # severity/review_status) lets a caller say "our data
+                # suggests X" without ever claiming X is confirmed.
+                "patient_factors": {"ingredient_a": a, "ingredient_b": b, "reported_severity": rule.severity.value},
                 "missing_factors": ["clinical_review"],
                 "review_status": ReviewStatus.PENDING,
             })

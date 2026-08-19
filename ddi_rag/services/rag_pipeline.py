@@ -292,6 +292,16 @@ def _call_groq_api(
         "max_tokens":  max_tokens or GENERATION_MAX_NEW,
         "temperature": temperature,
         "stream":      False,
+        # GROQ_MODEL (openai/gpt-oss-20b) is a reasoning model — without
+        # this, it spends the token budget on an internal chain-of-thought
+        # ("reasoning") field first and can hit max_tokens before emitting
+        # any actual answer, returning an EMPTY content string with no
+        # error (confirmed live: max_tokens=20 with no reasoning_effort
+        # produced content="" and finish_reason="length"). "low" keeps
+        # reasoning minimal so small max_tokens budgets already used
+        # elsewhere in this codebase (e.g. _rewrite_query's 80) still get
+        # a real answer instead of silently empty text.
+        "reasoning_effort": "low",
     }
 
     try:
