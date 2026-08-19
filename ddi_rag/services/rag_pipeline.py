@@ -21,6 +21,7 @@ Public API:
     answer_general(query, history_context)                 — general assistant (no retrieval)
 """
 
+import hashlib
 import logging
 import re
 from functools import lru_cache
@@ -69,11 +70,35 @@ def _chunk_text(text: str) -> List[str]:
     return chunks
 
 
+def _stable_doc_id(generic_name: str, section: str, chunk_text: str) -> str:
+    """
+    A chunk's identity must be stable and collision-free ACROSS separate
+    ingestion script runs, not just within one — evidence_chunks.id is the
+    upsert key (ON CONFLICT DO UPDATE), so two different runs producing the
+    same id silently overwrite each other's chunks no matter how unrelated
+    the drugs are.
+
+    The previous scheme (f"{idx}_{col}_{ci}", idx = the row's position
+    within whatever local dataframe a given script built) reset to 0 on
+    every script invocation — a real incident: ingesting an unrelated
+    1,684-drug batch silently zeroed out aspirin's and ibuprofen's
+    evidence_chunks rows because they happened to land on the same
+    low-numbered idx some other drug used in this run. Hashing
+    (generic_name, section, exact chunk text) instead ties the id to what
+    the chunk actually IS, not where it happened to sit in a transient
+    dataframe — re-ingesting the identical chunk later still correctly
+    updates the same row (idempotent), but a different drug can never
+    produce the same id by coincidence.
+    """
+    key = f"{generic_name}|{section}|{chunk_text}"
+    return hashlib.sha256(key.encode("utf-8")).hexdigest()
+
+
 def build_chunk_df(df: pd.DataFrame) -> pd.DataFrame:
     valid_cols = [c for c in TEXT_COLS if c in df.columns]
     documents: List[Dict] = []
 
-    for idx, row in df.iterrows():
+    for _, row in df.iterrows():
         generic_name = safe_str(row.get("final_generic_name", "") or "").strip()
         brand_name   = safe_str(row.get("openfda_brand_name",  "") or "").strip()
         product_type = safe_str(row.get("openfda_product_type","") or "").strip()
@@ -84,9 +109,9 @@ def build_chunk_df(df: pd.DataFrame) -> pd.DataFrame:
             if pd.isna(section_content) or not str(section_content).strip():
                 continue
             text = f"{col.replace('_', ' ').title()}: {section_content}"
-            for ci, chunk in enumerate(_chunk_text(text)):
+            for chunk in _chunk_text(text):
                 documents.append({
-                    "doc_id": f"{idx}_{col}_{ci}", "generic_name": generic_name,
+                    "doc_id": _stable_doc_id(generic_name, col, chunk), "generic_name": generic_name,
                     "brand_name": brand_name, "product_type": product_type,
                     "route": route, "section": col, "text": chunk,
                 })

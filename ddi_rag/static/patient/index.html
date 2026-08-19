@@ -55,16 +55,11 @@
   .btn-accent:active { transform: scale(0.985); }
   .btn-accent:disabled { background: #C9B79B; cursor: not-allowed; }
   .chip { background: var(--accent-tint); color: #6B3E14; border: 1px solid #E0BE8E; }
-  /* The visible × glyph is small — the button's actual hit area is padded
-     out to a real touch/click target (WCAG 2.5.5 recommends 24x24px min)
-     well beyond the glyph itself, so clicking near it (not just exactly on
-     the character) reliably registers. */
-  .chip-remove {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 18px; height: 18px; margin: -2px -4px -2px 0;
-    border-radius: 999px; cursor: pointer; transition: background 0.12s ease, opacity 0.12s ease;
-  }
-  .chip-remove:hover { opacity: 0.7; background: rgba(0,0,0,0.08); }
+  /* Tag-list entries: the ENTIRE pill is the click target for removal, not
+     just the small × glyph inside it — a tiny icon-only hit area reads as
+     "I can't click this" even when it technically works. */
+  .chip-remove { cursor: pointer; transition: background 0.12s ease, border-color 0.12s ease; }
+  .chip-remove:hover { background: #E7CBA0; border-color: #D2A868; }
   .underline-link { text-underline-offset: 3px; text-decoration-color: var(--line); }
   .underline-link:hover { text-decoration-color: currentColor; }
   ::selection { background: var(--accent-tint); }
@@ -227,7 +222,7 @@ function tagInputHtml(id, label, placeholder, items) {
         <button id="${id}-add" type="button" class="px-4 rounded-lg border text-[13px] font-semibold" style="border-color: var(--line); color: var(--primary);">Add</button>
       </div>
       <div id="${id}-chips" class="flex flex-wrap gap-2 min-h-[2px]">
-        ${items.map((v, i) => `<span class="chip inline-flex items-center gap-1.5 text-[12.5px] font-medium pl-3 pr-2 py-1 rounded-full">${esc(v)}<button type="button" data-remove="${i}" class="chip-remove text-[15px] leading-none">×</button></span>`).join('')}
+        ${items.map((v, i) => `<button type="button" data-remove="${i}" title="Remove ${esc(v)}" aria-label="Remove ${esc(v)}" class="chip chip-remove inline-flex items-center gap-1.5 text-[12.5px] font-medium pl-3 pr-2.5 py-1 rounded-full">${esc(v)}<span class="text-[15px] leading-none" aria-hidden="true">×</span></button>`).join('')}
       </div>
     </div>
   `;
@@ -384,7 +379,7 @@ function findingTitle(f) {
   return 'Finding';
 }
 
-function overallBanner(overallSeverity, seeADoctor) {
+function overallBanner(overallSeverity, seeADoctor, hasUnresolvedMed) {
   if (seeADoctor) {
     return `
       <div class="card card-shadow rounded-2xl p-6 flex items-start gap-4" style="border-left: 4px solid var(--critical); background: #FBF1EF;">
@@ -394,6 +389,23 @@ function overallBanner(overallSeverity, seeADoctor) {
         <div>
           <p class="font-display text-[19px] font-semibold mb-1" style="color: var(--critical);">Please talk to a doctor or pharmacist before taking these together</p>
           <p class="text-[13px] leading-relaxed" style="color: var(--ink-soft);">Something below looks serious enough to check first — see which finding triggered this and why in the details below.</p>
+        </div>
+      </div>`;
+  }
+  // Never show the reassuring "nothing flagged" message when we're not
+  // confident we understood every name typed in — a patient typing two
+  // drugs into one field (e.g. "Bactrim, warfarin") can end up with one
+  // name silently dropped during matching, and a green checkmark in that
+  // case is a false, dangerous reassurance, not an honest "no findings".
+  if (!overallSeverity && hasUnresolvedMed) {
+    return `
+      <div class="card card-shadow rounded-2xl p-6 flex items-start gap-4" style="border-left: 4px solid var(--caution);">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background: #F5EDD6;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3.5 L22 20.5 L2 20.5 Z" stroke="var(--caution)" stroke-width="2" stroke-linejoin="round"/><path d="M12 9.5 V14.5" stroke="var(--caution)" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1.1" fill="var(--caution)"/></svg>
+        </div>
+        <div>
+          <p class="font-display text-[19px] font-semibold mb-1">We're not sure we understood everything you entered</p>
+          <p class="text-[13px] leading-relaxed" style="color: var(--ink-soft);">One or more items below (marked <strong>·approx</strong>) didn't match a known medication exactly — if you typed more than one drug into the same box, try adding them as separate entries instead. No findings below isn't a clean bill of health until every item is confirmed.</p>
         </div>
       </div>`;
   }
@@ -442,6 +454,7 @@ function renderResults(data, checkingCount) {
   // Most urgent first — the on-demand explanations auto-fetch in this
   // order too, so the thing most worth reading loads first.
   const findings = [...rawFindings].sort((a, b) => findingUrgency(b) - findingUrgency(a));
+  const hasUnresolvedMed = resolved_medications.some(m => !m.identity_confirmed);
 
   shell('check', `
     <div class="reveal space-y-6">
@@ -450,7 +463,7 @@ function renderResults(data, checkingCount) {
         <button id="new-check" class="text-[12.5px] font-semibold underline underline-link" style="color: var(--ink-soft);">Start a new check</button>
       </div>
 
-      ${overallBanner(overall_severity, see_a_doctor)}
+      ${overallBanner(overall_severity, see_a_doctor, hasUnresolvedMed)}
 
       ${checkingMeds.length ? `
       <div>
