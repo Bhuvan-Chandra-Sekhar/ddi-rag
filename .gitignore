@@ -11,6 +11,12 @@ ddi_rag/.env
 *.env
 !.env.example
 
+# Session handoff doc — working notes across AI sessions, kept local only.
+# Was committed for several commits with real demo-account passwords in
+# plaintext, in a public repo (rotated 2026-08-22; see git history if you
+# need to purge those old commits too). Never re-add this to tracking.
+docs/SESSION_HANDOFF.md
+
 # Local dev database / vector store artifacts
 *.db
 *.sqlite
