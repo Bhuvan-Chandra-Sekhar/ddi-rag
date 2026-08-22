@@ -233,6 +233,56 @@ function tagInputHtml(id, label, placeholder, items) {
 // mirrors that cap client-side so entries never silently vanish on submit.
 const MAX_MEDS_TOTAL = 8;
 
+// "Checking" is deliberately one drug at a time, not a tag list like the
+// other fields — it represents a single question ("does THIS interact with
+// what I'm already on?"), and letting it hold several names blurred that
+// distinction. Once one is set, the input hides in favor of the single
+// chip; removing that chip is the only way back to typing a new one.
+function checkingFieldHtml(items) {
+  const hasDrug = items.length > 0;
+  return `
+    <div>
+      <label class="font-label text-[12.5px] font-semibold block mb-2" style="color: var(--ink);">The drug or prescription you want checked</label>
+      <div id="checking-chips">
+        ${hasDrug ? `
+          <div class="flex flex-wrap gap-2">
+            <button type="button" data-remove="0" title="Remove ${esc(items[0])}" aria-label="Remove ${esc(items[0])}" class="chip chip-remove inline-flex items-center gap-1.5 text-[12.5px] font-medium pl-3 pr-2.5 py-1 rounded-full">${esc(items[0])}<span class="text-[15px] leading-none" aria-hidden="true">×</span></button>
+          </div>
+          <p class="text-[11px] mt-1.5" style="color: var(--ink-faint);">One at a time — remove this to check a different drug instead.</p>
+        ` : `
+          <div class="flex gap-2">
+            <input id="checking-input" type="text" autocomplete="off" placeholder="e.g. the new prescription you just got" class="field flex-1 border rounded-lg px-3.5 py-2.5 text-[13.5px]" style="border-color: var(--line);" />
+            <button id="checking-add" type="button" class="px-4 rounded-lg border text-[13px] font-semibold" style="border-color: var(--line); color: var(--primary);">Add</button>
+          </div>
+        `}
+      </div>
+    </div>
+  `;
+}
+
+function wireCheckingField(rerender) {
+  const input = $('#checking-input');
+  if (input) {
+    const commit = () => {
+      const v = input.value.trim();
+      if (v && _draft.checking.length === 0) { _draft.checking = [v]; rerender(); }
+    };
+    $('#checking-add').addEventListener('click', commit);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); commit(); }
+    });
+  } else {
+    // The chip (not the input) is what's rendered once a drug is set — its
+    // container is recreated fresh on every rerenderChecking() call, same
+    // as tagInputHtml's own -chips divs, so this listener never stacks.
+    $('#checking-chips').addEventListener('click', (e) => {
+      if (!e.target.closest('[data-remove]')) return;
+      _draft.checking = [];
+      rerender();
+    });
+  }
+}
+
 function wireTagInput(id, list, rerender, canAdd = () => list.length < MAX_MEDS_TOTAL) {
   const input = $(`#${id}-input`);
   const addBtn = $(`#${id}-add`);
@@ -283,7 +333,7 @@ function renderChecker() {
   `);
 
   const totalMedsCanAdd = () => _draft.checking.length + _draft.current.length < MAX_MEDS_TOTAL;
-  function rerenderChecking() { $('#checking-field').innerHTML = tagInputHtml('checking', 'The drug or prescription you want checked', 'e.g. the new prescription you just got', _draft.checking); wireTagInput('checking', _draft.checking, rerenderChecking, totalMedsCanAdd); }
+  function rerenderChecking() { $('#checking-field').innerHTML = checkingFieldHtml(_draft.checking); wireCheckingField(rerenderChecking); }
   function rerenderCurrent() { $('#current-field').innerHTML = tagInputHtml('current', "What else are you currently taking? — your history", 'e.g. warfarin', _draft.current); wireTagInput('current', _draft.current, rerenderCurrent, totalMedsCanAdd); }
   function rerenderAllergies() { $('#allergy-field').innerHTML = tagInputHtml('allergy', 'Any known allergies or past bad reactions?', 'e.g. penicillin', _draft.allergies); wireTagInput('allergy', _draft.allergies, rerenderAllergies); }
   rerenderChecking();
@@ -295,8 +345,10 @@ function renderChecker() {
   $('#checker-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     // Commit any text still sitting in the tag inputs that the user didn't press Enter/Add on.
-    const checkingLeft = $('#checking-input').value.trim();
-    if (checkingLeft && _draft.checking.length + _draft.current.length < MAX_MEDS_TOTAL) _draft.checking.push(checkingLeft);
+    // #checking-input only exists when no drug is set yet (see checkingFieldHtml) — once one
+    // is added the field shows a chip instead, so there's never leftover text to lose there.
+    const checkingLeft = $('#checking-input')?.value.trim();
+    if (checkingLeft && _draft.checking.length === 0) _draft.checking = [checkingLeft];
     const currentLeft = $('#current-input').value.trim();
     if (currentLeft && _draft.checking.length + _draft.current.length < MAX_MEDS_TOTAL) _draft.current.push(currentLeft);
     const allergyLeft = $('#allergy-input').value.trim();
@@ -458,9 +510,12 @@ function renderResults(data, checkingCount) {
 
   shell('check', `
     <div class="reveal space-y-6">
-      <div class="flex items-center justify-between">
+      <div class="flex items-center justify-between gap-3 flex-wrap">
         <p class="font-label text-[11px] uppercase tracking-[0.16em]" style="color: var(--accent);">Your results</p>
-        <button id="new-check" class="text-[12.5px] font-semibold underline underline-link" style="color: var(--ink-soft);">Start a new check</button>
+        <div class="flex items-center gap-4">
+          <button id="check-another" class="text-[12.5px] font-semibold px-3.5 py-1.5 rounded-full border" style="border-color: var(--primary); color: var(--primary);">Check a different drug →</button>
+          <button id="new-check" class="text-[12.5px] font-semibold underline underline-link" style="color: var(--ink-soft);">Start a new check</button>
+        </div>
       </div>
 
       ${overallBanner(overall_severity, see_a_doctor, hasUnresolvedMed)}
@@ -481,16 +536,24 @@ function renderResults(data, checkingCount) {
       <div>
         <p class="text-[12px] font-semibold uppercase tracking-wide mb-2.5" style="color: var(--ink-faint);">Findings ${findings.length ? `(${findings.length})` : ''}</p>
         <div id="findings-list" class="space-y-3">
-          ${findings.length ? findings.map((f, i) => findingCard(f, i < AUTO_EXPLAIN_LIMIT)).join('') : `
+          ${findings.length ? findings.slice(0, DEFAULT_VISIBLE_FINDINGS).map(findingCard).join('') : `
             <div class="card rounded-2xl p-6 text-center" style="border-style: dashed;">
               <p class="text-[13px]" style="color: var(--ink-soft);">No findings to show.</p>
             </div>`}
         </div>
+        ${findings.length > DEFAULT_VISIBLE_FINDINGS ? `
+          <button id="show-more-findings" class="w-full mt-3 text-[13px] font-semibold py-2.5 rounded-xl border" style="border-color: var(--line); color: var(--primary); background: var(--paper-raised);">
+            Show ${findings.length - DEFAULT_VISIBLE_FINDINGS} more finding${findings.length - DEFAULT_VISIBLE_FINDINGS > 1 ? 's' : ''} →
+          </button>` : ''}
       </div>
     </div>
   `);
 
   $('#new-check').addEventListener('click', () => { _draft.checking = []; _draft.current = []; _draft.allergies = []; _draft.notes = ''; renderChecker(); });
+  // Keeps current medications/allergies/notes intact — only clears the
+  // single "checking" slot — so checking a second, third, etc. drug
+  // against the same baseline doesn't mean re-typing all of it again.
+  $('#check-another').addEventListener('click', () => { _draft.checking = []; renderChecker(); });
 
   $$('[data-drug-info]').forEach(btn => {
     btn.addEventListener('click', () => toggleDrugInfo(btn, resolved_medications[Number(btn.dataset.drugInfo)]));
@@ -500,22 +563,36 @@ function renderResults(data, checkingCount) {
     btn.addEventListener('click', () => runExplain(btn, Number(btn.dataset.explain), inputsSnapshot));
   });
 
-  // Auto-fetch the plain-language explanation for the most urgent findings
-  // as soon as results land — this used to be gated behind a click per
-  // finding, which meant the actual "here's what this means for you"
-  // answer wasn't the thing patients saw first. Capped at AUTO_EXPLAIN_LIMIT
-  // (findings are already sorted most-urgent-first) so a large multi-drug
-  // check with many real matches can't burst past Groq's rate limit —
-  // anything beyond the cap keeps the manual button instead.
-  findings.slice(0, AUTO_EXPLAIN_LIMIT).forEach(f => {
+  // Auto-fetch the plain-language explanation for whatever's actually
+  // visible on load — the top DEFAULT_VISIBLE_FINDINGS, already sorted
+  // most-urgent-first — so the real "here's what this means" answer is
+  // there the instant a patient sees the finding, not gated behind a
+  // click. Findings beyond that stay collapsed behind "Show more" and
+  // only get fetched once the patient actually asks to see them, so a
+  // large multi-drug check with many real matches can't burst Groq's rate
+  // limit for cards nobody has looked at yet.
+  findings.slice(0, DEFAULT_VISIBLE_FINDINGS).forEach(f => {
     const slot = document.querySelector(`[data-explain-slot="${f.index}"]`);
     if (slot) runExplain(slot, f.index, inputsSnapshot);
   });
+
+  const showMoreBtn = $('#show-more-findings');
+  if (showMoreBtn) {
+    showMoreBtn.addEventListener('click', () => {
+      const hidden = findings.slice(DEFAULT_VISIBLE_FINDINGS);
+      $('#findings-list').insertAdjacentHTML('beforeend', hidden.map(findingCard).join(''));
+      showMoreBtn.remove();
+      hidden.forEach(f => {
+        const slot = document.querySelector(`[data-explain-slot="${f.index}"]`);
+        if (slot) runExplain(slot, f.index, inputsSnapshot);
+      });
+    });
+  }
 }
 
-const AUTO_EXPLAIN_LIMIT = 5;
+const DEFAULT_VISIBLE_FINDINGS = 3;
 
-function findingCard(f, autoExplain) {
+function findingCard(f) {
   const meta = SEVERITY_META[f.severity] || SEVERITY_META.unknown;
   // reported_severity "unknown" here means the source dataset itself has no
   // severity rating for this pairing — a different thing from our own
@@ -544,9 +621,7 @@ function findingCard(f, autoExplain) {
       ${doctorCallout}
       <p class="text-[12px] mb-3" style="color: var(--ink-faint);">${esc(f.patient_guidance || f.recommended_action || '')}</p>
       <div data-explain-slot="${f.index}">
-        ${autoExplain
-          ? `<div class="flex items-center gap-2 text-[12.5px]" style="color: var(--ink-soft);"><span class="spinner w-3.5 h-3.5"></span>Working out what this means for you…</div>`
-          : `<button data-explain="${f.index}" class="text-[12.5px] font-semibold px-3.5 py-1.5 rounded-full border" style="border-color: var(--line); color: var(--primary);">Get a plain-language explanation →</button>`}
+        <div class="flex items-center gap-2 text-[12.5px]" style="color: var(--ink-soft);"><span class="spinner w-3.5 h-3.5"></span>Working out what this means for you…</div>
       </div>
     </div>
   `;
