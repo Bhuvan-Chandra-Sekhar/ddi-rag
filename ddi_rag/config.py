@@ -97,4 +97,9 @@ MIN_ROOT_LEN = 6
 # ── openFDA sync (fda_sync.py) ────────────────────────────────────────────────
 OPENFDA_BASE_URL  = "https://api.fda.gov/drug/label.json"
 OPENFDA_PAGE_SIZE = 100
+# Free, self-serve key from open.fda.gov/apis/authentication — raises the
+# rate limit from 1,000 requests/day (per IP, unauthenticated) to 120,000/day.
+# Used by scripts/mine_ddi_pairs_from_fda_labels.py to pull complete label
+# text; that script still works without a key, just capped at 1,000/day.
+OPENFDA_API_KEY   = os.getenv("OPENFDA_API_KEY", "")
 SYNC_HOUR         = 2   # nightly sync at 2 AM UTC

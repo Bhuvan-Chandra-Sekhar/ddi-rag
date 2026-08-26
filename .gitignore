@@ -17,6 +17,13 @@ ddi_rag/.env
 # need to purge those old commits too). Never re-add this to tracking.
 docs/SESSION_HANDOFF.md
 
+# Local session-recovery transcript dump — a third-party tool's export of
+# this project's own Claude Code conversation history. Never committed:
+# same reasoning as SESSION_HANDOFF.md above (working notes, not source,
+# and a transcript dump is exactly the kind of file that could carry a
+# demo credential in plaintext by accident).
+recovered/
+
 # Local dev database / vector store artifacts
 *.db
 *.sqlite

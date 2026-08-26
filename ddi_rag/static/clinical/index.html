@@ -231,11 +231,6 @@ function renderAuth() {
           <p id="auth-error" class="text-sm hidden" style="color: var(--critical)"></p>
         </form>
 
-        <div class="mt-5 panel-alt rounded p-4">
-          <p class="mono text-[10.5px] uppercase tracking-wide mb-2" style="color:var(--text-faint)">Seeded demo accounts (scripts/seed_demo_staff.py)</p>
-          <p class="mono text-[11.5px]" style="color:var(--text-dim)">pharmacist@demo.local <span style="color:var(--text-faint)">/</span> DemoPharm123!</p>
-          <p class="mono text-[11.5px]" style="color:var(--text-dim)">prescriber@demo.local <span style="color:var(--text-faint)">/</span> DemoPrescriber123!</p>
-        </div>
         <p class="text-[12px] mt-4" style="color:var(--text-faint)">This is a verification instrument, not the hospital production boundary. Self-registration for staff roles is intentionally disabled — accounts are provisioned directly.</p>
       </div>
     </div>
@@ -715,6 +710,12 @@ function findingCard(f, i) {
         <span class="tag" style="color:var(--text-dim)">review: ${esc(f.review_status)}</span>
       </div>
       <p class="text-sm mb-1.5">${esc(f.clinical_effect || '—')}</p>
+      ${f.patient_factors?.reported_severity && f.patient_factors.reported_severity !== f.severity ? `
+        <p class="mono text-[11px] mb-2 flex items-center gap-1.5" style="color:var(--caution)">
+          ${warningIcon('var(--caution)')}
+          source dataset reports severity as <strong>${esc(f.patient_factors.reported_severity.toUpperCase())}</strong> — not yet clinically approved, shown as UNKNOWN until reviewed
+        </p>
+      ` : ''}
       <p class="text-[12.5px] mb-2" style="color:var(--text-dim)">${esc(f.recommended_action || '')}</p>
       <div class="flex flex-wrap gap-1.5 mb-2">
         ${(f.evidence_refs || []).map(r => `<span class="tag">${esc(r.rule_id ? `rule:${r.rule_id.slice(0,8)}` : r.rule)} · ${esc(r.rule_version || '')}${r.status ? ' · ' + esc(r.status) : ''}</span>`).join('')}

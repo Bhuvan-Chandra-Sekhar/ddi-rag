@@ -1,0 +1,137 @@
+{
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\aho_corasick.py": {
+    "mtime": 1786909454.003178,
+    "ast_hash": "c63fbbecefde54a7014aba7d05557aa2",
+    "semantic_hash": "c63fbbecefde54a7014aba7d05557aa2"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\app.py": {
+    "mtime": 1786931469.5246387,
+    "ast_hash": "c24b7c13c587aa8e46e2b9eb83a81661",
+    "semantic_hash": "c24b7c13c587aa8e46e2b9eb83a81661"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\auth.py": {
+    "mtime": 1786546789.4878407,
+    "ast_hash": "6c4a4541e05bc46eef76fcfa8914d9fa",
+    "semantic_hash": "6c4a4541e05bc46eef76fcfa8914d9fa"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\config.py": {
+    "mtime": 1787416588.3083131,
+    "ast_hash": "0f87f6f2cb4f2b0f36d3a82a94825110",
+    "semantic_hash": "0f87f6f2cb4f2b0f36d3a82a94825110"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\data_preprocessing.py": {
+    "mtime": 1785945489.4914196,
+    "ast_hash": "ad6d35a45527ce41ddfc9cf4379c4a08",
+    "semantic_hash": "ad6d35a45527ce41ddfc9cf4379c4a08"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\database.py": {
+    "mtime": 1786733501.7607255,
+    "ast_hash": "259527dc44f36b137aa30120ddfd320f",
+    "semantic_hash": "259527dc44f36b137aa30120ddfd320f"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\drug_categorization.py": {
+    "mtime": 1785946841.9525304,
+    "ast_hash": "f6433ba21053dab774e56342f59ad055",
+    "semantic_hash": "f6433ba21053dab774e56342f59ad055"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\enums.py": {
+    "mtime": 1785954336.9096358,
+    "ast_hash": "5d82ec3d55ad1c6b60d608286dd998c7",
+    "semantic_hash": "5d82ec3d55ad1c6b60d608286dd998c7"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\fda_sync.py": {
+    "mtime": 1786592306.8531961,
+    "ast_hash": "ab89cea0030577302f5a7c4fb30f6ef4",
+    "semantic_hash": "ab89cea0030577302f5a7c4fb30f6ef4"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\mcp_server.py": {
+    "mtime": 1786592324.9075048,
+    "ast_hash": "62ac8feb3fe3c10146fd16925393abf3",
+    "semantic_hash": "62ac8feb3fe3c10146fd16925393abf3"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\models.py": {
+    "mtime": 1786417995.308548,
+    "ast_hash": "6e49c71cc64310b2486bd708c325b9fb",
+    "semantic_hash": "6e49c71cc64310b2486bd708c325b9fb"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\prescription_parsing.py": {
+    "mtime": 1786909865.470127,
+    "ast_hash": "93af3829647c76b12746f54fe6a91dab",
+    "semantic_hash": "93af3829647c76b12746f54fe6a91dab"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\routes_clinical.py": {
+    "mtime": 1786725823.9056466,
+    "ast_hash": "b1fa1244f835d377c48af793d4e40e40",
+    "semantic_hash": "b1fa1244f835d377c48af793d4e40e40"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\routes_public.py": {
+    "mtime": 1786933528.8560357,
+    "ast_hash": "2e81419300f6afada1faf42966fc43d1",
+    "semantic_hash": "2e81419300f6afada1faf42966fc43d1"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\services\\__init__.py": {
+    "mtime": 1785952708.7288845,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\services\\audit.py": {
+    "mtime": 1785952711.6620722,
+    "ast_hash": "15e91ef5b84b2269567d428eca56f551",
+    "semantic_hash": "15e91ef5b84b2269567d428eca56f551"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\services\\clinical_rules.py": {
+    "mtime": 1786933415.888865,
+    "ast_hash": "099be5b612e321696ebeef23cc05ebcb",
+    "semantic_hash": "099be5b612e321696ebeef23cc05ebcb"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\services\\eval_metrics.py": {
+    "mtime": 1785957730.1532307,
+    "ast_hash": "88cbf64adb4cf470af2dd5f605c78a8f",
+    "semantic_hash": "88cbf64adb4cf470af2dd5f605c78a8f"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\services\\evidence.py": {
+    "mtime": 1786931427.8376584,
+    "ast_hash": "de013dd85b166a890af7e612194ac77e",
+    "semantic_hash": "de013dd85b166a890af7e612194ac77e"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\services\\evidence_store.py": {
+    "mtime": 1786592761.567944,
+    "ast_hash": "b9649c337416909c83d46ba4d8962e57",
+    "semantic_hash": "b9649c337416909c83d46ba4d8962e57"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\services\\llm_eval.py": {
+    "mtime": 1786592341.1669881,
+    "ast_hash": "07b92a09a09051229075c2efdcd3db15",
+    "semantic_hash": "07b92a09a09051229075c2efdcd3db15"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\services\\medication_identity.py": {
+    "mtime": 1786654223.9110155,
+    "ast_hash": "38bb9797e7a446b2d3577d4857c7caf2",
+    "semantic_hash": "38bb9797e7a446b2d3577d4857c7caf2"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\services\\professional_workflow.py": {
+    "mtime": 1786416771.527455,
+    "ast_hash": "6074051e96b0affae6264f2a4b49be16",
+    "semantic_hash": "6074051e96b0affae6264f2a4b49be16"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\services\\rag_pipeline.py": {
+    "mtime": 1787113612.8776796,
+    "ast_hash": "d494d99224793cacc00f541a02125be4",
+    "semantic_hash": "d494d99224793cacc00f541a02125be4"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\services\\safety_case.py": {
+    "mtime": 1785952728.829272,
+    "ast_hash": "ed60830ec9b9872cfc2c021f502fa80d",
+    "semantic_hash": "ed60830ec9b9872cfc2c021f502fa80d"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\static\\clinical\\index.html": {
+    "mtime": 1787497413.2620356,
+    "ast_hash": "3ede7e066c34f4c64d8f3e3c8ab6e557",
+    "semantic_hash": "3ede7e066c34f4c64d8f3e3c8ab6e557"
+  },
+  "C:\\Users\\C V REDDY\\Downloads\\ddi_rag\\ddi_rag\\static\\patient\\index.html": {
+    "mtime": 1787414875.822506,
+    "ast_hash": "a13e4d0f5c224d72ba956e7e4ef489e4",
+    "semantic_hash": "a13e4d0f5c224d72ba956e7e4ef489e4"
+  }
+}
