@@ -65,6 +65,29 @@ MAX_PRESCRIPTION_LEN = 1_000
 DEFAULT_TOP_K        = 5
 MAX_TOP_K            = 10
 
+# CORS — restrict to actual known origins rather than allowing any site to
+# call the API cross-origin. Both frontends (static/patient, static/clinical)
+# are served by this SAME Flask app, so legitimate browser traffic is
+# same-origin already and doesn't need CORS at all; this only matters for a
+# separately-hosted frontend or direct API callers. Comma-separated in
+# ALLOWED_ORIGINS if you deploy one; defaults cover the live Render URL and
+# local dev.
+ALLOWED_ORIGINS = [
+    o.strip() for o in os.getenv(
+        "ALLOWED_ORIGINS",
+        "https://ddi-rag.onrender.com,http://localhost:5000,http://127.0.0.1:5000",
+    ).split(",") if o.strip()
+]
+
+# Rate limiting — /api/query, /api/self-check, /api/explain are reachable
+# with no login (self-check/explain by design; query works unauthenticated
+# too), so with no per-IP throttle a single bad actor can burn through the
+# Cohere/Groq free-tier quota for everyone. In-memory limiter (no Redis
+# needed) keyed by remote address — resets on process restart, which is an
+# acceptable tradeoff for a single-instance deployment like this one.
+RATE_LIMIT_PER_MINUTE = os.getenv("RATE_LIMIT_PER_MINUTE", "20 per minute")
+RATE_LIMIT_PER_DAY    = os.getenv("RATE_LIMIT_PER_DAY", "500 per day")
+
 # ── Guest self-check (routes_public.py) — no login required, so these bound
 # the worst case cost of a single unauthenticated request (RxNorm lookups
 # are sequential/network-bound; each finding explanation is one Cohere +

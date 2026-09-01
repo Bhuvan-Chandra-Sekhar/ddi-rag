@@ -19,8 +19,10 @@ severity or action, here or anywhere else.
 Cost/abuse note: MAX_SELF_CHECK_ITEMS/MAX_ITEM_LEN/MAX_NOTES_LEN (config.py)
 bound the worst case of a single unauthenticated request (RxNorm lookups
 are network calls; each /api/explain call is one Cohere + one Groq call).
-There is still no per-IP rate limiting on these routes — same known gap as
-/api/query, tracked in docs/SESSION_HANDOFF.md, not solved here.
+Per-IP rate limiting (rate_limit.py's shared limiter) is applied below —
+tighter than the app-wide default on /api/explain specifically, since that
+one call is the expensive path (Cohere + Groq every time, vs. self_check's
+DB-only lookups).
 """
 
 import logging
@@ -31,6 +33,7 @@ from flask import Blueprint, request
 from config import GROQ_MODEL, MAX_ITEM_LEN, MAX_NOTES_LEN, MAX_SELF_CHECK_ITEMS
 from database import get_session
 from enums import Severity
+from rate_limit import limiter
 from services.clinical_rules import evaluate_case
 from services.evidence import explain_finding
 from services.medication_identity import resolve_medication_identity
@@ -167,6 +170,7 @@ def _overall_severity(findings_raw: List[dict]) -> str | None:
 
 
 @public_bp.route("/api/self-check", methods=["POST"])
+@limiter.limit("15 per minute")
 def self_check():
     """
     { medications: [str], allergies: [str] } -> deterministic findings only,
@@ -195,6 +199,8 @@ def self_check():
 
 
 @public_bp.route("/api/explain", methods=["POST"])
+@limiter.limit("10 per minute")  # tighter than self_check — this is the
+# expensive path (real Cohere + Groq calls every time), not just a DB lookup.
 def explain_self_check_finding():
     """
     On-demand plain-language explanation for one finding from a prior

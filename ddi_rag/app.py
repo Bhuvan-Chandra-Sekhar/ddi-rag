@@ -38,7 +38,8 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from werkzeug.exceptions import HTTPException
 
 from auth import authenticate_user, configure_jwt, register_user
-from config import DEFAULT_TOP_K, MAX_PRESCRIPTION_LEN, MAX_TOP_K, PORT
+from config import ALLOWED_ORIGINS, DEFAULT_TOP_K, MAX_PRESCRIPTION_LEN, MAX_TOP_K, PORT
+from rate_limit import limiter
 from database import get_session, init_db
 from enums import FindingType, PrescriberDecision, ReviewStatus, Severity
 from models import (
@@ -57,7 +58,15 @@ from routes_public import public_bp
 log = logging.getLogger("ddi.app")
 
 flask_app = Flask("ddi")
-CORS(flask_app)
+# Restricted to known origins (config.ALLOWED_ORIGINS) rather than the
+# previous default of allowing any site — see config.py's comment. Lower
+# severity than it sounds (JWT bearer tokens in headers, not cookies, so
+# not classically CSRF-exploitable) but still a real gap: unrestricted CORS
+# lets any third-party page issue authenticated fetches on a signed-in
+# user's behalf, and lets any site relay traffic through the public,
+# unauthenticated self-check endpoint.
+CORS(flask_app, origins=ALLOWED_ORIGINS)
+limiter.init_app(flask_app)
 configure_jwt(flask_app)
 flask_app.register_blueprint(clinical_bp)
 flask_app.register_blueprint(public_bp)
@@ -88,6 +97,7 @@ def handle_exception(e):
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 @flask_app.route("/api/health")
+@limiter.exempt
 def health():
     return {"status": "ok"}, 200
 
@@ -137,6 +147,9 @@ def register():
 
 
 @flask_app.route("/api/auth/login", methods=["POST"])
+@limiter.limit("10 per minute")  # tighter than the app default — this is the
+# one endpoint where the threat model is brute-force/credential-stuffing,
+# not just quota exhaustion, so it gets its own stricter cap.
 def login():
     payload = request.get_json(force=True, silent=True) or {}
     try:
