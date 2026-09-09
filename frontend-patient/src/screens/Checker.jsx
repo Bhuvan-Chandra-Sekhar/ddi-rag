@@ -18,11 +18,19 @@ export default function Checker({ draft, setDraft, onSubmit }) {
     e.preventDefault();
     // Commit any text still sitting in an input the user didn't press
     // Enter/Add on — same intent as the original's leftover-DOM-value read.
-    checkingRef.current?.flush();
-    currentRef.current?.flush();
-    allergyRef.current?.flush();
+    const nextDraft = {
+      ...draft,
+      checking: checkingRef.current?.flush() ?? draft.checking,
+      current: currentRef.current?.flush() ?? draft.current,
+      allergies: allergyRef.current?.flush() ?? draft.allergies,
+    };
+    setDraft(nextDraft);
 
-    if (!draft.checking && !draft.current.length) {
+    if ((nextDraft.checking ? 1 : 0) + nextDraft.current.length > MAX_MEDS_TOTAL) {
+      setError(`Check up to ${MAX_MEDS_TOTAL} medications at a time. Remove one to continue.`);
+      return;
+    }
+    if (!nextDraft.checking && !nextDraft.current.length) {
       setError('Add at least one drug to check.');
       return;
     }
@@ -31,17 +39,17 @@ export default function Checker({ draft, setDraft, onSubmit }) {
   };
 
   return (
-    <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-10">
+    <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-16 sm:py-24">
       <div className="reveal">
         <p className="label-tag mb-4" style={{ color: 'var(--accent)' }}>Quick check · no account needed</p>
         <h1 className="font-display text-heading-sm mb-4" style={{ color: 'var(--ink)' }}>What are you checking?</h1>
         <p className="text-prose mb-10" style={{ color: 'var(--ink-soft)', maxWidth: '34rem' }}>
           Tell us the drug or prescription you want checked, and what else you're already
-          taking. Nothing here is sent to a care team or saved to an account — it stays in
-          this browser tab, and disappears when you leave.
+          taking. Your entries are sent for analysis, but this guest check is not saved
+          to an account or sent to a care team.
         </p>
 
-        <form onSubmit={handleSubmit} className="card card-shadow rounded-2xl p-6 sm:p-8 space-y-7">
+        <form onSubmit={handleSubmit} className="space-y-9">
           <CheckingField
             ref={checkingRef}
             value={draft.checking}
@@ -49,7 +57,7 @@ export default function Checker({ draft, setDraft, onSubmit }) {
           />
           <TagInput
             ref={currentRef}
-            label="What else are you currently taking? — your history"
+            label="Current medications"
             placeholder="e.g. warfarin"
             items={draft.current}
             canAdd={totalMedsCanAdd}
@@ -57,36 +65,33 @@ export default function Checker({ draft, setDraft, onSubmit }) {
           />
           <TagInput
             ref={allergyRef}
-            label="Any known allergies or past bad reactions?"
+            label="Known allergies or past reactions"
             placeholder="e.g. penicillin"
             items={draft.allergies}
             canAdd={() => draft.allergies.length < MAX_MEDS_TOTAL}
             onChange={(items) => setDraft((d) => ({ ...d, allergies: items }))}
           />
-          <div>
-            <label className="label-tag block mb-2" style={{ color: 'var(--ink)' }}>
-              Anything else about your history you'd like to mention?{' '}
-              <span className="normal-case" style={{ color: 'var(--ink-faint)', fontWeight: 400, letterSpacing: 'normal' }}>
-                (optional)
-              </span>
-            </label>
+          <details>
+            <summary className="field-label cursor-pointer mb-4" style={{ color: 'var(--ink-soft)' }}>Add context · optional</summary>
+            <label htmlFor="check-notes" className="sr-only">Additional context</label>
             <textarea
+              id="check-notes"
               rows={3}
               maxLength={600}
-              placeholder="Past reactions, other conditions, how you're feeling — anything that might matter here. This isn't saved anywhere; it's just used to help explain your results."
+              placeholder="Past reactions or other context to help explain your results. Avoid identifying details."
               value={draft.notes}
               onChange={(e) => setDraft((d) => ({ ...d, notes: e.target.value }))}
               className="field w-full border rounded-lg px-3.5 py-2.5 text-[13.5px]"
               style={{ borderColor: 'var(--line)' }}
             />
-          </div>
+          </details>
 
           {error && (
-            <div className="text-[13px] font-medium" style={{ color: 'var(--critical)' }}>{error}</div>
+            <div role="alert" className="text-[14px] font-medium" style={{ color: 'var(--critical)' }}>{error}</div>
           )}
 
-          <div className="flex items-center justify-between pt-1">
-            <p className="text-[11.5px] max-w-xs leading-relaxed" style={{ color: 'var(--ink-faint)' }}>
+          <div className="flex flex-col-reverse sm:flex-row items-start sm:items-center justify-between gap-6 pt-1">
+            <p className="text-[13px] max-w-xs leading-relaxed" style={{ color: 'var(--ink-soft)' }}>
               Not reviewed by a pharmacist. Not a substitute for professional medical advice.
             </p>
             <button type="submit" className="label-tag text-white px-6 py-3.5 rounded-full whitespace-nowrap" style={{ background: 'var(--primary)' }}>

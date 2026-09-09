@@ -81,7 +81,9 @@ export default function HeroConstellation() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reduceMotion = motionQuery.matches;
+    if (!ctx) return;
 
     let particles = seedParticles();
     let w = 0, h = 0, dpr = 1;
@@ -101,7 +103,7 @@ export default function HeroConstellation() {
       const t = (now - start) / 1000;
       ctx.clearRect(0, 0, w, h);
       const cx = w / 2, cy = h / 2;
-      const maxR = Math.min(w, h) / 2;
+      const maxR = Math.min(w, h) / 2.8;
       for (const p of particles) {
         const wobble = Math.sin(t * p.speed + p.phase) * p.drift;
         const r = (p.baseR + wobble) * maxR;
@@ -111,7 +113,7 @@ export default function HeroConstellation() {
         const rot = p.rot + t * p.rotSpeed;
         drawTriangle(ctx, x, y, p.size, rot, p.color, p.alpha);
       }
-      raf = requestAnimationFrame(frame);
+      if (!reduceMotion && !document.hidden) raf = requestAnimationFrame(frame);
     }
 
     resize();
@@ -121,14 +123,24 @@ export default function HeroConstellation() {
       raf = requestAnimationFrame(frame);
     }
 
-    window.addEventListener('resize', resize, { passive: true });
+    function restart() {
+      if (raf) cancelAnimationFrame(raf);
+      reduceMotion = motionQuery.matches;
+      resize();
+      frame(reduceMotion ? start : performance.now());
+    }
+    window.addEventListener('resize', restart, { passive: true });
+    motionQuery.addEventListener('change', restart);
+    document.addEventListener('visibilitychange', restart);
 
     // The whole payoff of doing this in React: teardown is guaranteed by
     // the framework when this component unmounts (navigating away from
     // Home), not by a hand-rolled "am I still attached?" poll every frame.
     return () => {
       if (raf) cancelAnimationFrame(raf);
-      window.removeEventListener('resize', resize);
+      window.removeEventListener('resize', restart);
+      motionQuery.removeEventListener('change', restart);
+      document.removeEventListener('visibilitychange', restart);
     };
   }, []);
 

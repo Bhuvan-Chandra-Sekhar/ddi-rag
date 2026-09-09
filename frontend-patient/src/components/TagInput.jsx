@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useId, useImperativeHandle, useState } from 'react';
 
 // Controlled version of the old tagInputHtml()/wireTagInput() pair — same
 // behavior (Enter or comma commits, click removes, whole pill is the
@@ -9,24 +9,28 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 // React equivalent of that same "grab whatever's still sitting there".
 const TagInput = forwardRef(function TagInput({ label, placeholder, items, onChange, canAdd = () => true }, ref) {
   const [draft, setDraft] = useState('');
+  const inputId = useId();
 
   const commit = () => {
     const v = draft.trim();
     if (v && canAdd()) {
       onChange([...items, v]);
       setDraft('');
+      return [...items, v];
     }
+    return items;
   };
 
   useImperativeHandle(ref, () => ({ flush: commit }));
 
   return (
     <div>
-      <label className="field-label block mb-2" style={{ color: 'var(--ink-soft)' }}>
+      <label htmlFor={inputId} className="field-label block mb-2" style={{ color: 'var(--ink-soft)' }}>
         {label}
       </label>
       <div className="flex gap-2 mb-2">
         <input
+          id={inputId}
           type="text"
           autoComplete="off"
           placeholder={placeholder}
@@ -38,7 +42,7 @@ const TagInput = forwardRef(function TagInput({ label, placeholder, items, onCha
               commit();
             }
           }}
-          className="field flex-1 border rounded-lg px-3.5 py-2.5 text-[13.5px]"
+          className="field min-w-0 flex-1 border rounded-lg px-3.5 py-2.5 text-[15px]"
           style={{ borderColor: 'var(--line)' }}
         />
         <button

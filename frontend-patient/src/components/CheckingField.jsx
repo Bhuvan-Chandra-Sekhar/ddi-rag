@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useId, useImperativeHandle, useState } from 'react';
 
 // "Checking" is deliberately one drug at a time, not a tag list like the
 // other fields — it represents a single question ("does THIS interact with
@@ -6,6 +6,7 @@ import { forwardRef, useImperativeHandle, useState } from 'react';
 // single chip; removing that chip is the only way back to typing a new one.
 const CheckingField = forwardRef(function CheckingField({ value, onChange }, ref) {
   const [draft, setDraft] = useState('');
+  const inputId = useId();
   const hasDrug = Boolean(value);
 
   const commit = () => {
@@ -14,14 +15,15 @@ const CheckingField = forwardRef(function CheckingField({ value, onChange }, ref
       onChange(v);
       setDraft('');
     }
+    return value || v;
   };
 
   useImperativeHandle(ref, () => ({ flush: commit }));
 
   return (
     <div>
-      <label className="field-label block mb-2" style={{ color: 'var(--ink-soft)' }}>
-        The drug or prescription you want checked
+      <label htmlFor={inputId} className="field-label block mb-2" style={{ color: 'var(--ink-soft)' }}>
+        Medication to check
       </label>
       {hasDrug ? (
         <>
@@ -44,9 +46,10 @@ const CheckingField = forwardRef(function CheckingField({ value, onChange }, ref
       ) : (
         <div className="flex gap-2">
           <input
+            id={inputId}
             type="text"
             autoComplete="off"
-            placeholder="e.g. the new prescription you just got"
+            placeholder="e.g. aspirin — one medication"
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={(e) => {
@@ -55,7 +58,7 @@ const CheckingField = forwardRef(function CheckingField({ value, onChange }, ref
                 commit();
               }
             }}
-            className="field flex-1 border rounded-lg px-3.5 py-2.5 text-[13.5px]"
+            className="field min-w-0 flex-1 border rounded-lg px-3.5 py-2.5 text-[15px]"
             style={{ borderColor: 'var(--line)' }}
           />
           <button

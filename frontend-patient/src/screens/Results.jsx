@@ -7,7 +7,7 @@ function OverallBanner({ overallSeverity, seeADoctor, hasUnresolvedMed }) {
   if (seeADoctor) {
     return (
       <Banner color="var(--critical)" bg="rgba(255,92,92,0.16)" tint="rgba(255,92,92,0.08)">
-        <p className="font-display text-[19px] font-semibold mb-1" style={{ color: 'var(--critical)' }}>
+        <p className="font-display text-[27px] font-normal mb-3" style={{ color: 'var(--critical)' }}>
           Please talk to a doctor or pharmacist before taking these together
         </p>
         <p className="text-[13px] leading-relaxed" style={{ color: 'var(--ink-soft)' }}>
@@ -25,7 +25,7 @@ function OverallBanner({ overallSeverity, seeADoctor, hasUnresolvedMed }) {
   if (!overallSeverity && hasUnresolvedMed) {
     return (
       <Banner color="var(--caution)" bg="rgba(255,184,41,0.16)">
-        <p className="font-display text-[19px] font-semibold mb-1">We're not sure we understood everything you entered</p>
+        <p className="font-display text-[27px] font-normal mb-3">We're not sure we understood everything you entered</p>
         <p className="text-[13px] leading-relaxed" style={{ color: 'var(--ink-soft)' }}>
           One or more items below (marked <strong>·approx</strong>) didn't match a known medication
           exactly — if you typed more than one drug into the same box, try adding them as separate
@@ -36,12 +36,12 @@ function OverallBanner({ overallSeverity, seeADoctor, hasUnresolvedMed }) {
   }
   if (!overallSeverity) {
     return (
-      <Banner color="var(--safe)" bg="rgba(62,207,142,0.16)" icon="check">
-        <p className="font-display text-[19px] font-semibold mb-1">Nothing flagged in our data</p>
+      <Banner color="var(--caution)" bg="rgba(255,184,41,0.16)">
+        <p className="font-display text-[27px] font-normal mb-3">Nothing flagged in our data</p>
         <p className="text-[13px] leading-relaxed" style={{ color: 'var(--ink-soft)' }}>
           No duplicate ingredients, recorded allergy conflicts, or known interaction rules matched what
-          you entered. That's reassuring, but it isn't a guarantee — it only reflects what's in this
-          dataset, and no pharmacist has reviewed it.
+          you entered. This does not establish that the combination is safe. Check the data coverage
+          below; no pharmacist has reviewed these results.
         </p>
       </Banner>
     );
@@ -49,7 +49,7 @@ function OverallBanner({ overallSeverity, seeADoctor, hasUnresolvedMed }) {
   const meta = SEVERITY_META[overallSeverity] || SEVERITY_META.unknown;
   return (
     <Banner color={meta.color} bg={meta.bg}>
-      <p className="font-display text-[19px] font-semibold mb-1">
+      <p className="font-display text-[27px] font-normal mb-3">
         We found something to review — highest priority: <span style={{ color: meta.color }}>{meta.label}</span>
       </p>
       <p className="text-[13px] leading-relaxed" style={{ color: 'var(--ink-soft)' }}>
@@ -63,8 +63,7 @@ function OverallBanner({ overallSeverity, seeADoctor, hasUnresolvedMed }) {
 function Banner({ color, bg, tint, icon = 'warning', children }) {
   return (
     <div
-      className="card card-shadow rounded-2xl p-6 flex items-start gap-4"
-      style={{ borderLeft: `4px solid ${color}`, background: tint }}
+      className="py-6 flex items-start gap-4"
     >
       <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: bg }}>
         {icon === 'check' ? (
@@ -107,7 +106,7 @@ function MedChips({ meds, offset, onToggle }) {
 
 // Ported from renderResults().
 export default function Results({ data, checkingCount, draft, onNewCheck, onCheckAnother }) {
-  const { resolved_medications: resolvedMedications = [], findings: rawFindings = [], overall_severity, see_a_doctor } = data;
+  const { resolved_medications: resolvedMedications = [], findings: rawFindings = [], overall_severity, see_a_doctor, ddi_coverage: coverage } = data;
   const checkingMeds = resolvedMedications.slice(0, checkingCount);
   const currentMeds = resolvedMedications.slice(checkingCount);
   const hasUnresolvedMed = resolvedMedications.some((m) => !m.identity_confirmed);
@@ -132,8 +131,8 @@ export default function Results({ data, checkingCount, draft, onNewCheck, onChec
   const remaining = findings.length - visibleCount;
 
   return (
-    <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-10">
-      <div className="reveal space-y-6">
+    <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-16 sm:py-24">
+      <div className="reveal space-y-9">
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <p className="label-tag" style={{ color: 'var(--accent)' }}>Your results</p>
           <div className="flex items-center gap-4">
@@ -151,6 +150,37 @@ export default function Results({ data, checkingCount, draft, onNewCheck, onChec
         </div>
 
         <OverallBanner overallSeverity={overall_severity} seeADoctor={see_a_doctor} hasUnresolvedMed={hasUnresolvedMed} />
+
+        <section aria-labelledby="coverage-title" className="py-6">
+          <h2 id="coverage-title" className="font-display text-[27px] mb-4">What the data covers</h2>
+          {coverage ? (
+            <>
+              <div className="grid grid-cols-3 gap-4 mb-5">
+                {[[coverage.pairs_checked, 'Ingredient pairs'], [coverage.pairs_approved, 'Approved rules'], [coverage.pairs_with_no_rule, 'Without a rule']].map(([count, label]) => (
+                  <div key={label}>
+                    <p className="font-display text-[36px]">{count ?? 0}</p>
+                    <p className="text-[13px]" style={{ color: 'var(--ink-soft)' }}>{label}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[15px] leading-relaxed" style={{ color: 'var(--ink-soft)' }}>
+                {coverage.pairs_checked === 0
+                  ? 'There were no distinct ingredient pairs to compare. A single medication can still carry risks.'
+                  : 'A missing rule means a gap in our data, not a safe combination. Counts refer to ingredient pairs, which may differ from the number of medications entered.'}
+                {coverage.pairs_unreviewed > 0 && ` ${coverage.pairs_unreviewed} pair(s) have rules awaiting review.`}
+                {coverage.pairs_rejected > 0 && ` ${coverage.pairs_rejected} pair(s) have rejected rules.`}
+              </p>
+              {coverage.unmatched_pairs?.length > 0 && (
+                <details className="mt-4 text-[14px]" style={{ color: 'var(--ink-soft)' }}>
+                  <summary className="cursor-pointer" style={{ color: 'var(--accent)' }}>See pairs without a rule</summary>
+                  <ul className="mt-3 space-y-2">
+                    {coverage.unmatched_pairs.map((pair, index) => <li key={index}>{pair.ingredient_a} + {pair.ingredient_b}</li>)}
+                  </ul>
+                </details>
+              )}
+            </>
+          ) : <p className="text-[15px]" style={{ color: 'var(--ink-soft)' }}>Coverage information is unavailable for this check. No findings should not be interpreted as confirmation of safety.</p>}
+        </section>
 
         {checkingMeds.length > 0 && (
           <div>

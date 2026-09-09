@@ -1,57 +1,35 @@
 import HeroConstellation from '../components/HeroConstellation.jsx';
 
-const FEATURES = [
-  { n: '01', title: 'No sign-up required', body: "Type your medications and go — nothing is saved to an account, so nothing about you has to be." },
-  { n: '02', title: 'You bring the history', body: "Since nothing's stored between visits, just type any allergies or past reactions in each time — takes a few seconds." },
-  { n: '03', title: 'Honest about limits', body: 'Unreviewed findings are always labeled as such — we never call something safe just because we don’t know.' },
-];
-
-// Ported from renderHome().
 export default function Home({ user, onNav }) {
   return (
-    <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-10">
-      <div className="reveal grid lg:grid-cols-[1fr_260px] gap-10 lg:gap-14 items-center mb-16">
-        <div>
-          <p className="label-tag mb-5" style={{ color: 'var(--accent)' }}>Medication safety, in plain language</p>
-          <h1 className="font-display text-display mb-6" style={{ color: 'var(--ink)' }}>
-            Know what's in
-            <br />
-            your medicine cabinet.
-          </h1>
-          <p className="text-prose max-w-lg mb-10" style={{ color: 'var(--ink-soft)' }}>
-            Type in what you're taking — no account needed — and see what our FDA-grounded
-            interaction checker finds. If you already have prescriptions on file with a care
-            team, sign in to see what your pharmacist has reviewed.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <button onClick={() => onNav('checker')} className="label-tag text-white px-6 py-3.5 rounded-full" style={{ background: 'var(--primary)' }}>
-              Check my medications →
-            </button>
-            {user ? (
-              <button onClick={() => onNav('dashboard')} className="label-tag px-6 py-3.5 rounded-full" style={{ color: 'var(--ink-soft)' }}>
-                Go to my prescriptions
-              </button>
-            ) : (
-              <button onClick={() => onNav('auth')} className="label-tag px-6 py-3.5 rounded-full" style={{ color: 'var(--ink-soft)' }}>
-                Sign in instead
-              </button>
-            )}
+    <main className="home-page flex-1">
+      <section className="home-hero">
+        <div className="hero-copy">
+          <p className="label-tag hero-enter" style={{ color: 'var(--accent)' }}>A little clarity. A better conversation.</p>
+          <h1 className="hero-title hero-enter">Your medications.<br />Better understood.</h1>
+          <p className="text-prose hero-enter hero-description">Check a new medication against what you already take. Understand potential interactions, and know what to discuss with your care team.</p>
+          <div className="hero-actions hero-enter">
+            <button onClick={() => onNav('checker')} className="btn-primary label-tag text-white px-6 py-4 rounded-full">Check my medications <span aria-hidden="true">↗</span></button>
+            <span className="text-caption" style={{ color: 'var(--ink-soft)' }}>No account needed</span>
           </div>
         </div>
         <HeroConstellation />
-      </div>
-
-      <div className="reveal">
-        <div className="grid sm:grid-cols-3 gap-x-8 gap-y-10">
-          {FEATURES.map((f) => (
-            <div key={f.n}>
-              <p className="font-display text-heading-2xs mb-3" style={{ color: 'var(--primary)' }}>{f.n}</p>
-              <p className="label-tag mb-2" style={{ color: 'var(--ink)' }}>{f.title}</p>
-              <p className="text-[14px] leading-relaxed" style={{ color: 'var(--ink-soft)', fontWeight: 300 }}>{f.body}</p>
-            </div>
-          ))}
+        <a className="hero-scroll label-tag" href="#how-it-works">Explore the process <span aria-hidden="true">↓</span></a>
+      </section>
+      <section id="how-it-works" className="home-editorial">
+        <div><p className="label-tag mb-6" style={{ color: 'var(--accent)' }}>From questions to context</p><h2 className="text-heading">Make sense of<br />what goes together.</h2></div>
+        <div className="home-steps">
+          {[
+            ['01', 'Bring your medication list.', 'Add the medication you want to check, what you already take, and any known allergies.'],
+            ['02', 'See what the evidence says.', 'Review potential interactions and allergy conflicts, with source details and clear labels for unreviewed findings.'],
+            ['03', 'Take the next step together.', 'Use the results to start a conversation with your pharmacist. Missing evidence does not mean a combination is safe.'],
+          ].map(([number, title, body]) => <article className="home-step" key={number}><span className="label-tag" style={{ color: 'var(--primary)' }}>{number}</span><div><h3 className="text-heading-2xs mb-3">{title}</h3><p className="text-prose" style={{ color: 'var(--ink-soft)' }}>{body}</p></div></article>)}
         </div>
-      </div>
+      </section>
+      <section className="home-editorial home-care">
+        <h2 className="text-heading">Your care team.<br />Your next chapter.</h2>
+        <div><p className="text-prose mb-6" style={{ color: 'var(--ink-soft)' }}>Already connected to a care team? See your prescriptions and the updates your pharmacist has reviewed.</p><button className="text-link label-tag" onClick={() => onNav(user ? 'dashboard' : 'auth')}>{user ? 'My prescriptions' : 'Sign in to your account'} <span aria-hidden="true">↗</span></button></div>
+      </section>
     </main>
   );
 }

@@ -105,8 +105,10 @@ def health():
 
 @flask_app.route("/patient")
 def patient_app():
-    """Serves the patient-facing single-page app (static HTML, no build step)."""
-    return send_from_directory(Path(__file__).resolve().parent / "static" / "patient", "index.html")
+    """Serve the built React patient portal, with a legacy development fallback."""
+    static_dir = Path(__file__).resolve().parent / "static"
+    portal = "patient-app" if (static_dir / "patient-app" / "index.html").exists() else "patient"
+    return send_from_directory(static_dir / portal, "index.html")
 
 
 @flask_app.route("/clinical")

@@ -13,7 +13,7 @@ services:
     name: ddi-rag
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt && npm --prefix frontend-patient ci && npm --prefix frontend-patient run build
     startCommand: gunicorn --chdir ddi_rag app:flask_app --bind 0.0.0.0:$PORT
     healthCheckPath: /api/health
     envVars:

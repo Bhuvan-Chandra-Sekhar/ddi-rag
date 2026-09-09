@@ -40,6 +40,7 @@ data/processed/
 # Node / Vite frontend builds — generated, not source.
 node_modules/
 frontend-patient/dist/
+ddi_rag/static/patient-app/
 frontend-clinical/dist/
 
 # Local AI-tool state (Claude Code, claude-flow, Codex) — not app code,
