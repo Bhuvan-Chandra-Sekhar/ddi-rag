@@ -14,7 +14,7 @@ from sqlalchemy.pool import StaticPool
 from database import Base
 from enums import (
     FindingType, PrescriberDecision, PrescriptionStatus, ReviewStatus,
-    SafetyCaseState, Severity,
+    SafetyCaseState, Severity, UserRole,
 )
 from models import (
     ClinicalProfileSnapshot, Finding, Medication, Organization, Patient,
@@ -48,8 +48,8 @@ def scenario(session):
     session.add(org)
     session.flush()
 
-    pharmacist = User(organization_id=org.id, email="enf-pharm@example.com", password_hash="x")
-    prescriber = User(organization_id=org.id, email="enf-doc@example.com", password_hash="x")
+    pharmacist = User(organization_id=org.id, email="enf-pharm@example.com", password_hash="x", role=UserRole.PHARMACIST)
+    prescriber = User(organization_id=org.id, email="enf-doc@example.com", password_hash="x", role=UserRole.PRESCRIBER)
     patient = Patient(organization_id=org.id, first_name="Enf", last_name="Test")
     session.add_all([pharmacist, prescriber, patient])
     session.flush()

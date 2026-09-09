@@ -24,6 +24,7 @@ Severity policy:
 
 import csv
 import logging
+from datetime import datetime, timezone
 from typing import Dict, List, Optional, Sequence
 
 from enums import FindingType, ReviewStatus, RuleStatus, Severity
@@ -333,3 +334,117 @@ def evaluate_case(
     findings.extend(evaluate_drug_allergy(ingredient_names, allergy_names))
     findings.extend(evaluate_ddi_pairs(session, ingredient_names))
     return findings
+
+
+def ddi_coverage_report(session, ingredient_names: Sequence[str]) -> dict:
+    """
+    What the knowledge base actually knows about every unordered pair among
+    ingredient_names — independent of evaluate_ddi_pairs()'s finding list,
+    which only ever returns rows FOR pairs that already have a matching
+    ClinicalRule. "No finding" on its own is ambiguous: it could mean
+    "checked, no matching rule exists at all" (a real coverage gap in the
+    data) or "checked, a rule exists but review_status doesn't call for a
+    finding" — this function makes the first case visible, which
+    evaluate_ddi_pairs() structurally cannot represent (a pair with no
+    rule never appears in its output at all). This is a NEW function, not
+    a change to evaluate_ddi_pairs()/evaluate_case()'s own return shape —
+    those stay exactly as they were so nothing that already depends on
+    them (5 tests, 3 call sites) has to change.
+
+    A second, separate query from evaluate_ddi_pairs()'s own lookup — kept
+    intentionally isolated rather than merged, so this stays a pure
+    reporting addition with zero risk to the existing rule-evaluation path.
+    """
+    pairs = list(_unique_unordered_pairs(ingredient_names))
+    if not pairs:
+        return {
+            "pairs_checked": 0, "pairs_with_rule": 0, "pairs_with_no_rule": 0,
+            "pairs_approved": 0, "pairs_unreviewed": 0, "pairs_rejected": 0,
+            "unmatched_pairs": [],
+        }
+
+    keys = [_pair_key(a, b) for a, b in pairs]
+    rules_by_key = {
+        rule.pair_key: rule
+        for rule in session.query(ClinicalRule).filter(ClinicalRule.pair_key.in_(keys))
+    }
+
+    unmatched, approved, unreviewed, rejected = [], 0, 0, 0
+    for (a, b), key in zip(pairs, keys):
+        rule = rules_by_key.get(key)
+        if rule is None:
+            unmatched.append({"ingredient_a": a, "ingredient_b": b})
+        elif rule.status == RuleStatus.APPROVED:
+            approved += 1
+        elif rule.status == RuleStatus.DRAFT:
+            unreviewed += 1
+        elif rule.status == RuleStatus.REJECTED:
+            rejected += 1
+
+    return {
+        "pairs_checked": len(pairs),
+        "pairs_with_rule": len(pairs) - len(unmatched),
+        "pairs_with_no_rule": len(unmatched),
+        "pairs_approved": approved,
+        "pairs_unreviewed": unreviewed,
+        "pairs_rejected": rejected,
+        "unmatched_pairs": unmatched,
+    }
+
+
+def review_rule(
+    session,
+    rule_id: str,
+    decision: RuleStatus,
+    reviewer_user_id: str,
+    severity_override: Optional[Severity] = None,
+) -> ClinicalRule:
+    """
+    Promote a DRAFT ClinicalRule to APPROVED or REJECTED — the one action
+    that gives a mined/imported rule real clinical authority. This is the
+    knowledge-governance workflow that was previously entirely absent:
+    RuleStatus.APPROVED was set only in test fixtures anywhere in this
+    repo before this function existed; no endpoint or script had ever
+    promoted a real rule.
+
+    decision must be APPROVED or REJECTED, never DRAFT (there's no
+    legitimate reason to move a rule backward into DRAFT through this
+    path). severity_override lets the reviewer adjust the rule's severity
+    at approval time (confirm the mined value as-is, or correct it) —
+    only meaningful when decision is APPROVED; ignored otherwise since a
+    rejected rule's severity is moot.
+
+    Deliberately re-review-able: approving/rejecting an already-decided
+    rule just updates reviewer_user_id/reviewed_at again (audit event
+    still records every change) rather than refusing — a reviewer finding
+    a past decision wrong needs a way to correct it, not a permanent lock.
+    """
+    if decision not in (RuleStatus.APPROVED, RuleStatus.REJECTED):
+        raise ValueError(f"decision must be APPROVED or REJECTED, got {decision}")
+
+    rule = session.get(ClinicalRule, rule_id)
+    if not rule:
+        raise ValueError(f"no ClinicalRule with id {rule_id}")
+
+    rule.status = decision
+    rule.reviewer_user_id = reviewer_user_id
+    rule.reviewed_at = datetime.now(timezone.utc)
+    if decision == RuleStatus.APPROVED and severity_override is not None:
+        rule.severity = severity_override
+
+    session.flush()
+    return rule
+
+
+def pending_rules(session, limit: int = 50, offset: int = 0) -> List[ClinicalRule]:
+    """DRAFT rules awaiting review, oldest first — the review queue for the
+    knowledge-administration workflow. Oldest-first (not newest) so a
+    rule doesn't sit unreviewed indefinitely just because newer ones keep
+    arriving ahead of it."""
+    return (
+        session.query(ClinicalRule)
+        .filter(ClinicalRule.status == RuleStatus.DRAFT)
+        .order_by(ClinicalRule.created_at)
+        .offset(offset).limit(limit)
+        .all()
+    )

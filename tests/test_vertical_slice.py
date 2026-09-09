@@ -12,7 +12,7 @@ from sqlalchemy.pool import StaticPool
 from database import Base
 from enums import (
     DeliveryChannel, DispensingStatus, PrescriberDecision, PrescriptionStatus,
-    ReviewStatus, RuleStatus, SafetyCaseState, Severity, FindingType,
+    ReviewStatus, RuleStatus, SafetyCaseState, Severity, FindingType, UserRole,
 )
 from models import (
     ClinicalProfileSnapshot, ClinicalRule, Finding, Medication, Organization,
@@ -44,8 +44,8 @@ def scenario(session):
     session.add(org)
     session.flush()
 
-    pharmacist = User(organization_id=org.id, email="pharm@example.com", password_hash="x", full_name="Pat Pharmacist")
-    prescriber = User(organization_id=org.id, email="doc@example.com", password_hash="x", full_name="Dr. Prescriber")
+    pharmacist = User(organization_id=org.id, email="pharm@example.com", password_hash="x", full_name="Pat Pharmacist", role=UserRole.PHARMACIST)
+    prescriber = User(organization_id=org.id, email="doc@example.com", password_hash="x", full_name="Dr. Prescriber", role=UserRole.PRESCRIBER)
     session.add_all([pharmacist, prescriber])
     session.flush()
 
@@ -218,8 +218,8 @@ def test_case_with_no_actionable_finding_routes_straight_to_dispense(session):
     org = Organization(name="Org2")
     session.add(org)
     session.flush()
-    prescriber = User(organization_id=org.id, email="d2@example.com", password_hash="x")
-    pharmacist = User(organization_id=org.id, email="p2@example.com", password_hash="x")
+    prescriber = User(organization_id=org.id, email="d2@example.com", password_hash="x", role=UserRole.PRESCRIBER)
+    pharmacist = User(organization_id=org.id, email="p2@example.com", password_hash="x", role=UserRole.PHARMACIST)
     patient = Patient(organization_id=org.id, first_name="John", last_name="Doe")
     session.add_all([prescriber, pharmacist, patient])
     session.flush()

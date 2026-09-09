@@ -34,7 +34,7 @@ from config import GROQ_MODEL, MAX_ITEM_LEN, MAX_NOTES_LEN, MAX_SELF_CHECK_ITEMS
 from database import get_session
 from enums import Severity
 from rate_limit import limiter
-from services.clinical_rules import evaluate_case
+from services.clinical_rules import ddi_coverage_report, evaluate_case
 from services.evidence import explain_finding
 from services.medication_identity import resolve_medication_identity
 from services.rag_pipeline import safe_str
@@ -66,7 +66,7 @@ def _clean_str_list(raw, max_items: int, max_len: int) -> List[str]:
 
 def _resolve_and_evaluate(
     session, medication_names: Sequence[str], allergy_names: Sequence[str],
-) -> Tuple[List[dict], List[dict]]:
+) -> Tuple[List[dict], List[dict], List[str]]:
     """
     Resolve each typed medication name to its RxNorm ingredient(s) (falling
     back to the raw name if RxNorm can't identify it — an unresolved name
@@ -78,6 +78,10 @@ def _resolve_and_evaluate(
     to persist a finding's identity in, so /api/explain re-derives this
     same list and reads it by index rather than trusting a client-supplied
     finding_id.
+
+    Returns (resolved, findings_raw, ingredient_names) — the third element
+    lets self_check() also run ddi_coverage_report() against the exact
+    same ingredient list evaluate_case() used, without re-resolving names.
     """
     resolved = []
     ingredient_names: List[str] = []
@@ -93,7 +97,7 @@ def _resolve_and_evaluate(
         ingredient_names.extend(ingredients)
 
     findings_raw = evaluate_case(session, ingredient_names, allergy_names)
-    return resolved, findings_raw
+    return resolved, findings_raw, ingredient_names
 
 
 _STRONG_SEVERITIES = {"critical", "major"}
@@ -187,7 +191,8 @@ def self_check():
         return {"error": "at least one medication is required"}, 400
 
     with get_session() as session:
-        resolved, findings_raw = _resolve_and_evaluate(session, medications, allergies)
+        resolved, findings_raw, ingredient_names = _resolve_and_evaluate(session, medications, allergies)
+        coverage = ddi_coverage_report(session, ingredient_names)
 
     findings = [_serialize_finding(f, i) for i, f in enumerate(findings_raw)]
     return {
@@ -195,6 +200,14 @@ def self_check():
         "findings": findings,
         "overall_severity": _overall_severity(findings_raw),
         "see_a_doctor": any(f["see_a_doctor"] for f in findings),
+        # What was actually checked, not just what was found — "no findings"
+        # on its own can't distinguish "checked, nothing concerning" from
+        # "checked, but the knowledge base has no rule for this pair at
+        # all" (pairs_with_no_rule below). Absence of a finding was already
+        # documented throughout this codebase as "not a safety claim" —
+        # this is that principle actually reaching the API response instead
+        # of staying a comment.
+        "ddi_coverage": coverage,
     }, 200
 
 
@@ -225,7 +238,7 @@ def explain_self_check_finding():
         return {"error": "at least one medication is required"}, 400
 
     with get_session() as session:
-        resolved, findings_raw = _resolve_and_evaluate(session, medications, allergies)
+        resolved, findings_raw, _ = _resolve_and_evaluate(session, medications, allergies)
 
     if finding_index < 0 or finding_index >= len(findings_raw):
         return {"error": "finding_index out of range for these inputs"}, 400

@@ -13,7 +13,7 @@ from app import flask_app
 from database import get_session, init_db
 from enums import (
     FindingType, PrescriberDecision, PrescriptionStatus, ReviewStatus,
-    RuleStatus, SafetyCaseState, Severity,
+    RuleStatus, SafetyCaseState, Severity, UserRole,
 )
 from models import (
     ClinicalProfileSnapshot, ClinicalRule, Finding, Medication, Organization,
@@ -30,8 +30,13 @@ def _seed_case_awaiting_review():
         session.flush()
 
         suffix = uuid.uuid4().hex[:8]
-        pharmacist = User(organization_id=org.id, email=f"api-pharm-{suffix}@example.com", password_hash="x")
-        prescriber = User(organization_id=org.id, email=f"api-doc-{suffix}@example.com", password_hash="x")
+        # role= must be explicit — User.role defaults to UserRole.PATIENT
+        # (models.py), and these routes now enforce role, not just tenant
+        # membership (authz.py). Before that enforcement existed this was
+        # silently harmless; now a defaulted PATIENT role here would make
+        # every assess/intervention call below correctly get rejected.
+        pharmacist = User(organization_id=org.id, email=f"api-pharm-{suffix}@example.com", password_hash="x", role=UserRole.PHARMACIST)
+        prescriber = User(organization_id=org.id, email=f"api-doc-{suffix}@example.com", password_hash="x", role=UserRole.PRESCRIBER)
         session.add_all([pharmacist, prescriber])
         session.flush()
 

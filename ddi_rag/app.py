@@ -38,10 +38,11 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from werkzeug.exceptions import HTTPException
 
 from auth import authenticate_user, configure_jwt, register_user
+from authz import authorized_case, get_caller, require_role
 from config import ALLOWED_ORIGINS, DEFAULT_TOP_K, MAX_PRESCRIPTION_LEN, MAX_TOP_K, PORT
 from rate_limit import limiter
 from database import get_session, init_db
-from enums import FindingType, PrescriberDecision, ReviewStatus, Severity
+from enums import FindingType, PrescriberDecision, ReviewStatus, Severity, UserRole
 from models import (
     Finding, Intervention, Medication, Patient, PatientCommunication,
     Prescription, SafetyCase, User,
@@ -223,18 +224,12 @@ def _max_severity(findings) -> str | None:
     return max(findings, key=lambda f: _SEVERITY_RANK[f.severity]).severity.value
 
 
-def _authorized_case_or_error(session, case_id: str, caller_user_id: str):
-    """Return (case, None) if case_id exists and belongs to the caller's
-    organization, else (None, (body, status)) for the caller to return."""
-    user = session.get(User, caller_user_id)
-    if not user:
-        return None, ({"error": "unknown user"}, 401)
-    case = session.get(SafetyCase, case_id)
-    if not case:
-        return None, ({"error": "not found"}, 404)
-    if case.organization_id != user.organization_id:
-        return None, ({"error": "not found"}, 404)  # 404, not 403 — don't leak existence across tenants
-    return case, None
+# Role groups for authz.authorized_case()/require_role() calls below — named
+# by what the action actually is, not by which endpoint uses them, so the
+# intent reads clearly at each call site.
+CLINICAL_STAFF     = (UserRole.PHARMACIST, UserRole.PRESCRIBER, UserRole.SAFETY_OFFICER)
+PHARMACIST_REVIEW  = (UserRole.PHARMACIST, UserRole.SAFETY_OFFICER)
+PRESCRIBER_ONLY    = (UserRole.PRESCRIBER,)
 
 
 @flask_app.route("/v1/safety-cases/queue", methods=["GET"])
@@ -248,9 +243,12 @@ def safety_case_queue():
     matter how many cases are in the queue.
     """
     with get_session() as session:
-        user = session.get(User, get_jwt_identity())
-        if not user:
-            return {"error": "unknown user"}, 401
+        user, error = get_caller(session, get_jwt_identity())
+        if error:
+            return error
+        role_error = require_role(user, CLINICAL_STAFF)
+        if role_error:
+            return role_error
         cases = pharmacist_queue(session, user.organization_id)
         if not cases:
             return {"cases": []}, 200
@@ -297,7 +295,7 @@ def safety_case_queue():
 @jwt_required()
 def safety_case_timeline(case_id):
     with get_session() as session:
-        case, error = _authorized_case_or_error(session, case_id, get_jwt_identity())
+        case, error = authorized_case(session, case_id, get_jwt_identity(), CLINICAL_STAFF)
         if error:
             return error
         timeline = case_timeline(session, case)
@@ -322,7 +320,7 @@ def assess_case_findings(case_id):
     reasons = {safe_str(fid): safe_str(reason) for fid, reason in (payload.get("reasons") or {}).items()}
 
     with get_session() as session:
-        case, error = _authorized_case_or_error(session, case_id, actor_id)
+        case, error = authorized_case(session, case_id, actor_id, PHARMACIST_REVIEW)
         if error:
             return error
         try:
@@ -345,7 +343,7 @@ def create_intervention_route():
         return {"error": "invalid urgency"}, 400
 
     with get_session() as session:
-        case, error = _authorized_case_or_error(session, safe_str(payload.get("case_id", "")), actor_id)
+        case, error = authorized_case(session, safe_str(payload.get("case_id", "")), actor_id, PHARMACIST_REVIEW)
         if error:
             return error
         intervention = create_intervention(
@@ -373,7 +371,7 @@ def respond_to_intervention(intervention_id):
         intervention = session.get(Intervention, intervention_id)
         if not intervention:
             return {"error": "not found"}, 404
-        case, error = _authorized_case_or_error(session, intervention.case_id, actor_id)
+        case, error = authorized_case(session, intervention.case_id, actor_id, PRESCRIBER_ONLY)
         if error:
             return error
         try:
@@ -399,7 +397,13 @@ def my_cases():
     professional-facing.
     """
     with get_session() as session:
-        patient = session.query(Patient).filter_by(user_id=get_jwt_identity()).first()
+        user, error = get_caller(session, get_jwt_identity())
+        if error:
+            return error
+        role_error = require_role(user, (UserRole.PATIENT,))
+        if role_error:
+            return role_error
+        patient = session.query(Patient).filter_by(user_id=user.id).first()
         if not patient:
             return {"error": "no patient record linked to this account"}, 404
 

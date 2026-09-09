@@ -3,18 +3,23 @@ routes_clinical.py — Clinical console API: patients, prescriptions, and the
 safety-case detail/action endpoints the pharmacist/prescriber-facing
 frontend (static/clinical/index.html) needs beyond what app.py already
 exposes (queue, findings/assess, interventions, intervention response).
+Also the knowledge-administration workflow (/v1/clinical-rules/*) —
+reviewing candidate ClinicalRule rows and promoting them to APPROVED.
 
-Tenant scoping follows app.py's convention exactly: every route resolves
-the case's organization_id and returns 404 (not 403) if it doesn't match
-the caller's own organization_id, so existence is never leaked across
-tenants. Role-gated actions (e.g. only pharmacists may assess findings)
-are Phase 6 RBAC work and not implemented here.
+Tenant scoping AND role enforcement both go through authz.py's
+authorized_case()/require_role() — 404 (not 403) on a cross-tenant case so
+existence is never leaked, 403 on a same-tenant caller with the wrong
+role. See authz.py's own docstring for why this exists: organization
+membership alone used to be the entire check here, which meant a
+`patient`-role account could call pharmacist-only actions.
 
 Nothing in this module determines clinical facts. Findings still come only
 from services/clinical_rules.py via run_case_analysis(); this module's
 /explain route only attaches services/evidence.explain_finding()'s output
 to an already-frozen Finding, exactly as evidence.py's own docstring
-requires.
+requires. The rule-review endpoints similarly never invent a severity —
+review_rule() only ever promotes/demotes status and optionally confirms
+or corrects the severity a source dataset already reported.
 """
 
 from datetime import datetime
@@ -23,18 +28,20 @@ from typing import List, Optional
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
+from authz import authorized_case, get_caller, require_role
 from config import GROQ_MODEL
 from database import get_session
 from enums import (
-    DeliveryChannel, DispensingStatus, PrescriptionStatus, SafetyCaseState,
-    UserRole,
+    DeliveryChannel, DispensingStatus, PrescriptionStatus, RuleStatus,
+    SafetyCaseState, Severity, UserRole,
 )
 from models import (
-    ClinicalProfileSnapshot, DispensingOutcome, Escalation, Finding,
-    Intervention, Medication, Patient, PatientCommunication,
+    ClinicalProfileSnapshot, ClinicalRule, DispensingOutcome, Escalation,
+    Finding, Intervention, Medication, Patient, PatientCommunication,
     PrescriberResponse, Prescription, SafetyCase, User,
 )
 from services.audit import record_audit_event
+from services.clinical_rules import ddi_coverage_report, pending_rules, review_rule
 from services.evidence import explain_finding
 from services.medication_identity import get_or_create_medication
 from services.professional_workflow import (
@@ -48,6 +55,13 @@ from services.safety_case import (
 
 clinical_bp = Blueprint("clinical", __name__)
 
+# Role groups — see app.py's identical constants for the same rationale;
+# duplicated rather than imported from app.py to avoid a routes_clinical.py
+# <-> app.py circular import (app.py registers this blueprint).
+CLINICAL_STAFF    = (UserRole.PHARMACIST, UserRole.PRESCRIBER, UserRole.SAFETY_OFFICER)
+PHARMACIST_REVIEW = (UserRole.PHARMACIST, UserRole.SAFETY_OFFICER)
+RULE_REVIEWERS    = (UserRole.PHARMACIST, UserRole.SAFETY_OFFICER)
+
 
 def _iso(dt: Optional[datetime]) -> Optional[str]:
     return dt.isoformat() if dt else None
@@ -55,20 +69,6 @@ def _iso(dt: Optional[datetime]) -> Optional[str]:
 
 def _str_list(values) -> List[str]:
     return [safe_str(v).strip().lower() for v in (values or []) if safe_str(v).strip()]
-
-
-def _authorized_case(session, case_id: str, caller_user_id: str):
-    """Same tenant-isolation contract as app.py's _authorized_case_or_error:
-    return (case, None), or (None, (body, status)) for the caller to return."""
-    user = session.get(User, caller_user_id)
-    if not user:
-        return None, ({"error": "unknown user"}, 401)
-    case = session.get(SafetyCase, case_id)
-    if not case:
-        return None, ({"error": "not found"}, 404)
-    if case.organization_id != user.organization_id:
-        return None, ({"error": "not found"}, 404)
-    return case, None
 
 
 def _finding_dict(f: Finding) -> dict:
@@ -119,6 +119,20 @@ def _case_detail(session, case: SafetyCase) -> dict:
             } if resp else None),
         })
 
+    # What the knowledge base actually knows about this case's own
+    # medication list, independent of the findings list above — see
+    # ddi_coverage_report()'s own docstring for why "no findings" alone
+    # can't distinguish "checked, nothing concerning" from "checked, no
+    # matching rule exists". Uses the same ingredient list
+    # create_safety_case() built the findings from (snapshot's prior
+    # medications + this case's own prescribed drug).
+    ddi_coverage = (
+        ddi_coverage_report(session, list(snapshot.medications or []) + [medication.display_name])
+        if snapshot and medication else
+        {"pairs_checked": 0, "pairs_with_rule": 0, "pairs_with_no_rule": 0,
+         "pairs_approved": 0, "pairs_unreviewed": 0, "pairs_rejected": 0, "unmatched_pairs": []}
+    )
+
     return {
         "id": case.id, "state": case.state.value,
         "created_at": _iso(case.created_at), "closed_at": _iso(case.closed_at),
@@ -127,6 +141,7 @@ def _case_detail(session, case: SafetyCase) -> dict:
             "medications": snapshot.medications or [], "allergies": snapshot.allergies or [],
             "conditions": snapshot.conditions or [], "labs": snapshot.labs or [],
         } if snapshot else None),
+        "ddi_coverage": ddi_coverage,
         "prescription": ({
             "id": prescription.id, "dose": prescription.dose, "route": prescription.route,
             "frequency": prescription.frequency, "status": prescription.status.value,
@@ -162,9 +177,12 @@ def _case_detail(session, case: SafetyCase) -> dict:
 @jwt_required()
 def list_staff():
     with get_session() as session:
-        caller = session.get(User, get_jwt_identity())
-        if not caller:
-            return {"error": "unknown user"}, 401
+        caller, error = get_caller(session, get_jwt_identity())
+        if error:
+            return error
+        role_error = require_role(caller, CLINICAL_STAFF)
+        if role_error:
+            return role_error
         staff = (
             session.query(User)
             .filter(
@@ -184,9 +202,12 @@ def list_staff():
 @jwt_required()
 def list_patients():
     with get_session() as session:
-        caller = session.get(User, get_jwt_identity())
-        if not caller:
-            return {"error": "unknown user"}, 401
+        caller, error = get_caller(session, get_jwt_identity())
+        if error:
+            return error
+        role_error = require_role(caller, CLINICAL_STAFF)
+        if role_error:
+            return role_error
         patients = (
             session.query(Patient).filter_by(organization_id=caller.organization_id)
             .order_by(Patient.created_at.desc()).all()
@@ -216,9 +237,12 @@ def create_patient():
         return {"error": "first_name and last_name are required"}, 400
 
     with get_session() as session:
-        caller = session.get(User, actor_id)
-        if not caller:
-            return {"error": "unknown user"}, 401
+        caller, error = get_caller(session, actor_id)
+        if error:
+            return error
+        role_error = require_role(caller, CLINICAL_STAFF)
+        if role_error:
+            return role_error
 
         patient = Patient(
             organization_id=caller.organization_id, first_name=first_name, last_name=last_name,
@@ -258,9 +282,12 @@ def create_prescription():
         return {"error": "patient_id and medication_name are required"}, 400
 
     with get_session() as session:
-        caller = session.get(User, actor_id)
-        if not caller:
-            return {"error": "unknown user"}, 401
+        caller, error = get_caller(session, actor_id)
+        if error:
+            return error
+        role_error = require_role(caller, CLINICAL_STAFF)
+        if role_error:
+            return role_error
         patient = session.get(Patient, patient_id)
         if not patient or patient.organization_id != caller.organization_id:
             return {"error": "not found"}, 404
@@ -314,9 +341,12 @@ def create_safety_case():
         return {"error": "prescription_id is required"}, 400
 
     with get_session() as session:
-        caller = session.get(User, actor_id)
-        if not caller:
-            return {"error": "unknown user"}, 401
+        caller, error = get_caller(session, actor_id)
+        if error:
+            return error
+        role_error = require_role(caller, CLINICAL_STAFF)
+        if role_error:
+            return role_error
         prescription = session.get(Prescription, prescription_id)
         if not prescription or prescription.organization_id != caller.organization_id:
             return {"error": "not found"}, 404
@@ -342,7 +372,7 @@ def create_safety_case():
 @jwt_required()
 def get_safety_case(case_id):
     with get_session() as session:
-        case, error = _authorized_case(session, case_id, get_jwt_identity())
+        case, error = authorized_case(session, case_id, get_jwt_identity(), CLINICAL_STAFF)
         if error:
             return error
         return _case_detail(session, case), 200
@@ -359,7 +389,7 @@ def dispense_safety_case(case_id):
         return {"error": "invalid status"}, 400
 
     with get_session() as session:
-        case, error = _authorized_case(session, case_id, actor_id)
+        case, error = authorized_case(session, case_id, actor_id, PHARMACIST_REVIEW)
         if error:
             return error
         record_dispensing_outcome(
@@ -383,7 +413,7 @@ def communicate_safety_case(case_id):
         return {"error": "invalid delivery_channel"}, 400
 
     with get_session() as session:
-        case, error = _authorized_case(session, case_id, actor_id)
+        case, error = authorized_case(session, case_id, actor_id, PHARMACIST_REVIEW)
         if error:
             return error
         send_patient_communication(
@@ -397,7 +427,7 @@ def communicate_safety_case(case_id):
 def close_safety_case(case_id):
     actor_id = get_jwt_identity()
     with get_session() as session:
-        case, error = _authorized_case(session, case_id, actor_id)
+        case, error = authorized_case(session, case_id, actor_id, PHARMACIST_REVIEW)
         if error:
             return error
         try:
@@ -424,7 +454,7 @@ def resolve_safety_case_escalation(case_id):
         return {"error": "next_state must be ready_to_dispense or held_or_cancelled"}, 400
 
     with get_session() as session:
-        case, error = _authorized_case(session, case_id, actor_id)
+        case, error = authorized_case(session, case_id, actor_id, PHARMACIST_REVIEW)
         if error:
             return error
         escalation = record_escalation(
@@ -447,9 +477,12 @@ def resolve_safety_case_escalation(case_id):
 def explain_case_finding(finding_id):
     actor_id = get_jwt_identity()
     with get_session() as session:
-        caller = session.get(User, actor_id)
-        if not caller:
-            return {"error": "unknown user"}, 401
+        caller, error = get_caller(session, actor_id)
+        if error:
+            return error
+        role_error = require_role(caller, CLINICAL_STAFF)
+        if role_error:
+            return role_error
         finding = session.get(Finding, finding_id)
         if not finding:
             return {"error": "not found"}, 404
@@ -479,3 +512,86 @@ def explain_case_finding(finding_id):
             "finding_id": finding.id, "explanation": result["explanation"],
             "citations": result["citations"], "evidence_hash": result["evidence_hash"],
         }, 200
+
+
+# ── Knowledge administration: rule review (services/clinical_rules.review_rule) ──
+# Previously absent entirely: RuleStatus.APPROVED was set only in test
+# fixtures anywhere in this repo. These two routes are the first real path
+# from an imported DRAFT candidate to a clinically-authoritative rule.
+
+def _rule_dict(r: ClinicalRule) -> dict:
+    return {
+        "id": r.id, "pair_key": r.pair_key,
+        "ingredient_a": r.ingredient_a, "ingredient_b": r.ingredient_b,
+        "clinical_effect": r.clinical_effect, "severity": r.severity.value,
+        "status": r.status.value, "source_dataset": r.source_dataset,
+        "rule_version": r.rule_version,
+        "reviewer_user_id": r.reviewer_user_id, "reviewed_at": _iso(r.reviewed_at),
+        "created_at": _iso(r.created_at),
+    }
+
+
+@clinical_bp.route("/v1/clinical-rules/pending", methods=["GET"])
+@jwt_required()
+def list_pending_rules():
+    actor_id = get_jwt_identity()
+    limit = min(int(request.args.get("limit", 50)), 200)
+    offset = max(int(request.args.get("offset", 0)), 0)
+    with get_session() as session:
+        caller, error = get_caller(session, actor_id)
+        if error:
+            return error
+        role_error = require_role(caller, RULE_REVIEWERS)
+        if role_error:
+            return role_error
+        rules = pending_rules(session, limit=limit, offset=offset)
+        return {"rules": [_rule_dict(r) for r in rules]}, 200
+
+
+@clinical_bp.route("/v1/clinical-rules/<rule_id>/review", methods=["POST"])
+@jwt_required()
+def review_clinical_rule(rule_id):
+    payload = request.get_json(force=True, silent=True) or {}
+    actor_id = get_jwt_identity()
+    try:
+        decision = RuleStatus(payload.get("decision", ""))
+    except ValueError:
+        return {"error": "decision must be 'approved' or 'rejected'"}, 400
+    if decision not in (RuleStatus.APPROVED, RuleStatus.REJECTED):
+        return {"error": "decision must be 'approved' or 'rejected'"}, 400
+
+    severity_override = None
+    raw_severity = payload.get("severity")
+    if raw_severity:
+        try:
+            severity_override = Severity(raw_severity)
+        except ValueError:
+            return {"error": f"invalid severity: {safe_str(raw_severity)}"}, 400
+
+    with get_session() as session:
+        caller, error = get_caller(session, actor_id)
+        if error:
+            return error
+        role_error = require_role(caller, RULE_REVIEWERS)
+        if role_error:
+            return role_error
+
+        existing = session.get(ClinicalRule, rule_id)
+        if not existing:
+            return {"error": "not found"}, 404
+        before = {"status": existing.status.value, "severity": existing.severity.value}
+
+        try:
+            rule = review_rule(
+                session, rule_id, decision, reviewer_user_id=actor_id,
+                severity_override=severity_override,
+            )
+        except ValueError as exc:
+            return {"error": safe_str(exc)}, 400
+
+        record_audit_event(
+            session, action=f"rule.{decision.value}", subject_type="clinical_rule", subject_id=rule.id,
+            actor_user_id=actor_id, before=before,
+            after={"status": rule.status.value, "severity": rule.severity.value},
+        )
+        return _rule_dict(rule), 200
