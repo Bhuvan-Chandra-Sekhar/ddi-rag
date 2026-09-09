@@ -6,75 +6,131 @@
 <title>MedTrust Connect — Check your medications</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,200..800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
+  /* Design system adapted from an uploaded Dala/craftedbygc brand kit:
+     void-black canvas, single violet accent (electric-iris), amber
+     highlight (saffron-spark), PPNeueMontreal → Inter (the kit's own
+     documented substitute), 6px-based spacing/radius scale. Deliberately
+     NOT a literal port — the source kit is a marketing-landing-page
+     system (no cards, one accent color total, ultra-light 200-weight
+     body text, 78-113px display type). This is a dense clinical tool:
+     panels are kept for scannability, body text stays at a readable
+     weight, and the severity palette below (critical/major/caution/
+     informational/unknown/safe) is a real addition the kit has no
+     equivalent for — patient safety findings need color distinctions
+     Dala's single-accent system was never designed to carry. */
   :root {
-    --paper:        #F5EFE1;
-    --paper-raised: #FFFCF4;
-    --ink:          #17262A;
-    --ink-soft:     #52625F;
-    --ink-faint:    #8B968E;
-    --primary:      #163A34;
-    --primary-tint: #1F4E45;
-    --accent:       #BE6A2C;
-    --accent-tint:  #EFDCBE;
-    --line:         #DFD4B8;
-    --line-soft:    #EAE1CB;
-    --critical:     #97281F;
-    --major:        #B15A1E;
-    --caution:      #9A7517;
-    --informational:#3C5A63;
-    --unknown:      #5C4A85;
-    --safe:         #2E6E4E;
+    --paper:        #000000;   /* void canvas — page background */
+    --paper-raised: #0c0c0e;   /* panel surface — a hairline lift off pure black, not a "card" in Dala's literal sense but the minimum structure a findings list needs to stay scannable */
+    --ink:          #ffffff;   /* bone-white — primary text */
+    --ink-soft:     #9a9a9a;   /* ash-gray — secondary text */
+    --ink-faint:    #6b6b70;   /* a dimmer step for the quietest captions */
+    --primary:      #8052ff;   /* electric-iris — primary actions, links, focus */
+    --primary-tint: #9c78ff;
+    --accent:       #ffb829;   /* saffron-spark — highlight/emphasis, kept as its own role per the kit */
+    --accent-tint:  #2e2210;   /* dark amber wash for chip backgrounds on black */
+    --line:         rgba(255,255,255,0.12);
+    --line-soft:    rgba(255,255,255,0.07);
+    /* Severity — not in the source kit at all; a clinical safety app
+       cannot collapse this to one accent color, so this extends the
+       kit's "one saturated hue per semantic role" logic across the
+       distinctions a findings list actually needs. */
+    --critical:      #ff5c5c;
+    --major:         #ff8a3d;
+    --caution:       #ffb829;
+    --informational: #6fc8ff;
+    --unknown:       #b892ff;
+    --safe:          #3ecf8e;
   }
-  * { font-family: 'Public Sans', sans-serif; }
-  .font-display { font-family: 'Fraunces', serif; font-optical-sizing: auto; }
+  * { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
   body { background: var(--paper); color: var(--ink); }
-  .paper-grain {
-    position: relative;
-  }
-  .paper-grain::before {
-    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.5; mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.025 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  /* The kit's actual type system, applied — not loaded and left unused.
+     Headings stay weight 400 always (never bold; scale carries hierarchy,
+     exactly as the kit specifies), with the real negative tracking value
+     at each step. Prose gets the signature ultra-light 200 weight at 18px
+     — this is Dala's most distinctive, most-substituted-away choice, so
+     it's the one most worth actually keeping. Nav/labels/buttons get 600
+     uppercase with the kit's real 0.35px / 0.025em tracking, not an
+     arbitrary loose tracking value. */
+  .font-display { font-weight: 400; letter-spacing: -0.04em; }
+  .text-display    { font-weight: 400; font-size: 78px;  line-height: 1.1;  letter-spacing: -3.12px; }
+  .text-heading    { font-weight: 400; font-size: 48px;  line-height: 1.1;  letter-spacing: -1.68px; }
+  .text-heading-sm { font-weight: 400; font-size: 42px;  line-height: 1.2;  letter-spacing: -1.68px; }
+  .text-subheading { font-weight: 400; font-size: 36px;  line-height: 1.2; }
+  .text-heading-xs { font-weight: 400; font-size: 27px;  line-height: 1; }
+  .text-heading-2xs{ font-weight: 400; font-size: 24px;  line-height: 1.25; letter-spacing: -0.48px; }
+  .text-prose      { font-weight: 200; font-size: 18px;  line-height: 1.5; }
+  .label-tag       { font-weight: 600; font-size: 14px;  letter-spacing: 0.35px; text-transform: uppercase; }
+  /* Smaller sibling of .label-tag for form field labels and status pills —
+     same uppercase/600 idiom, the kit's 12px "xs-2" caption-label step. */
+  .field-label     { font-weight: 600; font-size: 12px;  letter-spacing: 0.25px; text-transform: uppercase; }
+  /* The kit's plain --text-caption token (12px/400/1.5) — small supporting
+     text that is NOT a label: captions, dates, helper sentences. */
+  .text-caption    { font-weight: 400; font-size: 12px;  line-height: 1.5; }
+  @media (max-width: 640px) {
+    .text-display { font-size: 42px; letter-spacing: -1.68px; }
+    .text-heading { font-size: 36px; letter-spacing: -1.2px; }
   }
   .card { background: var(--paper-raised); border: 1px solid var(--line); }
-  .card-shadow { box-shadow: 0 1px 2px rgba(23,38,42,0.04), 0 8px 24px rgba(23,38,42,0.06); }
+  .card-shadow { box-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35); }
   .reveal { opacity: 0; transform: translateY(12px); animation: reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
   .pulse-dot { animation: pulse 2.4s ease-in-out infinite; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-  .field { transition: border-color 0.15s ease, box-shadow 0.15s ease; background: var(--paper-raised); }
-  .field:focus { outline: none; border-color: var(--primary-tint); box-shadow: 0 0 0 3px rgba(22,58,52,0.10); }
+  .field { transition: border-color 0.15s ease, box-shadow 0.15s ease; background: var(--paper-raised); color: var(--ink); }
+  .field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(128,82,255,0.20); }
+  .field::placeholder { color: var(--ink-faint); }
   .btn-primary { background: var(--primary); transition: background 0.15s ease, transform 0.08s ease; }
   .btn-primary:hover { background: var(--primary-tint); }
   .btn-primary:active { transform: scale(0.985); }
-  .btn-primary:disabled { background: #A9A093; cursor: not-allowed; }
-  .btn-accent { background: var(--accent); transition: background 0.15s ease, transform 0.08s ease; }
-  .btn-accent:hover { background: #A85C25; }
+  .btn-primary:disabled { background: #3a3550; color: #7a7690; cursor: not-allowed; }
+  .btn-accent { background: var(--primary); transition: background 0.15s ease, transform 0.08s ease; }
+  .btn-accent:hover { background: var(--primary-tint); }
   .btn-accent:active { transform: scale(0.985); }
-  .btn-accent:disabled { background: #C9B79B; cursor: not-allowed; }
-  .chip { background: var(--accent-tint); color: #6B3E14; border: 1px solid #E0BE8E; }
+  .btn-accent:disabled { background: #3a3550; color: #7a7690; cursor: not-allowed; }
+  .chip { background: var(--accent-tint); color: var(--accent); border: 1px solid rgba(255,184,41,0.35); }
   /* Tag-list entries: the ENTIRE pill is the click target for removal, not
      just the small × glyph inside it — a tiny icon-only hit area reads as
      "I can't click this" even when it technically works. */
   .chip-remove { cursor: pointer; transition: background 0.12s ease, border-color 0.12s ease; }
-  .chip-remove:hover { background: #E7CBA0; border-color: #D2A868; }
+  .chip-remove:hover { background: rgba(255,184,41,0.18); border-color: var(--accent); }
   .underline-link { text-underline-offset: 3px; text-decoration-color: var(--line); }
   .underline-link:hover { text-decoration-color: currentColor; }
-  ::selection { background: var(--accent-tint); }
+  ::selection { background: rgba(128,82,255,0.35); }
   .scan-track { position: relative; overflow: hidden; }
   .scan-bar {
     position: absolute; top: 0; left: -30%; width: 30%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(190,106,44,0.35), transparent);
+    background: linear-gradient(90deg, transparent, rgba(128,82,255,0.45), transparent);
     animation: scan 1.6s ease-in-out infinite;
   }
   @keyframes scan { 0% { left: -30%; } 100% { left: 100%; } }
   .fade-in { animation: fadeIn 0.35s ease forwards; }
   @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  .spinner { border: 2px solid rgba(22,58,52,0.15); border-top-color: var(--primary); border-radius: 999px; animation: spin 0.7s linear infinite; }
+  .spinner { border: 2px solid rgba(128,82,255,0.20); border-top-color: var(--primary); border-radius: 999px; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   textarea.field { resize: vertical; }
+
+  /* Hero constellation — Dala's signature visual: an animated field of tiny
+     outlined triangles forming an organic cloud, the one piece of imagery
+     the kit specifies at all ("no photography, no illustration — the
+     particle field is the only hero visual"). Scoped to the Home hero only:
+     it's a landing moment, not something that belongs on a form or a
+     findings list. */
+  .hero-visual { position: relative; }
+  .hero-visual::before {
+    content: '';
+    position: absolute; inset: -20%;
+    background: radial-gradient(circle at center, rgba(128,82,255,0.16), rgba(21,132,110,0.08) 45%, transparent 72%);
+    filter: blur(8px);
+    pointer-events: none;
+  }
+  #hero-canvas { position: relative; display: block; width: 100%; height: auto; aspect-ratio: 1; }
+  @media (max-width: 1023px) {
+    .hero-visual { max-width: 220px; margin: 0 auto; }
+  }
 </style>
 </head>
 <body class="min-h-screen">
@@ -120,18 +176,18 @@ function shell(active, bodyHtml, { tight = false } = {}) {
   app.innerHTML = `
     <div class="min-h-screen flex flex-col">
       <header class="border-b" style="border-color: var(--line); background: var(--paper);">
-        <div class="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-          <button data-nav="home" class="flex items-center gap-2 group">
-            <span class="w-2 h-2 rounded-full" style="background: var(--accent);"></span>
-            <span class="font-display text-[17px] font-semibold tracking-tight" style="color: var(--primary);">MedTrust <span style="color: var(--accent);">Connect</span></span>
+        <div class="max-w-3xl mx-auto px-6 py-5 flex items-center justify-between">
+          <button data-nav="home" class="flex items-center gap-2.5 group">
+            <span class="w-2 h-2 rounded-full flex-shrink-0" style="background: var(--primary);"></span>
+            <span class="text-[15px]" style="color: var(--ink); font-weight: 400; letter-spacing: -0.02em;">MedTrust Connect</span>
           </button>
-          <nav class="flex items-center gap-1 text-[13px] font-medium">
-            <button data-nav="check" class="px-3 py-1.5 rounded-full transition-colors ${active==='check' ? 'text-white' : ''}" style="${active==='check' ? `background: var(--primary);` : `color: var(--ink-soft);`}">Quick check</button>
+          <nav class="flex items-center gap-1 label-tag">
+            <button data-nav="check" class="px-4 py-2 rounded-full transition-colors" style="${active==='check' ? `background: var(--primary); color: #fff;` : `color: var(--ink-soft);`}">Quick check</button>
             ${user ? `
-              <button data-nav="dashboard" class="px-3 py-1.5 rounded-full transition-colors ${active==='dashboard' ? 'text-white' : ''}" style="${active==='dashboard' ? `background: var(--primary);` : `color: var(--ink-soft);`}">My prescriptions</button>
-              <button data-nav="signout" class="ml-2 px-3 py-1.5 rounded-full border text-[12.5px]" style="border-color: var(--line); color: var(--ink-soft);">Sign out</button>
+              <button data-nav="dashboard" class="px-4 py-2 rounded-full transition-colors" style="${active==='dashboard' ? `background: var(--primary); color: #fff;` : `color: var(--ink-soft);`}">My prescriptions</button>
+              <button data-nav="signout" class="ml-2 px-4 py-2 rounded-full border" style="border-color: var(--line); color: var(--ink-soft);">Sign out</button>
             ` : `
-              <button data-nav="signin" class="ml-2 px-3.5 py-1.5 rounded-full border text-[12.5px] font-semibold" style="border-color: var(--primary); color: var(--primary);">Sign in</button>
+              <button data-nav="signin" class="ml-2 px-5 py-2 rounded-full" style="background: var(--primary); color: #fff;">Sign in</button>
             `}
           </nav>
         </div>
@@ -159,48 +215,195 @@ function shell(active, bodyHtml, { tight = false } = {}) {
   });
 }
 
+// ── Hero constellation ───────────────────────────────────────────────────────
+// Dala's signature visual: a dense, organic cloud of tiny outlined triangles
+// drifting slowly on black, in a full chromatic spectrum rather than the
+// single brand accent. Plain Canvas 2D — no library needed for this. Scoped
+// entirely to the Home screen: it's a landing moment, not a decoration to
+// scatter across a form or a findings list.
+//
+// Each call owns its own rAF loop and stops itself the moment its canvas
+// leaves the DOM (checked every frame), since this is an SPA that swaps
+// #app.innerHTML wholesale on navigation — nothing else here would ever
+// know when to clean up.
+function initHeroConstellation(canvas) {
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Full-spectrum palette per the kit's own description of this component
+  // ("a full spectrum of vivid colors"), weighted toward the three brand
+  // hues but genuinely spanning warm-to-cool rather than staying on-brand.
+  const palette = [
+    '#8052ff', '#8052ff', '#9c78ff',   // electric-iris (brand, weighted)
+    '#ffb829', '#ffb829',              // saffron-spark (brand, weighted)
+    '#15846e', '#3ecf8e',              // deep-verdant + a lighter green
+    '#ff5c7a', '#ff8a3d', '#6fc8ff', '#b892ff', '#ffffff'
+  ];
+
+  let particles = [];
+  let w = 0, h = 0, dpr = 1;
+  let raf = null;
+  let start = performance.now();
+
+  // Organic, non-circular silhouette: radius at each angle is the base
+  // radius modulated by a few summed sine harmonics, so the cloud reads as
+  // a blob/brain shape instead of a perfect disc.
+  function shapeRadius(angle) {
+    return 1
+      + 0.16 * Math.sin(angle * 3 + 1.3)
+      + 0.10 * Math.sin(angle * 5 - 0.7)
+      + 0.07 * Math.sin(angle * 8 + 2.1);
+  }
+
+  function seed() {
+    particles = [];
+    const dense = 900;
+    const ambient = 260;
+    for (let i = 0; i < dense; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const r = (0.15 + 0.85 * Math.pow(Math.random(), 0.55)) * shapeRadius(angle);
+      particles.push({
+        angle, baseR: r,
+        size: 1 + Math.random() * 2.4,
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.4,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.15 + Math.random() * 0.25,
+        drift: 0.015 + Math.random() * 0.02,
+        color: palette[(Math.random() * palette.length) | 0],
+        alpha: 0.55 + Math.random() * 0.45
+      });
+    }
+    // Sparse outer field — fewer, dimmer, further out. Matches the kit's
+    // separate "ambient particle field" as loose scatter beyond the core.
+    for (let i = 0; i < ambient; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const r = (1.05 + Math.random() * 0.9) * shapeRadius(angle);
+      particles.push({
+        angle, baseR: r,
+        size: 0.8 + Math.random() * 1.6,
+        rot: Math.random() * Math.PI * 2,
+        rotSpeed: (Math.random() - 0.5) * 0.2,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.08 + Math.random() * 0.15,
+        drift: 0.01 + Math.random() * 0.015,
+        color: palette[(Math.random() * palette.length) | 0],
+        alpha: 0.12 + Math.random() * 0.22
+      });
+    }
+  }
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = rect.width; h = rect.height;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function drawTriangle(cx, cy, size, rot, color, alpha) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rot);
+    ctx.beginPath();
+    for (let i = 0; i < 3; i++) {
+      const a = (Math.PI * 2 / 3) * i - Math.PI / 2;
+      const x = Math.cos(a) * size, y = Math.sin(a) * size;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function frame(now) {
+    if (!document.body.contains(canvas)) { raf = null; return; }
+    const t = (now - start) / 1000;
+    ctx.clearRect(0, 0, w, h);
+    const cx = w / 2, cy = h / 2;
+    const maxR = Math.min(w, h) / 2;
+    for (const p of particles) {
+      const wobble = Math.sin(t * p.speed + p.phase) * p.drift;
+      const r = (p.baseR + wobble) * maxR;
+      const a = p.angle + t * 0.02 * (p.baseR < 1 ? 1 : 0.4);
+      const x = cx + Math.cos(a) * r;
+      const y = cy + Math.sin(a) * r * 0.92; // slight vertical compression, brain-like rather than a perfect sphere
+      const rot = p.rot + t * p.rotSpeed;
+      drawTriangle(x, y, p.size, rot, p.color, p.alpha);
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  seed();
+  resize();
+  if (reduceMotion) {
+    frame(start); // one static frame, no loop — respects prefers-reduced-motion
+  } else {
+    raf = requestAnimationFrame(frame);
+  }
+
+  const onResize = () => {
+    if (!document.body.contains(canvas)) { window.removeEventListener('resize', onResize); return; }
+    resize();
+  };
+  window.addEventListener('resize', onResize, { passive: true });
+}
+
 // ── Home / landing ───────────────────────────────────────────────────────────
 
 function renderHome() {
   const user = getUser();
   shell('home', `
-    <div class="reveal">
-      <p class="font-label text-[11px] uppercase tracking-[0.16em] mb-4" style="color: var(--accent);">Medication safety, in plain language</p>
-      <h1 class="font-display text-[40px] sm:text-[52px] leading-[1.05] font-semibold mb-5" style="color: var(--primary);">
-        Know what's in<br/>your medicine cabinet.
-      </h1>
-      <p class="text-[15.5px] leading-relaxed max-w-lg mb-9" style="color: var(--ink-soft);">
-        Type in what you're taking — no account needed — and see what our FDA-grounded
-        interaction checker finds. If you already have prescriptions on file with a
-        care team, sign in to see what your pharmacist has reviewed.
-      </p>
-      <div class="flex flex-wrap gap-3 mb-14">
-        <button id="cta-check" class="btn-accent text-white font-semibold text-[14.5px] px-6 py-3 rounded-full">Check my medications →</button>
-        ${user
-          ? `<button data-nav="dashboard" class="text-[14.5px] font-semibold px-6 py-3 rounded-full border" style="border-color: var(--line); color: var(--primary);">Go to my prescriptions</button>`
-          : `<button data-nav="signin" class="text-[14.5px] font-semibold px-6 py-3 rounded-full border" style="border-color: var(--line); color: var(--primary);">Sign in instead</button>`}
+    <div class="reveal grid lg:grid-cols-[1fr_260px] gap-10 lg:gap-14 items-center mb-16">
+      <div>
+        <p class="label-tag mb-5" style="color: var(--accent);">Medication safety, in plain language</p>
+        <h1 class="font-display text-display mb-6" style="color: var(--ink);">
+          Know what's in<br/>your medicine cabinet.
+        </h1>
+        <p class="text-prose max-w-lg mb-10" style="color: var(--ink-soft);">
+          Type in what you're taking — no account needed — and see what our FDA-grounded
+          interaction checker finds. If you already have prescriptions on file with a
+          care team, sign in to see what your pharmacist has reviewed.
+        </p>
+        <div class="flex flex-wrap gap-3">
+          <button id="cta-check" class="label-tag text-white px-6 py-3.5 rounded-full" style="background: var(--primary);">Check my medications →</button>
+          ${user
+            ? `<button data-nav="dashboard" class="label-tag px-6 py-3.5 rounded-full" style="color: var(--ink-soft);">Go to my prescriptions</button>`
+            : `<button data-nav="signin" class="label-tag px-6 py-3.5 rounded-full" style="color: var(--ink-soft);">Sign in instead</button>`}
+        </div>
       </div>
+      <div class="hero-visual">
+        <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      </div>
+    </div>
 
-      <div class="grid sm:grid-cols-3 gap-4">
-        <div class="card card-shadow rounded-2xl p-5">
-          <p class="font-display text-[22px] mb-1" style="color: var(--accent);">01</p>
-          <p class="text-[13.5px] font-semibold mb-1">No sign-up required</p>
-          <p class="text-[12.5px] leading-relaxed" style="color: var(--ink-soft);">Type your medications and go — nothing is saved to an account, so nothing about you has to be.</p>
+    <div class="reveal">
+      <div class="grid sm:grid-cols-3 gap-x-8 gap-y-10">
+        <div>
+          <p class="font-display text-heading-2xs mb-3" style="color: var(--primary);">01</p>
+          <p class="label-tag mb-2" style="color: var(--ink);">No sign-up required</p>
+          <p class="text-[14px] leading-relaxed" style="color: var(--ink-soft); font-weight: 300;">Type your medications and go — nothing is saved to an account, so nothing about you has to be.</p>
         </div>
-        <div class="card card-shadow rounded-2xl p-5">
-          <p class="font-display text-[22px] mb-1" style="color: var(--accent);">02</p>
-          <p class="text-[13.5px] font-semibold mb-1">You bring the history</p>
-          <p class="text-[12.5px] leading-relaxed" style="color: var(--ink-soft);">Since nothing's stored between visits, just type any allergies or past reactions in each time — takes a few seconds.</p>
+        <div>
+          <p class="font-display text-heading-2xs mb-3" style="color: var(--primary);">02</p>
+          <p class="label-tag mb-2" style="color: var(--ink);">You bring the history</p>
+          <p class="text-[14px] leading-relaxed" style="color: var(--ink-soft); font-weight: 300;">Since nothing's stored between visits, just type any allergies or past reactions in each time — takes a few seconds.</p>
         </div>
-        <div class="card card-shadow rounded-2xl p-5">
-          <p class="font-display text-[22px] mb-1" style="color: var(--accent);">03</p>
-          <p class="text-[13.5px] font-semibold mb-1">Honest about limits</p>
-          <p class="text-[12.5px] leading-relaxed" style="color: var(--ink-soft);">Unreviewed findings are always labeled as such — we never call something safe just because we don't know.</p>
+        <div>
+          <p class="font-display text-heading-2xs mb-3" style="color: var(--primary);">03</p>
+          <p class="label-tag mb-2" style="color: var(--ink);">Honest about limits</p>
+          <p class="text-[14px] leading-relaxed" style="color: var(--ink-soft); font-weight: 300;">Unreviewed findings are always labeled as such — we never call something safe just because we don't know.</p>
         </div>
       </div>
     </div>
   `);
   $('#cta-check').addEventListener('click', renderChecker);
+  initHeroConstellation($('#hero-canvas'));
 }
 
 // ── Guest self-checker ────────────────────────────────────────────────────────
@@ -216,7 +419,7 @@ const _draft = { checking: [], current: [], allergies: [], notes: '' };
 function tagInputHtml(id, label, placeholder, items) {
   return `
     <div>
-      <label class="font-label text-[12.5px] font-semibold block mb-2" style="color: var(--ink);">${label}</label>
+      <label class="field-label block mb-2" style="color: var(--ink-soft);">${label}</label>
       <div class="flex gap-2 mb-2">
         <input id="${id}-input" type="text" autocomplete="off" placeholder="${placeholder}" class="field flex-1 border rounded-lg px-3.5 py-2.5 text-[13.5px]" style="border-color: var(--line);" />
         <button id="${id}-add" type="button" class="px-4 rounded-lg border text-[13px] font-semibold" style="border-color: var(--line); color: var(--primary);">Add</button>
@@ -242,7 +445,7 @@ function checkingFieldHtml(items) {
   const hasDrug = items.length > 0;
   return `
     <div>
-      <label class="font-label text-[12.5px] font-semibold block mb-2" style="color: var(--ink);">The drug or prescription you want checked</label>
+      <label class="field-label block mb-2" style="color: var(--ink-soft);">The drug or prescription you want checked</label>
       <div id="checking-chips">
         ${hasDrug ? `
           <div class="flex flex-wrap gap-2">
@@ -305,9 +508,9 @@ function wireTagInput(id, list, rerender, canAdd = () => list.length < MAX_MEDS_
 function renderChecker() {
   shell('check', `
     <div class="reveal">
-      <p class="font-label text-[11px] uppercase tracking-[0.16em] mb-3" style="color: var(--accent);">Quick check · no account needed</p>
-      <h1 class="font-display text-[32px] font-semibold mb-2" style="color: var(--primary);">What are you checking?</h1>
-      <p class="text-[14px] mb-8" style="color: var(--ink-soft); max-width: 34rem;">
+      <p class="label-tag mb-4" style="color: var(--accent);">Quick check · no account needed</p>
+      <h1 class="font-display text-heading-sm mb-4" style="color: var(--ink);">What are you checking?</h1>
+      <p class="text-prose mb-10" style="color: var(--ink-soft); max-width: 34rem;">
         Tell us the drug or prescription you want checked, and what else you're already
         taking. Nothing here is sent to a care team or saved to an account — it stays in
         this browser tab, and disappears when you leave.
@@ -318,7 +521,7 @@ function renderChecker() {
         <div id="current-field"></div>
         <div id="allergy-field"></div>
         <div>
-          <label class="font-label text-[12.5px] font-semibold block mb-2">Anything else about your history you'd like to mention? <span class="font-normal" style="color: var(--ink-faint);">(optional)</span></label>
+          <label class="label-tag block mb-2" style="color: var(--ink);">Anything else about your history you'd like to mention? <span class="normal-case" style="color: var(--ink-faint); font-weight: 400; letter-spacing: normal;">(optional)</span></label>
           <textarea id="notes-input" rows="3" maxlength="600" placeholder="Past reactions, other conditions, how you're feeling — anything that might matter here. This isn't saved anywhere; it's just used to help explain your results." class="field w-full border rounded-lg px-3.5 py-2.5 text-[13.5px]" style="border-color: var(--line);"></textarea>
         </div>
 
@@ -326,7 +529,7 @@ function renderChecker() {
 
         <div class="flex items-center justify-between pt-1">
           <p class="text-[11.5px] max-w-xs leading-relaxed" style="color: var(--ink-faint);">Not reviewed by a pharmacist. Not a substitute for professional medical advice.</p>
-          <button id="checker-submit" type="submit" class="btn-accent text-white font-semibold text-[14px] px-6 py-3 rounded-full whitespace-nowrap">Check now →</button>
+          <button id="checker-submit" type="submit" class="label-tag text-white px-6 py-3.5 rounded-full whitespace-nowrap" style="background: var(--primary);">Check now →</button>
         </div>
       </form>
     </div>
@@ -408,11 +611,11 @@ async function runCheck() {
 // ── Results ───────────────────────────────────────────────────────────────────
 
 const SEVERITY_META = {
-  critical:      { label: 'Critical',              color: 'var(--critical)',      bg: '#F6E4E1' },
-  major:         { label: 'Major',                 color: 'var(--major)',         bg: '#F8E9DC' },
-  caution:       { label: 'Caution',                color: 'var(--caution)',       bg: '#F5EDD6' },
-  informational: { label: 'Informational',          color: 'var(--informational)', bg: '#E3EBEC' },
-  unknown:       { label: 'Not yet clinically reviewed', color: 'var(--unknown)',  bg: '#E9E3F3' },
+  critical:      { label: 'Critical',              color: 'var(--critical)',      bg: 'rgba(255,92,92,0.14)' },
+  major:         { label: 'Major',                 color: 'var(--major)',         bg: 'rgba(255,138,61,0.14)' },
+  caution:       { label: 'Caution',                color: 'var(--caution)',       bg: 'rgba(255,184,41,0.14)' },
+  informational: { label: 'Informational',          color: 'var(--informational)', bg: 'rgba(111,200,255,0.14)' },
+  unknown:       { label: 'Not yet clinically reviewed', color: 'var(--unknown)',  bg: 'rgba(184,146,255,0.14)' },
 };
 
 const SEVERITY_RANK = { critical: 4, major: 3, unknown: 2, caution: 1, informational: 0 };
@@ -434,8 +637,8 @@ function findingTitle(f) {
 function overallBanner(overallSeverity, seeADoctor, hasUnresolvedMed) {
   if (seeADoctor) {
     return `
-      <div class="card card-shadow rounded-2xl p-6 flex items-start gap-4" style="border-left: 4px solid var(--critical); background: #FBF1EF;">
-        <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background: #F6E4E1;">
+      <div class="card card-shadow rounded-2xl p-6 flex items-start gap-4" style="border-left: 4px solid var(--critical); background: rgba(255,92,92,0.08);">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background: rgba(255,92,92,0.16);">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3.5 L22 20.5 L2 20.5 Z" stroke="var(--critical)" stroke-width="2" stroke-linejoin="round"/><path d="M12 9.5 V14.5" stroke="var(--critical)" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1.1" fill="var(--critical)"/></svg>
         </div>
         <div>
@@ -452,7 +655,7 @@ function overallBanner(overallSeverity, seeADoctor, hasUnresolvedMed) {
   if (!overallSeverity && hasUnresolvedMed) {
     return `
       <div class="card card-shadow rounded-2xl p-6 flex items-start gap-4" style="border-left: 4px solid var(--caution);">
-        <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background: #F5EDD6;">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background: rgba(255,184,41,0.16);">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3.5 L22 20.5 L2 20.5 Z" stroke="var(--caution)" stroke-width="2" stroke-linejoin="round"/><path d="M12 9.5 V14.5" stroke="var(--caution)" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1.1" fill="var(--caution)"/></svg>
         </div>
         <div>
@@ -464,7 +667,7 @@ function overallBanner(overallSeverity, seeADoctor, hasUnresolvedMed) {
   if (!overallSeverity) {
     return `
       <div class="card card-shadow rounded-2xl p-6 flex items-start gap-4" style="border-left: 4px solid var(--safe);">
-        <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background: #E1EFE7;">
+        <div class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0" style="background: rgba(62,207,142,0.16);">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12.5 L9.5 17 L19 7" stroke="var(--safe)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </div>
         <div>
@@ -490,7 +693,7 @@ function medChipsHtml(meds, offset) {
   return meds.map((m, i) => `
     <button data-drug-info="${offset + i}" class="chip inline-flex items-center gap-1.5 text-[12.5px] font-medium pl-3 pr-3 py-1.5 rounded-full">
       ${esc(m.input)}
-      ${!m.identity_confirmed ? `<span title="Matched approximately — for best results use the name printed on the label" style="color: #A85C25;">·approx</span>` : ''}
+      ${!m.identity_confirmed ? `<span title="Matched approximately — for best results use the name printed on the label" style="color: var(--accent);">·approx</span>` : ''}
     </button>
   `).join('');
 }
@@ -511,7 +714,7 @@ function renderResults(data, checkingCount) {
   shell('check', `
     <div class="reveal space-y-6">
       <div class="flex items-center justify-between gap-3 flex-wrap">
-        <p class="font-label text-[11px] uppercase tracking-[0.16em]" style="color: var(--accent);">Your results</p>
+        <p class="label-tag" style="color: var(--accent);">Your results</p>
         <div class="flex items-center gap-4">
           <button id="check-another" class="text-[12.5px] font-semibold px-3.5 py-1.5 rounded-full border" style="border-color: var(--primary); color: var(--primary);">Check a different drug →</button>
           <button id="new-check" class="text-[12.5px] font-semibold underline underline-link" style="color: var(--ink-soft);">Start a new check</button>
@@ -606,7 +809,7 @@ function findingCard(f) {
     <p class="text-[11.5px] mb-3" style="color: var(--ink-faint);">No severity rating available in our data for this pairing.</p>
   ` : '');
   const doctorCallout = f.see_a_doctor ? `
-    <div class="flex items-center gap-2 text-[12.5px] font-bold px-3 py-2 rounded-lg mb-3" style="background: #F6E4E1; color: var(--critical);">
+    <div class="flex items-center gap-2 text-[12.5px] font-bold px-3 py-2 rounded-lg mb-3" style="background: rgba(255,92,92,0.14); color: var(--critical);">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0"><path d="M12 3.5 L22 20.5 L2 20.5 Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 9.5 V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1.1" fill="currentColor"/></svg>
       See a doctor or pharmacist before taking these together
     </div>` : '';
@@ -695,8 +898,8 @@ async function toggleDrugInfo(btn, resolvedMed) {
 function renderAuth() {
   shell('auth', `
     <div class="reveal max-w-sm mx-auto">
-      <p class="font-label text-[11px] uppercase tracking-[0.16em] mb-3" style="color: var(--accent);">Care team account</p>
-      <h1 class="font-display text-[28px] font-semibold mb-6" style="color: var(--primary);">Welcome back</h1>
+      <p class="label-tag mb-3" style="color: var(--accent);">Care team account</p>
+      <h1 class="font-display text-subheading mb-6" style="color: var(--ink);">Welcome back</h1>
       <div class="flex gap-1 p-1 rounded-full mb-7 text-[13px] font-medium" style="background: var(--line-soft);">
         <button id="tab-login" class="flex-1 py-2 rounded-full transition-colors">Sign in</button>
         <button id="tab-register" class="flex-1 py-2 rounded-full transition-colors">Create account</button>
@@ -718,14 +921,14 @@ function renderAuth() {
     forms.innerHTML = `
       <form id="login-form" class="space-y-4">
         <div>
-          <label class="font-label text-xs font-semibold block mb-1.5">Email</label>
+          <label class="field-label block mb-1.5" style="color: var(--ink-soft);">Email</label>
           <input type="email" name="email" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);" placeholder="you@example.com" />
         </div>
         <div>
-          <label class="font-label text-xs font-semibold block mb-1.5">Password</label>
+          <label class="field-label block mb-1.5" style="color: var(--ink-soft);">Password</label>
           <input type="password" name="password" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);" placeholder="••••••••" />
         </div>
-        <button type="submit" class="btn-primary font-label w-full text-white text-sm font-semibold py-2.5 rounded-lg mt-2">Sign in</button>
+        <button type="submit" class="btn-primary label-tag w-full text-white py-3 rounded-full mt-2">Sign in</button>
       </form>
     `;
     $('#login-form').addEventListener('submit', async (e) => {
@@ -748,7 +951,7 @@ function renderAuth() {
 
   async function renderRegister() {
     clearError();
-    forms.innerHTML = `<p class="font-label text-sm" style="color: var(--ink-faint);">Loading care organizations…</p>`;
+    forms.innerHTML = `<p class="text-caption" style="color: var(--ink-faint);">Loading care organizations…</p>`;
     let orgs = [];
     try {
       const data = await api('/v1/organizations');
@@ -763,27 +966,27 @@ function renderAuth() {
       <form id="register-form" class="space-y-4">
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="font-label text-xs font-semibold block mb-1.5">First name</label>
+            <label class="field-label block mb-1.5" style="color: var(--ink-soft);">First name</label>
             <input type="text" name="first_name" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);" />
           </div>
           <div>
-            <label class="font-label text-xs font-semibold block mb-1.5">Last name</label>
+            <label class="field-label block mb-1.5" style="color: var(--ink-soft);">Last name</label>
             <input type="text" name="last_name" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);" />
           </div>
         </div>
         <div>
-          <label class="font-label text-xs font-semibold block mb-1.5">Care organization</label>
-          <select name="organization_id" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm bg-white" style="border-color: var(--line);">${orgOptions}</select>
+          <label class="field-label block mb-1.5" style="color: var(--ink-soft);">Care organization</label>
+          <select name="organization_id" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);">${orgOptions}</select>
         </div>
         <div>
-          <label class="font-label text-xs font-semibold block mb-1.5">Email</label>
+          <label class="field-label block mb-1.5" style="color: var(--ink-soft);">Email</label>
           <input type="email" name="email" required class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);" placeholder="you@example.com" />
         </div>
         <div>
-          <label class="font-label text-xs font-semibold block mb-1.5">Password</label>
+          <label class="field-label block mb-1.5" style="color: var(--ink-soft);">Password</label>
           <input type="password" name="password" required minlength="8" class="field w-full border rounded-lg px-3.5 py-2.5 text-sm" style="border-color: var(--line);" placeholder="At least 8 characters" />
         </div>
-        <button type="submit" class="btn-primary font-label w-full text-white text-sm font-semibold py-2.5 rounded-lg mt-2">Create account</button>
+        <button type="submit" class="btn-primary label-tag w-full text-white py-3 rounded-full mt-2">Create account</button>
       </form>
     `;
     $('#register-form').addEventListener('submit', async (e) => {
@@ -816,11 +1019,9 @@ function renderAuth() {
   function setTab(active) {
     const login = $('#tab-login'), register = $('#tab-register');
     login.style.background = active === 'login' ? 'var(--paper-raised)' : 'transparent';
-    login.style.color = active === 'login' ? 'var(--primary)' : 'var(--ink-soft)';
-    login.style.boxShadow = active === 'login' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none';
+    login.style.color = active === 'login' ? 'var(--ink)' : 'var(--ink-soft)';
     register.style.background = active === 'register' ? 'var(--paper-raised)' : 'transparent';
-    register.style.color = active === 'register' ? 'var(--primary)' : 'var(--ink-soft)';
-    register.style.boxShadow = active === 'register' ? '0 1px 2px rgba(0,0,0,0.06)' : 'none';
+    register.style.color = active === 'register' ? 'var(--ink)' : 'var(--ink-soft)';
   }
 
   $('#tab-login').addEventListener('click', () => { setTab('login'); renderLogin(); });
@@ -830,15 +1031,20 @@ function renderAuth() {
 
 // ── Signed-in dashboard — existing prescriber-issued cases ────────────────────
 
+// bg/fg/dot are now inline-style values (rgba tints + CSS vars), not
+// Tailwind utility classes — the old bg-slate-100/bg-blue-50/etc. classes
+// were light backgrounds with dark text, designed for the old paper
+// theme; on a black void canvas they'd render as light rectangles rather
+// than tinted pills consistent with the rest of this redesign.
 const STATE_META = {
-  draft:                        { label: 'Getting started',        badge: 'bg-slate-100 text-slate-700',   dot: 'bg-slate-400' },
-  awaiting_analysis:             { label: 'Reviewing your prescription', badge: 'bg-slate-100 text-slate-700', dot: 'bg-slate-400' },
-  awaiting_pharmacist_review:    { label: 'Your pharmacist is reviewing this', badge: 'bg-blue-50 text-blue-800', dot: 'bg-blue-500' },
-  awaiting_prescriber_response:  { label: 'Checking with your prescriber', badge: 'bg-amber-50 text-amber-800', dot: 'bg-amber-500' },
-  escalated:                     { label: 'Under urgent review',    badge: 'bg-red-50 text-red-800',        dot: 'bg-red-500' },
-  ready_to_dispense:             { label: 'Reviewed and ready',     badge: 'bg-emerald-50 text-emerald-800', dot: 'bg-emerald-500' },
-  held_or_cancelled:             { label: 'On hold — contact your pharmacy', badge: 'bg-red-50 text-red-800', dot: 'bg-red-500' },
-  closed:                        { label: 'Complete',               badge: 'bg-emerald-50 text-emerald-800', dot: 'bg-emerald-500' },
+  draft:                        { label: 'Getting started',        bg: 'rgba(154,154,154,0.14)', fg: 'var(--ink-soft)', dot: 'var(--ink-soft)' },
+  awaiting_analysis:             { label: 'Reviewing your prescription', bg: 'rgba(154,154,154,0.14)', fg: 'var(--ink-soft)', dot: 'var(--ink-soft)' },
+  awaiting_pharmacist_review:    { label: 'Your pharmacist is reviewing this', bg: 'rgba(111,200,255,0.14)', fg: 'var(--informational)', dot: 'var(--informational)' },
+  awaiting_prescriber_response:  { label: 'Checking with your prescriber', bg: 'rgba(255,184,41,0.14)', fg: 'var(--caution)', dot: 'var(--caution)' },
+  escalated:                     { label: 'Under urgent review',    bg: 'rgba(255,92,92,0.14)', fg: 'var(--critical)', dot: 'var(--critical)' },
+  ready_to_dispense:             { label: 'Reviewed and ready',     bg: 'rgba(62,207,142,0.14)', fg: 'var(--safe)', dot: 'var(--safe)' },
+  held_or_cancelled:             { label: 'On hold — contact your pharmacy', bg: 'rgba(255,92,92,0.14)', fg: 'var(--critical)', dot: 'var(--critical)' },
+  closed:                        { label: 'Complete',               bg: 'rgba(62,207,142,0.14)', fg: 'var(--safe)', dot: 'var(--safe)' },
 };
 
 function caseCard(c, i) {
@@ -853,15 +1059,15 @@ function caseCard(c, i) {
     <div class="card card-shadow rounded-2xl p-5 reveal" style="animation-delay: ${i * 70}ms">
       <div class="flex items-start justify-between gap-3 mb-3">
         <div>
-          <p class="font-label text-[11px] uppercase tracking-wide mb-1" style="color: var(--ink-faint);">${dateStr}</p>
-          <h3 class="text-[15px] font-semibold">${esc(c.medication)}</h3>
+          <p class="field-label mb-1" style="color: var(--ink-faint);">${dateStr}</p>
+          <h3 class="font-display text-heading-xs">${esc(c.medication)}</h3>
         </div>
-        <span class="font-label inline-flex items-center gap-1.5 text-[11px] font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${meta.badge}">
-          <span class="w-1.5 h-1.5 rounded-full ${meta.dot}"></span>${meta.label}
+        <span class="field-label inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full whitespace-nowrap" style="background: ${meta.bg}; color: ${meta.fg};">
+          <span class="w-1.5 h-1.5 rounded-full" style="background: ${meta.dot};"></span>${meta.label}
         </span>
       </div>
       ${c.has_findings ? (c.interaction_review === 'pending' ? `
-        <div class="flex items-center gap-1.5 mb-2.5 font-label text-[11.5px] font-semibold" style="color: var(--critical)">
+        <div class="flex items-center gap-1.5 mb-2.5 field-label" style="color: var(--critical)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="flex-shrink:0">
             <path d="M12 3.5 L22 20.5 L2 20.5 Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
             <path d="M12 9.5 V14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -870,7 +1076,7 @@ function caseCard(c, i) {
           Pending clinical review — your pharmacist flagged something not yet fully reviewed
         </div>
       ` : `
-        <div class="flex items-center gap-1.5 mb-2.5 font-label text-[11.5px] font-semibold" style="color: var(--safe)">
+        <div class="flex items-center gap-1.5 mb-2.5 field-label" style="color: var(--safe)">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="flex-shrink:0">
             <circle cx="12" cy="12" r="9.5" stroke="currentColor" stroke-width="2"/>
             <path d="M7.5 12.5 L10.5 15.5 L16.5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -888,15 +1094,15 @@ async function renderDashboard() {
   const user = getUser();
   shell('dashboard', `
     <div class="reveal">
-      <p class="font-label text-[11px] uppercase tracking-[0.16em] mb-2" style="color: var(--accent);">Your care team</p>
-      <h1 class="font-display text-[28px] font-semibold mb-1" style="color: var(--primary);">Hi, ${esc((user && user.full_name) || 'there')}</h1>
-      <p class="font-label text-[13px] mb-6" style="color: var(--ink-soft);">Your prescriptions, and where each one stands with your care team.</p>
+      <p class="label-tag mb-2" style="color: var(--accent);">Your care team</p>
+      <h1 class="font-display text-subheading mb-1" style="color: var(--ink);">Hi, ${esc((user && user.full_name) || 'there')}</h1>
+      <p class="text-caption mb-6" style="color: var(--ink-soft);">Your prescriptions, and where each one stands with your care team.</p>
       <div id="cases" class="space-y-3"></div>
     </div>
   `);
 
   const casesEl = $('#cases');
-  casesEl.innerHTML = `<p class="font-label text-sm" style="color: var(--ink-faint);">Loading…</p>`;
+  casesEl.innerHTML = `<p class="text-caption" style="color: var(--ink-faint);">Loading…</p>`;
   try {
     const data = await api('/v1/my/cases');
     const cases = data.cases || [];
@@ -904,7 +1110,7 @@ async function renderDashboard() {
       ? cases.map(caseCard).join('')
       : `<div class="card rounded-2xl p-8 text-center reveal" style="border-style: dashed;">
            <p class="text-sm font-semibold">No prescriptions on file yet</p>
-           <p class="font-label text-[13px] mt-1.5 max-w-xs mx-auto" style="color: var(--ink-faint);">Once your prescriber sends a prescription to your pharmacy, it'll show up here after review. In the meantime, try the quick check.</p>
+           <p class="text-caption mt-1.5 max-w-xs mx-auto" style="color: var(--ink-faint);">Once your prescriber sends a prescription to your pharmacy, it'll show up here after review. In the meantime, try the quick check.</p>
          </div>`;
   } catch (err) {
     if (err.message.includes('401') || err.message.toLowerCase().includes('token')) {

@@ -6,39 +6,45 @@
 <title>Clinical Console — DDI-RAG</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,200..800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
+  /* Same design system as static/patient/index.html — adapted from an
+     uploaded Dala/craftedbygc brand kit (void-black canvas, electric-iris
+     violet accent, saffron-spark amber highlight). This console's own
+     severity palette already nearly matched Dala's "one saturated hue per
+     role" instinct before this pass (critical/major/info/unknown/safe
+     below are barely changed), so the two apps now share one coherent
+     severity language on top of one shared visual identity. IBM Plex Mono
+     stays for data/IDs/timestamps — a real functional need (scannable
+     technical labels) Dala's marketing-page system has no equivalent for,
+     kept deliberately distinct from Inter's role in body/UI text. The old
+     amber "instrument panel" grid background and scanline sweep are
+     removed — Dala's void canvas is flat, no decorative texture. */
   :root {
-    --bg: #0A0C0F;
-    --panel: #12161C;
-    --panel-alt: #171C23;
-    --panel-raised: #1B212A;
-    --border: #262E38;
-    --border-bright: #3A4552;
-    --text: #E4E9EF;
-    --text-dim: #8B98A8;
-    --text-faint: #4E5A67;
-    --accent: #FFB020;
-    --accent-soft: rgba(255,176,32,0.14);
-    --accent-glow: rgba(255,176,32,0.35);
+    --bg: #000000;
+    --panel: #0c0c0e;
+    --panel-alt: #131316;
+    --panel-raised: #1a1a1f;
+    --border: rgba(255,255,255,0.10);
+    --border-bright: rgba(255,255,255,0.20);
+    --text: #ffffff;
+    --text-dim: #9a9a9a;
+    --text-faint: #6b6b70;
+    --accent: #8052ff;
+    --accent-soft: rgba(128,82,255,0.14);
+    --accent-glow: rgba(128,82,255,0.35);
     --info: #6FC8FF;
-    --caution: #FFB020;
+    --caution: #ffb829;
     --major: #FF8A3D;
     --critical: #FF5555;
-    --unknown: #B48DFF;
+    --unknown: #b892ff;
     --safe: #3ECF8E;
   }
-  * { font-family: 'IBM Plex Sans', sans-serif; }
+  * { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
   .mono { font-family: 'IBM Plex Mono', monospace; }
   html, body { background: var(--bg); }
-  body {
-    background-image:
-      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
-    background-size: 34px 34px;
-  }
-  ::selection { background: var(--accent-glow); color: #1a1200; }
+  ::selection { background: var(--accent-glow); color: #ffffff; }
   ::-webkit-scrollbar { width: 9px; height: 9px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 5px; }
@@ -64,9 +70,9 @@
   select.field { -webkit-appearance: none; appearance: none; }
 
   .btn { font-family: 'IBM Plex Mono', monospace; letter-spacing: 0.02em; transition: all .12s ease; }
-  .btn-primary { background: var(--accent); color: #1a1200; font-weight: 600; }
-  .btn-primary:hover { background: #ffc350; }
-  .btn-primary:disabled { background: #4a4230; color: #7a715a; cursor: not-allowed; }
+  .btn-primary { background: var(--accent); color: #ffffff; font-weight: 600; }
+  .btn-primary:hover { background: #9c78ff; }
+  .btn-primary:disabled { background: #2e2a45; color: #6b6580; cursor: not-allowed; }
   .btn-outline { background: transparent; border: 1px solid var(--border-bright); color: var(--text); }
   .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
   .btn-danger { background: transparent; border: 1px solid #7a2c2c; color: var(--critical); }
@@ -78,19 +84,25 @@
   .navlink.active { background: var(--accent-soft); border-left-color: var(--accent); color: var(--accent); }
 
   .tag { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; padding: 2px 7px; border-radius: 3px; border: 1px solid var(--border-bright); color: var(--text-dim); }
-  .scanline { position: relative; overflow: hidden; }
-  .scanline::after {
-    content: ''; position: absolute; left: 0; right: 0; height: 120px; top: -120px;
-    background: linear-gradient(180deg, transparent, rgba(255,176,32,0.05), transparent);
-    animation: scan 7s linear infinite;
-  }
-  @keyframes scan { to { transform: translateY(620px); } }
 
   .console-line { animation: consoleIn .35s ease forwards; }
   @keyframes consoleIn { from { opacity: 0; transform: translateX(6px); } to { opacity: 1; transform: translateX(0); } }
 
   .spinner { width: 13px; height: 13px; border: 2px solid var(--border-bright); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* The kit's real type scale, same tokens as static/patient/index.html —
+     headings stay weight 400 with real negative tracking (scale carries
+     hierarchy, not bold), never the arbitrary Tailwind font-semibold this
+     console used before. Kept to the smaller end of the kit's scale on
+     purpose: this is a repeated, in-flow screen header on a dense
+     operational tool, not a one-time landing hero — 78-113px display type
+     has no place here. IBM Plex Mono keeps its own separate role for
+     data/IDs/field-labels, untouched by this. */
+  .font-display    { font-weight: 400; letter-spacing: -0.02em; }
+  .text-heading    { font-weight: 400; font-size: 48px; line-height: 1.1;  letter-spacing: -1.68px; }
+  .text-heading-xs { font-weight: 400; font-size: 27px; line-height: 1; }
+  .text-heading-2xs{ font-weight: 400; font-size: 24px; line-height: 1.25; letter-spacing: -0.48px; }
 </style>
 </head>
 <body class="min-h-screen" style="color: var(--text)">
@@ -199,6 +211,17 @@ function interactionWarningBanner(findings) {
   `;
 }
 function fmtDate(s) { if (!s) return '—'; return new Date(s).toLocaleString(undefined, { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }); }
+function timeAgo(s) {
+  if (!s) return '—';
+  const mins = Math.floor((Date.now() - new Date(s).getTime()) / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days < 30) return `${days}d ago`;
+  return fmtDate(s);
+}
 function esc(s) { return (s ?? '').toString().replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function parseList(str) { return (str || '').split(',').map(s => s.trim().toLowerCase()).filter(Boolean); }
 
@@ -209,13 +232,13 @@ function nav(view, params = {}) { Object.assign(R, { view }, params); renderView
 // ── Auth screen ───────────────────────────────────────────────────────────
 function renderAuth() {
   app.innerHTML = `
-    <div class="min-h-screen flex items-center justify-center px-6 scanline">
+    <div class="min-h-screen flex items-center justify-center px-6">
       <div class="w-full max-w-md reveal">
         <div class="flex items-center gap-2 mb-1">
           <span class="led led-glow pulse" style="background:var(--safe)"></span>
           <span class="mono text-[10.5px] tracking-[0.16em] uppercase" style="color:var(--text-dim)">System online</span>
         </div>
-        <h1 class="text-3xl font-semibold mt-3 mb-1">Clinical Console</h1>
+        <h1 class="font-display text-heading mt-3 mb-1">Clinical Console</h1>
         <p class="mono text-[12px] mb-8" style="color:var(--text-dim)">DDI-RAG · pharmacist / prescriber verification instrument</p>
 
         <form id="login-form" class="panel rounded p-6 space-y-4">
@@ -273,7 +296,7 @@ function renderShell() {
             <span class="led led-glow pulse" style="background:var(--safe)"></span>
             <span class="mono text-[10px] tracking-[0.16em] uppercase" style="color:var(--text-dim)">Console online</span>
           </div>
-          <h1 class="text-lg font-semibold mt-2">Clinical Console</h1>
+          <h1 class="font-display text-[19px] mt-2" style="color: var(--text);">Clinical Console</h1>
         </div>
         <nav id="sidenav" class="flex-1 py-3"></nav>
         <div class="px-5 py-4" style="border-top:1px solid var(--border)">
@@ -319,7 +342,7 @@ function renderView() {
 
 function panelHeader(title, subtitle) {
   return `<div class="mb-6 reveal">
-    <h2 class="text-2xl font-semibold">${title}</h2>
+    <h2 class="font-display text-heading-2xs">${title}</h2>
     ${subtitle ? `<p class="mono text-[12px] mt-1" style="color:var(--text-dim)">${subtitle}</p>` : ''}
   </div>`;
 }
@@ -391,38 +414,113 @@ function queryResultCard(r, i) {
 
 // ── Queue ─────────────────────────────────────────────────────────────────
 async function renderQueue(el) {
-  el.innerHTML = panelHeader('Pharmacist Queue', 'cases in awaiting_pharmacist_review for your organization') +
-    `<div id="queue-list" class="space-y-2"></div>
-     <div class="mt-8">
+  el.innerHTML = panelHeader('Pharmacist Queue', 'Loading…') +
+    `<div id="queue-filters" class="flex flex-wrap gap-2 mb-4"></div>
+     <div id="queue-list" class="space-y-2"></div>
+     <div class="mt-10">
        <p class="mono text-[10.5px] uppercase tracking-wide mb-2" style="color:var(--text-faint)">Recently viewed (this browser)</p>
        <div id="recent-list" class="space-y-1.5"></div>
      </div>`;
+  const subtitleEl = $('.mb-6 p', el);
+  const filtersEl = $('#queue-filters', el);
   const listEl = $('#queue-list', el);
-  listEl.innerHTML = `<p class="mono text-sm" style="color:var(--text-dim)">Loading…</p>`;
-  try {
-    const data = await api('/v1/safety-cases/queue');
-    listEl.innerHTML = data.cases.length ? data.cases.map((c, i) => queueRow(c, i)).join('') :
-      `<div class="panel rounded p-8 text-center"><p class="text-sm" style="color:var(--text-dim)">Queue is empty — no cases awaiting pharmacist review.</p></div>`;
-    $$('[data-case]', listEl).forEach(r => r.addEventListener('click', () => nav('case', { caseId: r.dataset.case })));
-  } catch (err) {
-    listEl.innerHTML = `<p class="text-sm" style="color:var(--critical)">${esc(err.message)}</p>`;
-  }
+  listEl.innerHTML = queueSkeleton();
   renderRecentList($('#recent-list', el));
+
+  let cases;
+  try {
+    cases = (await api('/v1/safety-cases/queue')).cases || [];
+  } catch (err) {
+    subtitleEl.textContent = '';
+    listEl.innerHTML = `<p class="text-sm" style="color:var(--critical)">${esc(err.message)}</p>`;
+    return;
+  }
+
+  if (!cases.length) {
+    subtitleEl.textContent = 'Nothing waiting for review right now';
+    filtersEl.innerHTML = '';
+    listEl.innerHTML = `<div class="panel rounded p-8 text-center"><p class="text-sm" style="color:var(--text-dim)">Queue is empty — no cases awaiting pharmacist review.</p></div>`;
+    return;
+  }
+
+  // Worst-severity-first, then longest-waiting-first — surfaces what needs
+  // attention most instead of arbitrary database order.
+  cases.sort((a, b) => {
+    const rankA = a.finding_count ? (SEVERITY_RANK[a.max_severity] ?? -1) : -1;
+    const rankB = b.finding_count ? (SEVERITY_RANK[b.max_severity] ?? -1) : -1;
+    if (rankA !== rankB) return rankB - rankA;
+    return new Date(a.created_at) - new Date(b.created_at);
+  });
+  subtitleEl.textContent = `${cases.length} case${cases.length > 1 ? 's' : ''} waiting for review — most urgent first`;
+
+  const buckets = { critical: 0, major: 0, unknown: 0, caution: 0, informational: 0, none: 0 };
+  cases.forEach(c => buckets[c.finding_count ? c.max_severity : 'none']++);
+  const chipDefs = [
+    { key: 'all',           label: 'ALL',         color: 'var(--accent)' },
+    { key: 'critical',      label: 'CRITICAL',    color: SEVERITY_META.critical.color },
+    { key: 'major',         label: 'MAJOR',       color: SEVERITY_META.major.color },
+    { key: 'unknown',       label: 'UNKNOWN',     color: SEVERITY_META.unknown.color },
+    { key: 'caution',       label: 'CAUTION',     color: SEVERITY_META.caution.color },
+    { key: 'informational', label: 'INFO',        color: SEVERITY_META.informational.color },
+    { key: 'none',          label: 'NO FINDINGS', color: 'var(--text-faint)' },
+  ].filter(c => c.key === 'all' || buckets[c.key] > 0);
+
+  let activeFilter = 'all';
+
+  function renderChips() {
+    filtersEl.innerHTML = chipDefs.map(c => {
+      const count = c.key === 'all' ? cases.length : buckets[c.key];
+      const active = activeFilter === c.key;
+      return `<button data-filter="${c.key}" class="mono text-[10.5px] px-2.5 py-1 rounded-full border transition"
+        style="border-color:${active ? c.color : 'var(--border-bright)'}; color:${active ? c.color : 'var(--text-dim)'}; background:${active ? c.color + '1A' : 'transparent'}">
+        ${c.label} <span style="opacity:.7">${count}</span>
+      </button>`;
+    }).join('');
+    $$('[data-filter]', filtersEl).forEach(b => b.addEventListener('click', () => {
+      activeFilter = b.dataset.filter;
+      renderChips();
+      renderList();
+    }));
+  }
+
+  function renderList() {
+    const filtered = activeFilter === 'all' ? cases
+      : activeFilter === 'none' ? cases.filter(c => !c.finding_count)
+      : cases.filter(c => c.finding_count && c.max_severity === activeFilter);
+    listEl.innerHTML = filtered.length ? filtered.map((c, i) => queueRow(c, i)).join('') :
+      `<div class="panel rounded p-8 text-center"><p class="text-sm" style="color:var(--text-dim)">No cases match this filter.</p></div>`;
+    $$('[data-case]', listEl).forEach(r => r.addEventListener('click', () => nav('case', { caseId: r.dataset.case })));
+  }
+
+  renderChips();
+  renderList();
+}
+
+function queueSkeleton() {
+  return Array.from({ length: 3 }).map(() => `
+    <div class="panel rounded pl-3 pr-4 py-4 pulse" style="border-left:3px solid var(--border-bright)">
+      <div class="h-3 w-40 rounded mb-2" style="background:var(--panel-alt)"></div>
+      <div class="h-2.5 w-24 rounded" style="background:var(--panel-alt)"></div>
+    </div>
+  `).join('');
 }
 
 function queueRow(c, i) {
   const hasFindings = (c.finding_count || 0) > 0;
   const sevMeta = hasFindings ? (SEVERITY_META[c.max_severity] || SEVERITY_META.unknown) : null;
+  const barColor = sevMeta ? sevMeta.color : 'var(--border-bright)';
   return `
-    <div data-case="${c.id}" class="panel rounded px-4 py-3 flex items-center justify-between cursor-pointer hover:border-[var(--accent)] reveal" style="animation-delay:${i*40}ms">
-      <div class="flex items-center gap-2.5">
-        ${hasFindings ? `<span title="${c.finding_count} finding(s), highest severity: ${sevMeta.label}">${warningIcon(sevMeta.color)}</span>` : ''}
-        <div>
-          <p class="text-sm font-medium">${esc(c.patient_name || 'Unknown patient')} <span style="color:var(--text-faint)">·</span> <span style="color:var(--text-dim)">${esc(c.medication || '')}</span></p>
-          <p class="mono text-[10.5px] mt-0.5" style="color:var(--text-faint)">${esc(c.id)} · ${fmtDate(c.created_at)}</p>
+    <div data-case="${c.id}" class="panel rounded pl-3 pr-4 py-3 flex items-center justify-between gap-3 cursor-pointer hover:border-[var(--accent)] reveal" style="animation-delay:${i*40}ms; border-left:3px solid ${barColor}">
+      <div class="flex items-center gap-2.5 min-w-0">
+        ${hasFindings ? warningIcon(sevMeta.color) : ''}
+        <div class="min-w-0">
+          <p class="text-sm font-medium truncate">${esc(c.patient_name || 'Unknown patient')} <span style="color:var(--text-faint)">·</span> <span style="color:var(--text-dim)">${esc(c.medication || '')}</span></p>
+          <p class="mono text-[10.5px] mt-0.5" style="color:var(--text-faint)" title="${esc(c.id)}">${timeAgo(c.created_at)} · #${esc(c.id.slice(0, 8))}</p>
         </div>
       </div>
-      ${ledBadge(STATE_META[c.state]?.color || '#888', STATE_META[c.state]?.label || c.state)}
+      ${hasFindings
+        ? `<span class="mono text-[10.5px] font-semibold tracking-wide shrink-0 text-right" style="color:${sevMeta.color}">${c.finding_count} FINDING${c.finding_count > 1 ? 'S' : ''}<br class="hidden sm:block">· ${sevMeta.label}</span>`
+        : `<span class="mono text-[10.5px] shrink-0" style="color:var(--text-faint)">NO FINDINGS YET</span>`}
     </div>
   `;
 }
@@ -597,7 +695,7 @@ async function renderCaseDetail(el, caseId) {
     <button id="back" class="mono text-[11px] mb-4" style="color:var(--text-dim)">← back</button>
     <div class="flex items-start justify-between mb-1 reveal">
       <div>
-        <h2 class="text-2xl font-semibold">${esc(c.patient?.name || 'Unknown patient')}</h2>
+        <h2 class="font-display text-heading-2xs">${esc(c.patient?.name || 'Unknown patient')}</h2>
         <p class="mono text-[11px] mt-1" style="color:var(--text-faint)">${esc(c.id)}</p>
       </div>
       ${ledBadge(meta.color, meta.label)}
