@@ -1,0 +1,96 @@
+@import "tailwindcss";
+@import "@fontsource/inter/200.css";
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/600.css";
+
+/* Same design system as the original static/patient/index.html — ported
+   verbatim, not reinvented. The only structural change from the old file:
+   Inter is now a bundled npm package (self-hosted, part of the build
+   output) instead of a Google Fonts <link> — one less external network
+   call the page depends on to look right. */
+:root {
+  --paper:        #000000;
+  --paper-raised: #0c0c0e;
+  --ink:          #ffffff;
+  --ink-soft:     #9a9a9a;
+  --ink-faint:    #6b6b70;
+  --primary:      #8052ff;
+  --primary-tint: #9c78ff;
+  --accent:       #ffb829;
+  --accent-tint:  #2e2210;
+  --line:         rgba(255,255,255,0.12);
+  --line-soft:    rgba(255,255,255,0.07);
+  --critical:      #ff5c5c;
+  --major:         #ff8a3d;
+  --caution:       #ffb829;
+  --informational: #6fc8ff;
+  --unknown:       #b892ff;
+  --safe:          #3ecf8e;
+}
+
+* { font-family: 'Inter', ui-sans-serif, system-ui, sans-serif; }
+body { background: var(--paper); color: var(--ink); margin: 0; }
+
+.font-display { font-weight: 400; letter-spacing: -0.04em; }
+.text-display    { font-weight: 400; font-size: 78px;  line-height: 1.1;  letter-spacing: -3.12px; }
+.text-heading    { font-weight: 400; font-size: 48px;  line-height: 1.1;  letter-spacing: -1.68px; }
+.text-heading-sm { font-weight: 400; font-size: 42px;  line-height: 1.2;  letter-spacing: -1.68px; }
+.text-subheading { font-weight: 400; font-size: 36px;  line-height: 1.2; }
+.text-heading-xs { font-weight: 400; font-size: 27px;  line-height: 1; }
+.text-heading-2xs{ font-weight: 400; font-size: 24px;  line-height: 1.25; letter-spacing: -0.48px; }
+.text-prose      { font-weight: 200; font-size: 18px;  line-height: 1.5; }
+.label-tag       { font-weight: 600; font-size: 14px;  letter-spacing: 0.35px; text-transform: uppercase; }
+.field-label     { font-weight: 600; font-size: 12px;  letter-spacing: 0.25px; text-transform: uppercase; }
+.text-caption    { font-weight: 400; font-size: 12px;  line-height: 1.5; }
+@media (max-width: 640px) {
+  .text-display { font-size: 42px; letter-spacing: -1.68px; }
+  .text-heading { font-size: 36px; letter-spacing: -1.2px; }
+}
+
+.reveal { opacity: 0; transform: translateY(12px); animation: reveal 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+::selection { background: rgba(128,82,255,0.35); }
+
+.hero-visual { position: relative; }
+.hero-visual::before {
+  content: '';
+  position: absolute; inset: -20%;
+  background: radial-gradient(circle at center, rgba(128,82,255,0.16), rgba(21,132,110,0.08) 45%, transparent 72%);
+  filter: blur(8px);
+  pointer-events: none;
+}
+#hero-canvas { position: relative; display: block; width: 100%; height: auto; aspect-ratio: 1; }
+@media (max-width: 1023px) {
+  .hero-visual { max-width: 220px; margin: 0 auto; }
+}
+
+/* The rest of the original file's custom classes — ported verbatim so
+   every screen below Home has what it needs. */
+.card { background: var(--paper-raised); border: 1px solid var(--line); }
+.card-shadow { box-shadow: 0 1px 2px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.35); }
+.pulse-dot { animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.field { transition: border-color 0.15s ease, box-shadow 0.15s ease; background: var(--paper-raised); color: var(--ink); }
+.field:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(128,82,255,0.20); }
+.field::placeholder { color: var(--ink-faint); }
+.btn-primary { background: var(--primary); transition: background 0.15s ease, transform 0.08s ease; }
+.btn-primary:hover { background: var(--primary-tint); }
+.btn-primary:active { transform: scale(0.985); }
+.btn-primary:disabled { background: #3a3550; color: #7a7690; cursor: not-allowed; }
+.chip { background: var(--accent-tint); color: var(--accent); border: 1px solid rgba(255,184,41,0.35); }
+.chip-remove { cursor: pointer; transition: background 0.12s ease, border-color 0.12s ease; }
+.chip-remove:hover { background: rgba(255,184,41,0.18); border-color: var(--accent); }
+.underline-link { text-underline-offset: 3px; text-decoration-color: var(--line); }
+.underline-link:hover { text-decoration-color: currentColor; }
+.scan-track { position: relative; overflow: hidden; }
+.scan-bar {
+  position: absolute; top: 0; left: -30%; width: 30%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(128,82,255,0.45), transparent);
+  animation: scan 1.6s ease-in-out infinite;
+}
+@keyframes scan { 0% { left: -30%; } 100% { left: 100%; } }
+.fade-in { animation: fadeIn 0.35s ease forwards; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.spinner { border: 2px solid rgba(128,82,255,0.20); border-top-color: var(--primary); border-radius: 999px; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+textarea.field { resize: vertical; }
