@@ -276,14 +276,18 @@ footer p { max-width:none !important; padding:28px 3vw !important; color:#e9dfed
 .living-tree::before { content:''; position:absolute; inset:9% 7% 7%; border-radius:50%; background:radial-gradient(ellipse,rgba(255,255,255,.58),rgba(204,186,226,.22) 48%,transparent 72%); filter:blur(28px); }
 .living-tree img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 22px 22px rgba(65,43,76,.15)); }
 .living-tree-base { transform-origin:50% 92%; animation:tree-sway 6.5s ease-in-out infinite alternate; }
-.tree-tendrils { position:absolute; inset:0; width:100%; height:100%; fill:none; stroke:#765d5e; stroke-width:1.4; opacity:.75; }
-.tree-tendrils path { transform-origin:50% 52%; animation:tendril-sway 3.8s ease-in-out infinite alternate; }
+.tree-tendrils { position:absolute; inset:0; width:100%; height:100%; fill:none; stroke:#765d5e; stroke-width:1.35; stroke-linecap:round; opacity:.78; }
+.tree-tendrils path { transform-box:fill-box; transform-origin:50% 0; animation:tendril-sway 3.4s ease-in-out infinite alternate; }
 .tree-tendrils path:nth-child(2) { animation-delay:-1.2s; }
 .tree-tendrils path:nth-child(3) { animation-delay:-2.1s; }
-.tree-leaf { position:absolute; left:calc(7% + var(--i)*4.8%); top:calc(15% + var(--i)*1.8%); width:clamp(6px,.65vw,10px); height:clamp(10px,1vw,16px); border-radius:70% 10% 70% 10%; background:linear-gradient(145deg,#fffaf8,#cfc1e8); box-shadow:0 2px 7px rgba(77,55,91,.12); opacity:.8; animation:leaf-float calc(4s + var(--i)*.16s) ease-in-out calc(var(--i)*-.32s) infinite alternate; }
+.tree-tendrils path:nth-child(4) { animation-delay:-.7s; }
+.tree-tendrils path:nth-child(5) { animation-delay:-2.7s; }
+.tree-leaf { position:absolute; left:calc(5% + var(--i)*3.05%); top:calc(13% + var(--i)*1.05%); width:clamp(6px,.65vw,10px); height:clamp(10px,1vw,16px); border-radius:70% 10% 70% 10%; background:linear-gradient(145deg,#fffaf8,#cfc1e8); box-shadow:0 2px 7px rgba(77,55,91,.12); opacity:.82; transform-origin:50% 85%; animation:leaf-shake calc(1.5s + var(--i)*.035s) ease-in-out calc(var(--i)*-.17s) infinite alternate; }
+.tree-leaf:nth-of-type(3n) { top:calc(22% + var(--i)*.55%); }
+.tree-leaf:nth-of-type(4n) { top:calc(9% + var(--i)*.85%); }
 @keyframes tree-sway { from { transform:rotate(-.35deg) scale(1.003); } to { transform:rotate(.38deg) scale(1.009); } }
-@keyframes tendril-sway { from { transform:rotate(-2deg) translateX(-3px); } to { transform:rotate(2deg) translateX(4px); } }
-@keyframes leaf-float { from { transform:translateY(-3px) rotate(-18deg); } to { transform:translate(12px,13px) rotate(30deg); } }
+@keyframes tendril-sway { from { transform:rotate(-1.6deg) scaleY(.985); } to { transform:rotate(1.8deg) scaleY(1.018); } }
+@keyframes leaf-shake { from { transform:translate(-2px,-1px) rotate(-13deg); } 55% { transform:translate(1px,2px) rotate(8deg); } to { transform:translate(3px,-2px) rotate(16deg); } }
 .journey-story { display:flex; align-items:center; padding:8vw; background:linear-gradient(#f4ecfa,#f8f3fb); }
 .journey-story-copy { position:relative; z-index:2; width:min(54%,780px); }
 .journey-story h2 { font-size:clamp(64px,7vw,118px); line-height:.94; letter-spacing:-.075em; font-weight:400; margin:22px 0; }

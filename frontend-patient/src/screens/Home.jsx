@@ -3,13 +3,15 @@ import treeImage from '../assets/cicada-tree.png';
 
 function LivingTree() {
   return <div className="living-tree" aria-hidden="true">
-    <img className="living-tree-base" src={treeImage} alt="" />
     <svg className="tree-tendrils" viewBox="0 0 700 700" preserveAspectRatio="none">
-      <path d="M291 370 C287 438 300 478 287 517 C274 542 271 498 266 470" />
-      <path d="M394 352 C401 428 387 505 402 555 C417 598 420 530 425 487" />
-      <path d="M474 388 C471 446 485 487 474 524 C461 552 456 510 454 482" />
+      <path d="M224 278 C218 372 225 470 253 492 C278 511 284 392 274 281" />
+      <path d="M280 268 C270 377 281 520 311 545 C340 565 345 382 329 269" />
+      <path d="M350 263 C338 375 347 543 376 568 C405 589 416 382 401 266" />
+      <path d="M420 270 C409 378 416 512 445 538 C474 558 484 379 469 275" />
+      <path d="M478 284 C467 371 477 467 505 490 C531 509 540 379 526 291" />
     </svg>
-    {Array.from({ length: 18 }, (_, i) => <i className="tree-leaf" style={{ '--i': i }} key={i} />)}
+    <img className="living-tree-base" src={treeImage} alt="" />
+    {Array.from({ length: 30 }, (_, i) => <i className="tree-leaf" style={{ '--i': i }} key={i} />)}
   </div>;
 }
 
