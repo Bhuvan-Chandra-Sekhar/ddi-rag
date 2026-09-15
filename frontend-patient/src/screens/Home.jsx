@@ -4,7 +4,6 @@ import treeImage from '../assets/cicada-tree.png';
 function LivingTree() {
   return <div className="living-tree" aria-hidden="true">
     <img className="living-tree-base" src={treeImage} alt="" />
-    <img className="living-tree-crown" src={treeImage} alt="" />
     <svg className="tree-tendrils" viewBox="0 0 700 700" preserveAspectRatio="none">
       <path d="M291 370 C287 438 300 478 287 517 C274 542 271 498 266 470" />
       <path d="M394 352 C401 428 387 505 402 555 C417 598 420 530 425 487" />
