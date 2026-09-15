@@ -48,9 +48,9 @@ export default function Home({ onNav }) {
       const top = page.getBoundingClientRect().top + window.scrollY;
       const progress = Math.max(0, (window.scrollY - top) / window.innerHeight);
       const set = (name, value) => page.style.setProperty(name, value.toFixed(3));
-      set('--tree-gone', smooth(1.55, 2.05, progress));
-      set('--tree-grow', smooth(.3, 1.5, progress));
-      set('--symbol-visible', smooth(1.65, 2.05, progress));
+      set('--tree-gone', smooth(1.7, 2.05, progress));
+      set('--tree-grow', smooth(.35, 1.55, progress));
+      set('--symbol-visible', smooth(1.82, 2.1, progress));
       set('--wings-visible', smooth(2.2, 2.55, progress));
       set('--intro-wings', 1 - smooth(.5, 1.3, progress));
       page.classList.toggle('choices-ready', progress >= 2.48);

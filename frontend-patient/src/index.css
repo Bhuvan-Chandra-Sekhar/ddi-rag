@@ -390,11 +390,11 @@ footer p { max-width:none !important; padding:28px 3vw !important; color:#e9dfed
 /* Keep the headline readable while preserving the full first-view tree. */
 .journey-hero-copy { padding-top:5vh; }
 .journey-hero h1 { font-size:clamp(48px,6.2vw,96px); line-height:1.02; }
-.living-tree,.journey-stage .living-tree { width:min(880px,86vw); top:21vh; }
+.living-tree,.journey-stage .living-tree { width:min(63vh,76vw); aspect-ratio:1; top:24vh; }
 @media(max-width:800px) {
-  .living-tree,.journey-stage .living-tree { width:110vw; top:29vh; }
+  .living-tree,.journey-stage .living-tree { width:min(61vh,96vw); top:27vh; }
 }
 @media(max-width:480px) {
   .journey-hero h1 { font-size:clamp(38px,10vw,54px); }
-  .living-tree,.journey-stage .living-tree { width:145vw; top:31vh; }
+  .living-tree,.journey-stage .living-tree { width:min(56vh,102vw); top:31vh; }
 }
