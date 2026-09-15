@@ -22,7 +22,10 @@ export default function App() {
   const [resultsData, setResultsData] = useState(null);
   const [scanError, setScanError] = useState('');
 
-  const nav = (next) => setView(next);
+  const nav = (next) => {
+    setView(next);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  };
 
   const handleSubmitCheck = () => {
     setScanError('');
@@ -94,6 +97,7 @@ export default function App() {
       )}
 
       {view === 'auth' && <Auth onAuthenticated={handleAuthenticated} onSkip={() => nav('checker')} />}
+      {view === 'clinician' && <Auth mode="clinician" onAuthenticated={() => { window.location.href = '/clinical'; }} onSkip={() => nav('checker')} />}
 
       {view === 'dashboard' && (
         token() ? (
