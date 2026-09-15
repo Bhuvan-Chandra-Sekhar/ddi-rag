@@ -273,14 +273,17 @@ footer p { max-width:none !important; padding:28px 3vw !important; color:#e9dfed
 .hero-wings { position:absolute; z-index:0; width:min(1450px,100vw); height:65vh; left:50%; top:31vh; transform:translateX(-50%); color:#b8a7bb; opacity:.65; }
 .journey-scroll { position:absolute; z-index:3; bottom:25px; left:3vw; font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; }
 .living-tree { position:absolute; z-index:1; width:min(1120px,100vw); aspect-ratio:1200/1280; left:50%; top:16vh; transform:translateX(-50%); pointer-events:none; }
-.living-tree img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; }
-.living-tree-crown { clip-path:polygon(0 0,100% 0,100% 73%,0 73%); transform-origin:50% 64%; animation:crown-sway 5.5s ease-in-out infinite alternate; }
+.living-tree::before { content:''; position:absolute; inset:9% 7% 7%; border-radius:50%; background:radial-gradient(ellipse,rgba(255,255,255,.58),rgba(204,186,226,.22) 48%,transparent 72%); filter:blur(28px); }
+.living-tree img { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 22px 22px rgba(65,43,76,.15)); }
+.living-tree-base { animation:trunk-breathe 7s ease-in-out infinite alternate; }
+.living-tree-crown { clip-path:polygon(0 0,100% 0,100% 69%,0 69%); transform-origin:50% 58%; animation:crown-sway 5.5s ease-in-out infinite alternate; }
 .tree-tendrils { position:absolute; inset:0; width:100%; height:100%; fill:none; stroke:#765d5e; stroke-width:1.4; opacity:.75; }
 .tree-tendrils path { transform-origin:50% 52%; animation:tendril-sway 3.8s ease-in-out infinite alternate; }
 .tree-tendrils path:nth-child(2) { animation-delay:-1.2s; }
 .tree-tendrils path:nth-child(3) { animation-delay:-2.1s; }
-.tree-leaf { position:absolute; left:calc(12% + var(--i)*6.6%); top:calc(24% + var(--i)*2.7%); width:9px; height:15px; border-radius:70% 10% 70% 10%; background:#e2d1ec; opacity:.7; animation:leaf-float calc(4s + var(--i)*.2s) ease-in-out calc(var(--i)*-.35s) infinite alternate; }
-@keyframes crown-sway { from { transform:rotate(-.6deg) scale(1.005); } to { transform:rotate(.65deg) scale(1.018); } }
+.tree-leaf { position:absolute; left:calc(7% + var(--i)*4.8%); top:calc(15% + var(--i)*1.8%); width:clamp(6px,.65vw,10px); height:clamp(10px,1vw,16px); border-radius:70% 10% 70% 10%; background:linear-gradient(145deg,#fffaf8,#cfc1e8); box-shadow:0 2px 7px rgba(77,55,91,.12); opacity:.8; animation:leaf-float calc(4s + var(--i)*.16s) ease-in-out calc(var(--i)*-.32s) infinite alternate; }
+@keyframes trunk-breathe { from { transform:translateY(0) scale(1); } to { transform:translateY(-2px) scale(1.003); } }
+@keyframes crown-sway { from { transform:rotate(-.7deg) scale(1.008); } to { transform:rotate(.72deg) scale(1.022); } }
 @keyframes tendril-sway { from { transform:rotate(-2deg) translateX(-3px); } to { transform:rotate(2deg) translateX(4px); } }
 @keyframes leaf-float { from { transform:translateY(-3px) rotate(-18deg); } to { transform:translate(12px,13px) rotate(30deg); } }
 .journey-story { display:flex; align-items:center; padding:8vw; background:linear-gradient(#f4ecfa,#f8f3fb); }
@@ -387,7 +390,7 @@ footer p { max-width:none !important; padding:28px 3vw !important; color:#e9dfed
 /* Keep the headline readable while preserving the full first-view tree. */
 .journey-hero-copy { padding-top:5vh; }
 .journey-hero h1 { font-size:clamp(48px,6.2vw,96px); line-height:1.02; }
-.living-tree,.journey-stage .living-tree { width:min(900px,88vw); top:22vh; }
+.living-tree,.journey-stage .living-tree { width:min(880px,86vw); top:21vh; }
 @media(max-width:800px) {
   .living-tree,.journey-stage .living-tree { width:110vw; top:29vh; }
 }

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import treeImage from '../assets/blossom-tree.svg';
+import treeImage from '../assets/cicada-tree.png';
 
 function LivingTree() {
   return <div className="living-tree" aria-hidden="true">
@@ -10,7 +10,7 @@ function LivingTree() {
       <path d="M394 352 C401 428 387 505 402 555 C417 598 420 530 425 487" />
       <path d="M474 388 C471 446 485 487 474 524 C461 552 456 510 454 482" />
     </svg>
-    {Array.from({ length: 12 }, (_, i) => <i className="tree-leaf" style={{ '--i': i }} key={i} />)}
+    {Array.from({ length: 18 }, (_, i) => <i className="tree-leaf" style={{ '--i': i }} key={i} />)}
   </div>;
 }
 
