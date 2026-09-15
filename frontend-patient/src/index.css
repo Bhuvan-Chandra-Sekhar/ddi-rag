@@ -270,7 +270,7 @@ footer p { max-width:none !important; padding:28px 3vw !important; color:#e9dfed
 .journey-kicker { color:var(--accent); font-size:11px; font-weight:600; letter-spacing:.16em; }
 .journey-hero h1 { margin:10px auto 0; font-size:clamp(60px,7.5vw,128px); line-height:.95; letter-spacing:-.073em; font-weight:400; color:#261b2d; }
 .journey-hero h1 span { border-bottom:2px solid currentColor; }
-.hero-wings { position:absolute; z-index:0; width:min(1450px,100vw); height:65vh; left:50%; top:31vh; transform:translateX(-50%); color:#b8a7bb; opacity:.65; }
+.hero-wings { position:absolute; z-index:0; width:min(1450px,100vw); height:65vh; left:50%; top:12vh; transform:translateX(-50%); color:#b8a7bb; opacity:.65; }
 .journey-scroll { position:absolute; z-index:3; bottom:25px; left:3vw; font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; }
 .living-tree { position:absolute; z-index:1; width:min(1120px,100vw); aspect-ratio:1200/1280; left:50%; top:16vh; transform:translateX(-50%); pointer-events:none; }
 .living-tree::before { content:''; position:absolute; inset:9% 7% 7%; border-radius:50%; background:radial-gradient(ellipse,rgba(255,255,255,.58),rgba(204,186,226,.22) 48%,transparent 72%); filter:blur(28px); }
@@ -306,6 +306,7 @@ footer p { max-width:none !important; padding:28px 3vw !important; color:#e9dfed
 .option-name { display:block; font-size:22px; letter-spacing:-.05em; }
 .option-detail { display:block; margin-top:7px; font-size:12px; line-height:1.4; color:var(--ink-soft); }
 @media(max-width:800px) {
+  .hero-wings { top:17vh; height:58vh; }
   .journey-hero h1 { font-size:clamp(47px,11vw,80px); }
   .living-tree { width:110vw; top:28vh; }
   .journey-story { align-items:flex-start; padding:10vh 6vw; }
@@ -318,6 +319,7 @@ footer p { max-width:none !important; padding:28px 3vw !important; color:#e9dfed
   .option-1 { left:3%; top:100px; }.option-2 { left:28%; top:315px; }.option-3 { right:3%; top:100px; }
 }
 @media(max-width:480px) {
+  .hero-wings { top:20vh; height:52vh; }
   .journey-hero-copy { padding-top:8vh; }
   .journey-hero h1 { font-size:clamp(42px,10vw,55px); }
   .journey-hero h1 br { display:none; }
