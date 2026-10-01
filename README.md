@@ -1,10 +1,23 @@
 # DDI-RAG — Medication Safety Coordination Platform
 
-<p align="center">
-  <a href="https://ddi-rag.onrender.com/patient"><strong>Open the live application →</strong></a>
-  &nbsp;·&nbsp;
-  <a href="frontend-patient/"><strong>View frontend source</strong></a>
-</p>
+<table align="center">
+  <tr>
+    <th>Patient Web Application</th>
+    <th>Clinical Web Application</th>
+  </tr>
+  <tr>
+    <td align="center">
+      <a href="https://ddi-rag.onrender.com/patient"><strong>Open Patient App →</strong></a>
+    </td>
+    <td align="center">
+      <a href="https://ddi-rag.onrender.com/clinical"><strong>Open Clinical App →</strong></a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><a href="frontend-patient/">View patient app source</a></td>
+    <td align="center"><a href="ddi_rag/static/clinical/">View clinical app source</a></td>
+  </tr>
+</table>
 
 <p align="center">
   <a href="https://ddi-rag.onrender.com/patient">
