@@ -1,5 +1,34 @@
 # DDI-RAG — Medication Safety Coordination Platform
 
+<p align="center">
+  <a href="https://ddi-rag.onrender.com/"><strong>Open the live application →</strong></a>
+  &nbsp;·&nbsp;
+  <a href="frontend-patient/"><strong>View frontend source</strong></a>
+</p>
+
+<p align="center">
+  <a href="https://ddi-rag.onrender.com/">
+    <img src="docs/application-preview.png" alt="MedTrust Connect application landing page" width="100%" />
+  </a>
+</p>
+
+> The Render free instance may need about a minute to wake after a period of inactivity.
+
+## Application
+
+The interactive patient application presents an animated tree-to-butterfly
+journey and provides three entry points:
+
+- **Quick Check** — review potential medication interactions without an account.
+- **Patient Portal** — sign in to prescriptions and care-team updates.
+- **Clinic Portal** — enter the role-protected clinical console.
+
+The deployable React application lives in [`frontend-patient/`](frontend-patient/).
+Render builds it during deployment using [`render.yaml`](render.yaml), and Flask
+serves the compiled application and API from the same service.
+
+---
+
 A clinical drug-drug interaction (DDI) safety platform. Prescriptions are
 checked against a deterministic clinical rule engine, findings are routed
 through a pharmacist → prescriber workflow, and an LLM (Groq) is used only
@@ -29,7 +58,7 @@ gaps: [`docs/SESSION_HANDOFF.md`](docs/SESSION_HANDOFF.md).
 | Embeddings | Cohere (`embed-english-v3.0`) | hosted API, no local model |
 | LLM generation | Groq (`llama-3.1-8b-instant`) | hosted API, no local model |
 | Medication identity | RxNorm (NLM, free, no key) | identity/RxCUI resolution only — never used for interaction data (RxNav's interaction endpoints were discontinued by NLM in Jan 2024) |
-| Frontend | Plain HTML + Tailwind (CDN) | `ddi_rag/static/patient/index.html` — patient-facing only, no build step |
+| Frontend | React + Vite + Tailwind | `frontend-patient/` — built into `ddi_rag/static/patient-app/` during deployment |
 
 No local ML dependencies (no `torch`, no `sentence-transformers`) — both
 embeddings and generation are hosted API calls, chosen to keep local
