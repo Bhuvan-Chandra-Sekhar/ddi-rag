@@ -1,13 +1,13 @@
 # DDI-RAG — Medication Safety Coordination Platform
 
 <p align="center">
-  <a href="https://ddi-rag.onrender.com/"><strong>Open the live application →</strong></a>
+  <a href="https://ddi-rag.onrender.com/patient"><strong>Open the live application →</strong></a>
   &nbsp;·&nbsp;
   <a href="frontend-patient/"><strong>View frontend source</strong></a>
 </p>
 
 <p align="center">
-  <a href="https://ddi-rag.onrender.com/">
+  <a href="https://ddi-rag.onrender.com/patient">
     <img src="docs/application-preview.png" alt="MedTrust Connect application landing page" width="100%" />
   </a>
 </p>

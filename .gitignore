@@ -37,10 +37,10 @@ data/datasets/clean_ddi_dataset.csv
 src/clean_ddi_dataset.csv
 data/processed/
 
-# Node / Vite frontend builds — generated, not source.
+# Node / Vite frontend builds. The patient-app bundle is intentionally
+# tracked so Python-only deployment environments still serve the React app.
 node_modules/
 frontend-patient/dist/
-ddi_rag/static/patient-app/
 frontend-clinical/dist/
 src/cicada-preview/dist/
 
