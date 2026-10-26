@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
 import Home from './screens/Home.jsx';
@@ -7,52 +6,17 @@ import Scanning from './screens/Scanning.jsx';
 import Results from './screens/Results.jsx';
 import Auth from './screens/Auth.jsx';
 import Dashboard from './screens/Dashboard.jsx';
-import { getUser, setToken, setUser as persistUser, token } from './api.js';
+import { token } from './api.js';
+import { AppStateProvider, useAppState } from './state/AppStateContext.jsx';
 
-const EMPTY_DRAFT = { checking: '', current: [], allergies: [], notes: '' };
-
-// Top-level router — replaces the old shell()/renderX() DOM-swap pattern
-// with real React state. `draft` is lifted here (it's the direct
-// equivalent of the old module-level `_draft` object) since Results'
-// "check another"/"start over" actions mutate the same state Checker reads.
-export default function App() {
-  const [view, setView] = useState(() => (token() ? 'dashboard' : 'home'));
-  const [user, setUserState] = useState(getUser);
-  const [draft, setDraft] = useState(EMPTY_DRAFT);
-  const [resultsData, setResultsData] = useState(null);
-  const [scanError, setScanError] = useState('');
-
-  const nav = (next) => {
-    setView(next);
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-  };
-
-  const handleSubmitCheck = () => {
-    setScanError('');
-    setView('scanning');
-  };
-
-  const handleScanDone = (data) => {
-    setResultsData({ data, checkingCount: draft.checking ? 1 : 0 });
-    setView('results');
-  };
-
-  const handleScanError = (message) => {
-    setScanError(message);
-    setView('checker');
-  };
-
-  const handleSignOut = () => {
-    setToken(null);
-    persistUser(null);
-    setUserState(null);
-    setView('home');
-  };
-
-  const handleAuthenticated = (u) => {
-    setUserState(u);
-    setView('dashboard');
-  };
+// Top-level router. State ownership lives in AppStateContext — this
+// component only reads it and renders the view it points to.
+function AppShell() {
+  const {
+    view, user, draft, setDraft, resultsData, scanError,
+    nav, handleSubmitCheck, handleScanDone, handleScanError,
+    handleSignOut, handleAuthenticated, handleStartOver, handleCheckAnother,
+  } = useAppState();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -85,14 +49,8 @@ export default function App() {
           data={resultsData.data}
           checkingCount={resultsData.checkingCount}
           draft={draft}
-          onNewCheck={() => {
-            setDraft(EMPTY_DRAFT);
-            setView('checker');
-          }}
-          onCheckAnother={() => {
-            setDraft((d) => ({ ...d, checking: '' }));
-            setView('checker');
-          }}
+          onNewCheck={handleStartOver}
+          onCheckAnother={handleCheckAnother}
         />
       )}
 
@@ -109,5 +67,13 @@ export default function App() {
 
       <Footer />
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AppStateProvider>
+      <AppShell />
+    </AppStateProvider>
   );
 }
