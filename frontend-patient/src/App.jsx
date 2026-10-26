@@ -1,5 +1,6 @@
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
+import InlineAlert from './components/InlineAlert.jsx';
 import Home from './screens/Home.jsx';
 import Checker from './screens/Checker.jsx';
 import Scanning from './screens/Scanning.jsx';
@@ -28,7 +29,7 @@ function AppShell() {
         <>
           {scanError && (
             <div className="max-w-3xl mx-auto px-6 pt-6 -mb-4">
-              <p className="text-[13px] font-medium" style={{ color: 'var(--critical)' }}>{scanError}</p>
+              <InlineAlert>{scanError}</InlineAlert>
             </div>
           )}
           <Checker draft={draft} setDraft={setDraft} onSubmit={handleSubmitCheck} />

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api, getUser } from '../api.js';
 import { STATE_META } from '../meta.js';
+import InlineAlert from '../components/InlineAlert.jsx';
 
 function CaseCard({ c, i }) {
   const meta = STATE_META[c.state] || STATE_META.draft;
@@ -77,7 +78,7 @@ export default function Dashboard({ onSessionExpired }) {
         </p>
         <div className="space-y-3">
           {state.status === 'loading' && <p className="text-caption" style={{ color: 'var(--ink-faint)' }}>Loading…</p>}
-          {state.status === 'error' && <p className="text-sm" style={{ color: 'var(--critical)' }}>{state.message}</p>}
+          {state.status === 'error' && <InlineAlert>{state.message}</InlineAlert>}
           {state.status === 'ok' && state.cases.length === 0 && (
             <div className="card rounded-2xl p-8 text-center reveal" style={{ borderStyle: 'dashed' }}>
               <p className="text-sm font-semibold">No prescriptions on file yet</p>

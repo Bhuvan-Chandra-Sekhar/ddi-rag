@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api, mdLite } from '../api.js';
+import InlineAlert from './InlineAlert.jsx';
 
 // Ported from toggleDrugInfo(). Results owns which drug (if any) is open;
 // this just fetches and renders for whichever `med` it's given, re-fetching
@@ -37,7 +38,7 @@ export default function DrugInfoPanel({ med }) {
     );
   }
   if (state.status === 'error') {
-    return <p className="text-[12.5px]" style={{ color: 'var(--critical)' }}>{state.message}</p>;
+    return <InlineAlert size="compact">{state.message}</InlineAlert>;
   }
   if (state.status === 'unrecognized') {
     return (

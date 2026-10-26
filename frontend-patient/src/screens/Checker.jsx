@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import CheckingField from '../components/CheckingField.jsx';
 import TagInput from '../components/TagInput.jsx';
+import InlineAlert from '../components/InlineAlert.jsx';
 import { MAX_MEDS_TOTAL } from '../meta.js';
 
 // Ported from renderChecker(). `draft` is lifted to App (like the
@@ -87,7 +88,7 @@ export default function Checker({ draft, setDraft, onSubmit }) {
           </details>
 
           {error && (
-            <div role="alert" className="text-[14px] font-medium" style={{ color: 'var(--critical)' }}>{error}</div>
+            <InlineAlert>{error}</InlineAlert>
           )}
 
           <div className="flex flex-col-reverse sm:flex-row items-start sm:items-center justify-between gap-6 pt-1">

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api, setToken, setUser } from '../api.js';
+import InlineAlert from '../components/InlineAlert.jsx';
 
 function LoginForm({ onError, onSuccess, mode }) {
   const [submitting, setSubmitting] = useState(false);
@@ -160,7 +161,7 @@ export default function Auth({ onAuthenticated, onSkip, mode = 'patient' }) {
           <RegisterForm onError={setError} onSuccess={onAuthenticated} />
         )}
 
-        {error && <p role="alert" className="text-sm mt-4" style={{ color: 'var(--critical)' }}>{error}</p>}
+        {error && <InlineAlert className="mt-4">{error}</InlineAlert>}
 
         <p className="text-[12px] mt-8 text-center" style={{ color: 'var(--ink-faint)' }}>
           Don't have prescriptions on file yet?{' '}

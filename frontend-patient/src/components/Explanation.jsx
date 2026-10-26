@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { api, mdLite } from '../api.js';
+import InlineAlert from './InlineAlert.jsx';
 
 // Ported from runExplain(). Auto-fetches on mount — this reproduces the
 // original's "auto-fetch the first 3 visible findings, fetch on-demand
@@ -37,9 +38,9 @@ export default function Explanation({ findingIndex, inputs }) {
   if (state.status === 'error') {
     return (
       <>
-        <p className="text-[12.5px] mb-2" style={{ color: 'var(--critical)' }}>
+        <InlineAlert size="compact" className="mb-2">
           Couldn't load an explanation: {state.message}
-        </p>
+        </InlineAlert>
         <button
           onClick={load}
           className="text-[12.5px] font-semibold px-3.5 py-1.5 rounded-full border"
