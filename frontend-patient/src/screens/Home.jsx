@@ -86,7 +86,7 @@ export default function Home({ onNav }) {
       </svg>
     </div>
     <section className="journey-hero" aria-labelledby="journey-title">
-      <div className="journey-hero-copy"><h1 id="journey-title">Uncovering what's safe<br /><span>to take together.</span></h1></div>
+      <div className="journey-hero-copy"><h1 id="journey-title">Uncovering what to know<br /><span>before you take it together.</span></h1></div>
       <a className="journey-scroll" href="#how-it-works">Scroll to explore ↓</a>
     </section>
     <section className="journey-story" id="how-it-works" aria-labelledby="journey-story-title">

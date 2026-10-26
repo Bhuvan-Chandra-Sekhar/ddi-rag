@@ -29,7 +29,7 @@ from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from authz import authorized_case, get_caller, require_role
-from config import GROQ_MODEL
+from config import GROQ_MODEL, PROTOTYPE_MODE
 from database import get_session
 from enums import (
     DeliveryChannel, DispensingStatus, PrescriptionStatus, RuleStatus,
@@ -41,8 +41,8 @@ from models import (
     PrescriberResponse, Prescription, SafetyCase, User,
 )
 from services.audit import record_audit_event
-from services.clinical_rules import ddi_coverage_report, pending_rules, review_rule
-from services.evidence import explain_finding
+from services.clinical_rules import approved_rules, ddi_coverage_report, pending_rules, review_rule
+from services.evidence import ExplanationUnavailable, explain_finding
 from services.medication_identity import get_or_create_medication
 from services.professional_workflow import (
     record_dispensing_outcome, record_escalation, resolve_escalation,
@@ -236,6 +236,22 @@ def create_patient():
     if not first_name or not last_name:
         return {"error": "first_name and last_name are required"}, 400
 
+    # This system has not been clinically validated (README "Known
+    # limitations") — PROTOTYPE_MODE defaults on and requires an explicit,
+    # per-request acknowledgment before a real-PHI-shaped record (name +
+    # medication/allergy/condition history) can be created. This is a
+    # technical gate, not just a disclaimer: the record is refused, not
+    # created-with-a-warning.
+    synthetic_ack = bool(payload.get("synthetic_data_acknowledged"))
+    if PROTOTYPE_MODE and not synthetic_ack:
+        return {
+            "error": "synthetic_data_acknowledgment_required",
+            "message": "This system is running in prototype mode and has not been "
+                       "clinically validated. Creating a patient record requires "
+                       "explicitly confirming the data is synthetic/test data: "
+                       "set synthetic_data_acknowledged: true in the request.",
+        }, 400
+
     with get_session() as session:
         caller, error = get_caller(session, actor_id)
         if error:
@@ -247,6 +263,7 @@ def create_patient():
         patient = Patient(
             organization_id=caller.organization_id, first_name=first_name, last_name=last_name,
             sex=safe_str(payload.get("sex", "")).strip() or None,
+            is_synthetic_data=synthetic_ack if PROTOTYPE_MODE else None,
         )
         session.add(patient)
         session.flush()
@@ -264,7 +281,10 @@ def create_patient():
         record_audit_event(
             session, action="patient.created", subject_type="patient", subject_id=patient.id,
             organization_id=caller.organization_id, actor_user_id=actor_id,
-            after={"first_name": first_name, "last_name": last_name},
+            after={
+                "first_name": first_name, "last_name": last_name,
+                "synthetic_data_acknowledged": synthetic_ack, "prototype_mode": PROTOTYPE_MODE,
+            },
         )
         return {"patient_id": patient.id, "snapshot_id": snapshot.id}, 201
 
@@ -493,11 +513,21 @@ def explain_case_finding(finding_id):
         prescription = session.get(Prescription, case.prescription_id)
         medication = session.get(Medication, prescription.medication_id) if prescription else None
 
-        result = explain_finding(
-            finding_type=finding.type.value, severity=finding.severity.value,
-            clinical_effect=finding.clinical_effect or "", recommended_action=finding.recommended_action or "",
-            drug_name=(medication.display_name if medication else None), model_name=GROQ_MODEL,
-        )
+        try:
+            result = explain_finding(
+                finding_type=finding.type.value, severity=finding.severity.value,
+                clinical_effect=finding.clinical_effect or "", recommended_action=finding.recommended_action or "",
+                drug_name=(medication.display_name if medication else None), model_name=GROQ_MODEL,
+            )
+        except ExplanationUnavailable:
+            # The Finding row itself is untouched — only the explanation
+            # generation failed. Nothing is written; the pharmacist can
+            # retry once the explanation service is back.
+            return {
+                "error": "explanation_unavailable",
+                "message": "The explanation service is temporarily unavailable. "
+                           "The finding is unaffected — try again shortly.",
+            }, 503
         finding.explanation = result["explanation"]
         finding.explanation_model_version = result["model_version"]
         finding.explanation_prompt_version = result["prompt_version"]
@@ -548,6 +578,25 @@ def list_pending_rules():
         return {"rules": [_rule_dict(r) for r in rules]}, 200
 
 
+@clinical_bp.route("/v1/clinical-rules/approved", methods=["GET"])
+@jwt_required()
+def list_approved_rules():
+    """Currently-APPROVED rules — the listing a reviewer needs to find a
+    rule to retire (RuleStatus.RETIRED is only reachable from APPROVED)."""
+    actor_id = get_jwt_identity()
+    limit = min(int(request.args.get("limit", 50)), 200)
+    offset = max(int(request.args.get("offset", 0)), 0)
+    with get_session() as session:
+        caller, error = get_caller(session, actor_id)
+        if error:
+            return error
+        role_error = require_role(caller, RULE_REVIEWERS)
+        if role_error:
+            return role_error
+        rules = approved_rules(session, limit=limit, offset=offset)
+        return {"rules": [_rule_dict(r) for r in rules]}, 200
+
+
 @clinical_bp.route("/v1/clinical-rules/<rule_id>/review", methods=["POST"])
 @jwt_required()
 def review_clinical_rule(rule_id):
@@ -556,9 +605,9 @@ def review_clinical_rule(rule_id):
     try:
         decision = RuleStatus(payload.get("decision", ""))
     except ValueError:
-        return {"error": "decision must be 'approved' or 'rejected'"}, 400
-    if decision not in (RuleStatus.APPROVED, RuleStatus.REJECTED):
-        return {"error": "decision must be 'approved' or 'rejected'"}, 400
+        return {"error": "decision must be 'approved', 'rejected', or 'retired'"}, 400
+    if decision not in (RuleStatus.APPROVED, RuleStatus.REJECTED, RuleStatus.RETIRED):
+        return {"error": "decision must be 'approved', 'rejected', or 'retired'"}, 400
 
     severity_override = None
     raw_severity = payload.get("severity")

@@ -73,6 +73,12 @@ class Patient(Base):
     sex          = Column(String(32), nullable=True)
     consent_directives      = Column(JSON, nullable=True)
     disclosure_preferences  = Column(JSON, nullable=True)
+    # True when created while config.PROTOTYPE_MODE was on and the creating
+    # caller explicitly acknowledged this is synthetic/test data — see
+    # routes_clinical.py's POST /v1/patients. Nullable rather than a
+    # default so an existing row created before this column existed reads
+    # as "unknown", not a false "confirmed synthetic".
+    is_synthetic_data = Column(Boolean, nullable=True)
     created_at   = Column(DateTime, default=_now)
 
 

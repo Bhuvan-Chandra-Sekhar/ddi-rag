@@ -87,7 +87,13 @@ class DeliveryChannel(str, Enum):
 class RuleStatus(str, Enum):
     """A rule mined from a raw dataset starts DRAFT and stays clinically
     inert (never drives a confirmed Finding) until a qualified reviewer
-    marks it APPROVED. See services/clinical_rules.py."""
+    marks it APPROVED. REJECTED is terminal from DRAFT (never clinically
+    valid). RETIRED is reached only from APPROVED — a previously-approved
+    rule a reviewer has since withdrawn (superseded evidence, a labeling
+    change, a correction) stops producing findings without erasing the
+    fact that it was once approved, which REJECTED's DRAFT-only meaning
+    would misrepresent. See services/clinical_rules.py."""
     DRAFT    = "draft"
     APPROVED = "approved"
     REJECTED = "rejected"
+    RETIRED  = "retired"

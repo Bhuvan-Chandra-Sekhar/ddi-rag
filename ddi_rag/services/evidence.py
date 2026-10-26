@@ -26,6 +26,22 @@ log = logging.getLogger("ddi.evidence")
 
 PROMPT_VERSION = "explain-finding-v1"
 
+
+class ExplanationUnavailable(Exception):
+    """Raised by explain_finding() when the Groq call failed. _call_groq_api()
+    itself never raises — on timeout or any error it returns a string like
+    "Generation timed out. Please try again." or "Generation error: <exc>"
+    (shared by several other callers that are fine treating that as
+    displayable text). explain_finding()'s own contract is stricter: it
+    must never return something that isn't a real constrained explanation,
+    so those failure strings would otherwise reach a patient as if they
+    were clinical content — worse, "Generation error: <exc>" can carry raw
+    exception text. Callers (the HTTP routes) catch this and return an
+    explicit "service unavailable" response instead."""
+
+
+_GROQ_FAILURE_PREFIXES = ("Generation timed out", "Generation error:", "GROQ_API_KEY not configured")
+
 _EXPLAIN_SYSTEM_PROMPT = (
     "You are a clinical pharmacist writing a plain-language explanation of a "
     "SAFETY FINDING that has already been determined by a deterministic rule "
@@ -156,6 +172,10 @@ def explain_finding(
     ]
 
     explanation = _call_groq_api(messages, temperature=0.2, max_tokens=400)
+
+    if explanation.startswith(_GROQ_FAILURE_PREFIXES):
+        log.error("Explanation generation unavailable: %s", explanation)
+        raise ExplanationUnavailable("The explanation service is temporarily unavailable.")
 
     return {
         "explanation": safe_str(explanation),

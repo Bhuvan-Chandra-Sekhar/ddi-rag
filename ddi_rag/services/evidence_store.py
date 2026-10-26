@@ -91,6 +91,19 @@ def init_evidence_store() -> None:
                     embedding     vector({COHERE_EMBED_DIM}) NOT NULL
                 );
             """)
+            # Provenance/versioning columns — added via ALTER rather than
+            # only in the CREATE TABLE above, so this also backfills an
+            # already-existing production table the next time this
+            # function runs (CREATE TABLE IF NOT EXISTS alone would never
+            # touch a table that already exists; this repo has no Alembic
+            # migrations, so this ALTER is the only self-applying path).
+            # Without embedding_model specifically, a future COHERE_EMBED_MODEL
+            # change would silently mix incomparable vectors in the same
+            # cosine-similarity search with no way to tell them apart.
+            cur.execute(f"ALTER TABLE {_TABLE} ADD COLUMN IF NOT EXISTS source_dataset TEXT;")
+            cur.execute(f"ALTER TABLE {_TABLE} ADD COLUMN IF NOT EXISTS chunk_version TEXT;")
+            cur.execute(f"ALTER TABLE {_TABLE} ADD COLUMN IF NOT EXISTS embedding_model TEXT;")
+            cur.execute(f"ALTER TABLE {_TABLE} ADD COLUMN IF NOT EXISTS ingested_at TIMESTAMPTZ;")
             # HNSW, not IVFFlat: IVFFlat is an approximate index that needs a
             # `lists` parameter tuned to the table size and gives incomplete/
             # wrong ORDER BY ... LIMIT results on small tables — a real,
@@ -108,9 +121,23 @@ def init_evidence_store() -> None:
         conn.close()
 
 
-def upsert_chunks(chunk_df: pd.DataFrame) -> int:
+def upsert_chunks(
+    chunk_df: pd.DataFrame,
+    source_dataset: Optional[str] = None,
+    chunk_version: str = "v1",
+) -> int:
     """Embed and upsert a chunk_df (as built by services.rag_pipeline.build_chunk_df)
     into the evidence store. Returns the number of rows upserted.
+
+    source_dataset/chunk_version are provenance, not query filters — e.g.
+    "openfda-2026-01" and the chunking logic's own version, so a stored
+    chunk's origin is traceable later. embedding_model is NOT a parameter:
+    it's always config.COHERE_EMBED_MODEL at the moment of this call,
+    recorded automatically — if that config value ever changes, rows
+    embedded under the old model stay correctly labeled with it instead of
+    silently becoming indistinguishable from rows embedded under the new
+    one (cosine similarity between vectors from two different embedding
+    models is meaningless, not just slightly off).
 
     Embeds in batches of EMBED_BATCH_SIZE — Cohere's embed API caps requests
     at 96 texts each; sending everything in one call would fail or silently
@@ -130,21 +157,27 @@ def upsert_chunks(chunk_df: pd.DataFrame) -> int:
                     cur.execute(
                         f"""
                         INSERT INTO {_TABLE}
-                            (id, generic_name, brand_name, product_type, route, section, text, embedding)
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s::vector)
+                            (id, generic_name, brand_name, product_type, route, section, text, embedding,
+                             source_dataset, chunk_version, embedding_model, ingested_at)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s::vector, %s, %s, %s, NOW())
                         ON CONFLICT (id) DO UPDATE SET
-                            generic_name = EXCLUDED.generic_name,
-                            brand_name   = EXCLUDED.brand_name,
-                            product_type = EXCLUDED.product_type,
-                            route        = EXCLUDED.route,
-                            section      = EXCLUDED.section,
-                            text         = EXCLUDED.text,
-                            embedding    = EXCLUDED.embedding;
+                            generic_name    = EXCLUDED.generic_name,
+                            brand_name      = EXCLUDED.brand_name,
+                            product_type    = EXCLUDED.product_type,
+                            route           = EXCLUDED.route,
+                            section         = EXCLUDED.section,
+                            text            = EXCLUDED.text,
+                            embedding       = EXCLUDED.embedding,
+                            source_dataset  = EXCLUDED.source_dataset,
+                            chunk_version   = EXCLUDED.chunk_version,
+                            embedding_model = EXCLUDED.embedding_model,
+                            ingested_at     = EXCLUDED.ingested_at;
                         """,
                         (
                             row["doc_id"], row.get("generic_name"), row.get("brand_name"),
                             row.get("product_type"), row.get("route"), row.get("section"),
                             row["text"], _to_pgvector_literal(embedding),
+                            source_dataset, chunk_version, COHERE_EMBED_MODEL,
                         ),
                     )
                 conn.commit()
@@ -185,6 +218,7 @@ def search(
 
         sql = f"""
             SELECT generic_name, brand_name, product_type, route, section, text,
+                   source_dataset, chunk_version, embedding_model, ingested_at,
                    1 - (embedding <=> %s::vector) AS score
             FROM {_TABLE}
             {where_clause}

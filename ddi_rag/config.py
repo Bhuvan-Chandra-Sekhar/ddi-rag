@@ -104,6 +104,30 @@ BCRYPT_ROUNDS         = 12
 # ── Database ──────────────────────────────────────────────────────────────────
 DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./drugsafe.db")
 
+# ── Prototype-mode gating ─────────────────────────────────────────────────────
+# This system has not been clinically validated or reviewed by qualified
+# clinical staff (see README's "Known limitations"). Defaults to on —
+# PROTOTYPE_MODE=false must be set explicitly (and only after real privacy
+# controls and a retention/deletion policy exist) before a clinical-staff
+# user can record a real patient record. Does not gate a patient's own
+# self-registration (name + email only, no clinical history) — see
+# routes_clinical.py's POST /v1/patients, the route that actually collects
+# PHI-shaped data (medications/allergies/conditions against a named person).
+PROTOTYPE_MODE = os.getenv("PROTOTYPE_MODE", "true").strip().lower() not in ("false", "0", "no")
+
+# ── Kill switches ─────────────────────────────────────────────────────────────
+# Emergency controls for an operator to disable a specific risky path
+# without a code change or a full redeploy — set the env var on the
+# hosting platform and restart. Deliberately per-feature, not one global
+# switch: an incident with the explanation service (e.g. Groq returning
+# bad output) shouldn't force taking down the deterministic self-check
+# path too, and vice versa. See docs/INCIDENT_RUNBOOK.md.
+def _flag_on(name: str) -> bool:
+    return os.getenv(name, "false").strip().lower() in ("true", "1", "yes")
+
+KILL_SWITCH_SELF_CHECK = _flag_on("KILL_SWITCH_SELF_CHECK")
+KILL_SWITCH_EXPLAIN    = _flag_on("KILL_SWITCH_EXPLAIN")
+
 # ── RAG columns ───────────────────────────────────────────────────────────────
 TEXT_COLS = [
     "drug_interactions",

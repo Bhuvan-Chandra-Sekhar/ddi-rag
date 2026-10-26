@@ -26,16 +26,21 @@ DB-only lookups).
 """
 
 import logging
+import uuid
 from typing import List, Sequence, Tuple
 
 from flask import Blueprint, request
 
-from config import GROQ_MODEL, MAX_ITEM_LEN, MAX_NOTES_LEN, MAX_SELF_CHECK_ITEMS
+from config import (
+    GROQ_MODEL, KILL_SWITCH_EXPLAIN, KILL_SWITCH_SELF_CHECK,
+    MAX_ITEM_LEN, MAX_NOTES_LEN, MAX_SELF_CHECK_ITEMS,
+)
 from database import get_session
 from enums import Severity
 from rate_limit import limiter
+from services.audit import record_audit_event
 from services.clinical_rules import ddi_coverage_report, evaluate_case
-from services.evidence import explain_finding
+from services.evidence import ExplanationUnavailable, explain_finding
 from services.medication_identity import resolve_medication_identity
 from services.rag_pipeline import safe_str
 
@@ -47,6 +52,19 @@ _SEVERITY_RANK = {
     Severity.CRITICAL: 4, Severity.MAJOR: 3, Severity.UNKNOWN: 2,
     Severity.CAUTION: 1, Severity.INFORMATIONAL: 0,
 }
+
+
+def _try_audit(**kwargs) -> None:
+    """record_audit_event(), but audit logging must never become a second
+    point of failure for a request that otherwise succeeded (or already
+    failed for a reason the caller is already handling). If the database
+    itself is unreachable, this logs that locally and moves on instead of
+    raising past an already-decided HTTP response."""
+    try:
+        with get_session() as session:
+            record_audit_event(session, subject_id=str(uuid.uuid4()), **kwargs)
+    except Exception:
+        log.exception("Failed to record audit event (action=%s)", kwargs.get("action"))
 
 
 def _clean_str_list(raw, max_items: int, max_len: int) -> List[str]:
@@ -183,6 +201,11 @@ def self_check():
     explanations are a separate, on-demand /api/explain call so a single
     submission never fans out into many Groq/Cohere calls automatically.
     """
+    if KILL_SWITCH_SELF_CHECK:
+        return {
+            "error": "temporarily_unavailable",
+            "message": "This feature is temporarily disabled for maintenance. Please try again later.",
+        }, 503
     payload = request.get_json(force=True, silent=True) or {}
     medications = _clean_str_list(payload.get("medications"), MAX_SELF_CHECK_ITEMS, MAX_ITEM_LEN)
     allergies = _clean_str_list(payload.get("allergies"), MAX_SELF_CHECK_ITEMS, MAX_ITEM_LEN)
@@ -190,9 +213,45 @@ def self_check():
     if not medications:
         return {"error": "at least one medication is required"}, 400
 
-    with get_session() as session:
-        resolved, findings_raw, ingredient_names = _resolve_and_evaluate(session, medications, allergies)
-        coverage = ddi_coverage_report(session, ingredient_names)
+    try:
+        with get_session() as session:
+            resolved, findings_raw, ingredient_names = _resolve_and_evaluate(session, medications, allergies)
+            coverage = ddi_coverage_report(session, ingredient_names)
+    except Exception:
+        log.exception("self_check failed")
+        # A failure here before any audit write — _try_audit() itself
+        # already survives the database being unreachable, so it's safe
+        # to call unconditionally, including when THAT'S the failure.
+        _try_audit(action="guest_self_check_error", subject_type="guest_self_check",
+                   after={"client_ip": request.remote_addr})
+        return {"error": "Something went wrong processing this check. Please try again."}, 500
+
+    # Audited at the system level, not the content level: how many items,
+    # which rule rows fired, what severity resulted, where the knowledge
+    # base has gaps. Deliberately NOT the medication/allergy names
+    # themselves or any free text — this endpoint's own module docstring
+    # promises no persistence of what a guest types, and an audit log that
+    # quietly re-created that persistence under a different name would
+    # break that promise while adding a second place PII could leak from.
+    # A separate, best-effort write (not inside the lookup's own session/
+    # transaction above) so a hiccup recording the audit event can never
+    # turn an already-successful check into a 500 for the user.
+    matched_rule_ids = [
+        ref["rule_id"]
+        for f in findings_raw
+        for ref in f.get("evidence_refs", [])
+        if "rule_id" in ref
+    ]
+    overall_severity = _overall_severity(findings_raw)
+    _try_audit(
+        action="guest_self_check", subject_type="guest_self_check",
+        after={
+            "medication_count": len(medications), "allergy_count": len(allergies),
+            "finding_count": len(findings_raw), "matched_rule_ids": matched_rule_ids,
+            "overall_severity": overall_severity,
+            "ddi_coverage": coverage, "client_ip": request.remote_addr,
+        },
+    )
 
     findings = [_serialize_finding(f, i) for i, f in enumerate(findings_raw)]
     return {
@@ -224,6 +283,11 @@ def explain_self_check_finding():
     arbitrary fabricated finding that the rule engine never actually
     produced.
     """
+    if KILL_SWITCH_EXPLAIN:
+        return {
+            "error": "temporarily_unavailable",
+            "message": "This feature is temporarily disabled for maintenance. Please try again later.",
+        }, 503
     payload = request.get_json(force=True, silent=True) or {}
     medications = _clean_str_list(payload.get("medications"), MAX_SELF_CHECK_ITEMS, MAX_ITEM_LEN)
     allergies = _clean_str_list(payload.get("allergies"), MAX_SELF_CHECK_ITEMS, MAX_ITEM_LEN)
@@ -247,16 +311,37 @@ def explain_self_check_finding():
     factors = finding.get("patient_factors") or {}
     drug_name = factors.get("ingredient") or factors.get("ingredient_a") or None
 
-    result = explain_finding(
-        finding_type=finding["type"].value,
-        severity=finding["severity"].value,
-        clinical_effect=finding["clinical_effect"],
-        recommended_action=finding["recommended_action"],
-        drug_name=drug_name,
-        model_name=GROQ_MODEL,
-        audience="patient",
-        patient_notes=patient_notes,
-    )
+    try:
+        result = explain_finding(
+            finding_type=finding["type"].value,
+            severity=finding["severity"].value,
+            clinical_effect=finding["clinical_effect"],
+            recommended_action=finding["recommended_action"],
+            drug_name=drug_name,
+            model_name=GROQ_MODEL,
+            audience="patient",
+            patient_notes=patient_notes,
+        )
+    except ExplanationUnavailable:
+        # The finding itself (above) was already computed by the
+        # deterministic rule engine before this call — only the plain-
+        # language explanation failed. Say so explicitly rather than let
+        # a Groq outage surface as a generic 500 or, worse, as 200 text
+        # that reads like a real clinical explanation.
+        _try_audit(
+            action="guest_explain_unavailable", subject_type="guest_self_check",
+            after={"finding_type": finding["type"].value, "client_ip": request.remote_addr},
+        )
+        return {
+            "error": "explanation_unavailable",
+            "message": "The explanation service is temporarily unavailable. "
+                       "The finding itself is still valid — only the plain-language "
+                       "explanation couldn't be generated. Try again shortly.",
+        }, 503
+    _try_audit(
+        action="guest_explain_success", subject_type="guest_self_check",
+        after={"finding_type": finding["type"].value, "client_ip": request.remote_addr},
+        )
     return {
         "explanation": result["explanation"],
         "citations": result["citations"],

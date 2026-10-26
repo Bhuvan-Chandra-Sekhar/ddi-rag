@@ -130,7 +130,7 @@ def test_single_ingredient_has_no_pairs_and_does_not_raise(session):
     assert report == {
         "pairs_checked": 0, "pairs_with_rule": 0, "pairs_with_no_rule": 0,
         "pairs_approved": 0, "pairs_unreviewed": 0, "pairs_rejected": 0,
-        "unmatched_pairs": [],
+        "pairs_retired": 0, "unmatched_pairs": [],
     }
 
 

@@ -26,6 +26,7 @@ Environment:
 
 import logging
 import sys
+import uuid
 from pathlib import Path
 from typing import Dict
 
@@ -33,13 +34,17 @@ from typing import Dict
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from flask import Flask, request, send_from_directory
+from sqlalchemy import text
 from flask_cors import CORS
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from werkzeug.exceptions import HTTPException
 
 from auth import authenticate_user, configure_jwt, register_user
 from authz import authorized_case, get_caller, require_role
-from config import ALLOWED_ORIGINS, DEFAULT_TOP_K, MAX_PRESCRIPTION_LEN, MAX_TOP_K, PORT
+from config import (
+    ALLOWED_ORIGINS, DEFAULT_TOP_K, KILL_SWITCH_EXPLAIN, KILL_SWITCH_SELF_CHECK,
+    MAX_PRESCRIPTION_LEN, MAX_TOP_K, PORT,
+)
 from rate_limit import limiter
 from database import get_session, init_db
 from enums import FindingType, PrescriberDecision, ReviewStatus, Severity, UserRole
@@ -48,6 +53,7 @@ from models import (
     Prescription, SafetyCase, User,
 )
 from prescription_parsing import init_lookups, parse_prescription
+from services.audit import record_audit_event
 from services.rag_pipeline import answer_ddi, safe_str
 from services.professional_workflow import (
     assess_findings_and_route, case_timeline, create_intervention,
@@ -57,6 +63,20 @@ from routes_clinical import clinical_bp
 from routes_public import public_bp
 
 log = logging.getLogger("ddi.app")
+
+
+def _try_audit(**kwargs) -> None:
+    """record_audit_event(), but audit logging must never become a second
+    point of failure for a request whose outcome is already decided — if
+    the database itself is unreachable at the moment of the audit write,
+    this logs that locally and moves on instead of raising past an
+    already-successful (or already-handled-failure) response."""
+    try:
+        with get_session() as session:
+            record_audit_event(session, **kwargs)
+    except Exception:
+        log.exception("Failed to record audit event (action=%s)", kwargs.get("action"))
+
 
 flask_app = Flask("ddi")
 # Restricted to known origins (config.ALLOWED_ORIGINS) rather than the
@@ -100,7 +120,34 @@ def handle_exception(e):
 @flask_app.route("/api/health")
 @limiter.exempt
 def health():
+    """Shallow liveness check — this is render.yaml's healthCheckPath, so
+    it must never depend on the database: a transient DB blip shouldn't
+    make the hosting platform decide the whole process is dead and
+    restart it. See /api/health/deep for an actual dependency check."""
     return {"status": "ok"}, 200
+
+
+@flask_app.route("/api/health/deep")
+@limiter.exempt
+def health_deep():
+    """Checks the database is actually reachable, not just that the Flask
+    process is up — not used as the platform's restart-trigger health
+    check (see health() above for why), this is for manual/monitoring use
+    to distinguish "the app is up but can't reach Postgres" from "the app
+    itself is down"."""
+    checks = {}
+    try:
+        with get_session() as session:
+            session.execute(text("SELECT 1"))
+        checks["database"] = "ok"
+    except Exception as exc:
+        checks["database"] = f"unreachable: {safe_str(exc)[:200]}"
+
+    checks["self_check_kill_switch"] = "disabled" if KILL_SWITCH_SELF_CHECK else "active"
+    checks["explain_kill_switch"] = "disabled" if KILL_SWITCH_EXPLAIN else "active"
+
+    overall_ok = checks["database"] == "ok"
+    return {"status": "ok" if overall_ok else "degraded", "checks": checks}, 200 if overall_ok else 503
 
 
 @flask_app.route("/patient")
@@ -135,17 +182,26 @@ def list_organizations():
 @flask_app.route("/api/auth/register", methods=["POST"])
 def register():
     payload = request.get_json(force=True, silent=True) or {}
+    email = safe_str(payload.get("email", ""))
     try:
         user = register_user(
-            email           = safe_str(payload.get("email", "")),
+            email           = email,
             password        = str(payload.get("password", "")),
             organization_id = safe_str(payload.get("organization_id", "")),
             full_name       = safe_str(payload.get("full_name", "")),
             first_name      = safe_str(payload.get("first_name", "")),
             last_name       = safe_str(payload.get("last_name", "")),
         )
+        _try_audit(
+            action="auth.register_success", subject_type="user", subject_id=user["id"],
+            actor_user_id=user["id"], after={"email": email, "client_ip": request.remote_addr},
+        )
         return {"user": user}, 201
     except ValueError as exc:
+        _try_audit(
+            action="auth.register_failed", subject_type="user", subject_id=str(uuid.uuid4()),
+            after={"email": email, "reason": str(exc), "client_ip": request.remote_addr},
+        )
         return {"error": str(exc)}, 400
 
 
@@ -155,13 +211,27 @@ def register():
 # not just quota exhaustion, so it gets its own stricter cap.
 def login():
     payload = request.get_json(force=True, silent=True) or {}
+    email = safe_str(payload.get("email", ""))
     try:
         result = authenticate_user(
-            email    = safe_str(payload.get("email", "")),
+            email    = email,
             password = str(payload.get("password", "")),
+        )
+        _try_audit(
+            action="auth.login_success", subject_type="user", subject_id=result["user"]["id"],
+            actor_user_id=result["user"]["id"],
+            after={"email": email, "client_ip": request.remote_addr},
         )
         return result, 200
     except ValueError as exc:
+        # Deliberately no subject_id tied to a real user here — matching
+        # authenticate_user()'s own "Invalid email or password" (never
+        # "no such user" vs "wrong password") so the audit trail can't be
+        # used to enumerate which emails have accounts either.
+        _try_audit(
+            action="auth.login_failed", subject_type="user", subject_id=str(uuid.uuid4()),
+            after={"email": email, "reason": str(exc), "client_ip": request.remote_addr},
+        )
         return {"error": str(exc)}, 401
 
 

@@ -319,7 +319,30 @@ def evaluate_ddi_pairs(session, ingredient_names: Sequence[str]) -> List[dict]:
                 "missing_factors": ["clinical_review"],
                 "review_status": ReviewStatus.PENDING,
             })
-        # REJECTED rules produce no finding.
+        elif rule.status == RuleStatus.RETIRED:
+            # A RETIRED rule was once APPROVED and a reviewer has since
+            # withdrawn it (superseded evidence, a labeling change, a
+            # correction) — it no longer carries confirmed clinical
+            # authority, same as DRAFT. Deliberately NOT silent like
+            # REJECTED: REJECTED means a reviewer looked at this pair and
+            # found no real interaction, so absence of a finding is the
+            # correct signal. RETIRED means the opposite — something WAS
+            # once confirmed here — so going silent would look identical
+            # to "never studied," which is exactly the false reassurance
+            # this codebase's own module docstring says never to produce.
+            findings.append({
+                "type": FindingType.UNKNOWN,
+                "severity": Severity.UNKNOWN,
+                "clinical_effect": rule.clinical_effect,
+                "recommended_action": "Manual review required — this interaction was previously approved but has since been retired.",
+                "evidence_refs": [{"rule_id": rule.id, "rule_version": rule.rule_version,
+                                    "source_dataset": rule.source_dataset, "status": "retired"}],
+                "patient_factors": {"ingredient_a": a, "ingredient_b": b, "reported_severity": rule.severity.value},
+                "missing_factors": ["clinical_review"],
+                "review_status": ReviewStatus.PENDING,
+            })
+        # REJECTED rules produce no finding — a reviewer determined no
+        # real interaction exists, so absence here is the correct signal.
     return findings
 
 
@@ -360,7 +383,7 @@ def ddi_coverage_report(session, ingredient_names: Sequence[str]) -> dict:
         return {
             "pairs_checked": 0, "pairs_with_rule": 0, "pairs_with_no_rule": 0,
             "pairs_approved": 0, "pairs_unreviewed": 0, "pairs_rejected": 0,
-            "unmatched_pairs": [],
+            "pairs_retired": 0, "unmatched_pairs": [],
         }
 
     keys = [_pair_key(a, b) for a, b in pairs]
@@ -369,7 +392,7 @@ def ddi_coverage_report(session, ingredient_names: Sequence[str]) -> dict:
         for rule in session.query(ClinicalRule).filter(ClinicalRule.pair_key.in_(keys))
     }
 
-    unmatched, approved, unreviewed, rejected = [], 0, 0, 0
+    unmatched, approved, unreviewed, rejected, retired = [], 0, 0, 0, 0
     for (a, b), key in zip(pairs, keys):
         rule = rules_by_key.get(key)
         if rule is None:
@@ -380,6 +403,8 @@ def ddi_coverage_report(session, ingredient_names: Sequence[str]) -> dict:
             unreviewed += 1
         elif rule.status == RuleStatus.REJECTED:
             rejected += 1
+        elif rule.status == RuleStatus.RETIRED:
+            retired += 1
 
     return {
         "pairs_checked": len(pairs),
@@ -388,6 +413,7 @@ def ddi_coverage_report(session, ingredient_names: Sequence[str]) -> dict:
         "pairs_approved": approved,
         "pairs_unreviewed": unreviewed,
         "pairs_rejected": rejected,
+        "pairs_retired": retired,
         "unmatched_pairs": unmatched,
     }
 
@@ -400,31 +426,41 @@ def review_rule(
     severity_override: Optional[Severity] = None,
 ) -> ClinicalRule:
     """
-    Promote a DRAFT ClinicalRule to APPROVED or REJECTED — the one action
-    that gives a mined/imported rule real clinical authority. This is the
-    knowledge-governance workflow that was previously entirely absent:
+    Promote a DRAFT ClinicalRule to APPROVED or REJECTED, or retire an
+    already-APPROVED one — the actions that give a mined/imported rule
+    real clinical authority, or withdraw it. This is the knowledge-
+    governance workflow that was previously entirely absent:
     RuleStatus.APPROVED was set only in test fixtures anywhere in this
     repo before this function existed; no endpoint or script had ever
     promoted a real rule.
 
-    decision must be APPROVED or REJECTED, never DRAFT (there's no
-    legitimate reason to move a rule backward into DRAFT through this
-    path). severity_override lets the reviewer adjust the rule's severity
-    at approval time (confirm the mined value as-is, or correct it) —
-    only meaningful when decision is APPROVED; ignored otherwise since a
-    rejected rule's severity is moot.
+    decision must be APPROVED, REJECTED, or RETIRED — never DRAFT
+    (there's no legitimate reason to move a rule backward into DRAFT
+    through this path). RETIRED is only reachable from a currently-
+    APPROVED rule: retiring a rule that was never approved doesn't mean
+    anything (REJECTED already covers "never valid"), and retiring an
+    already-retired or already-rejected rule is a no-op this function
+    refuses rather than silently allows. severity_override lets the
+    reviewer adjust the rule's severity at approval time (confirm the
+    mined value as-is, or correct it) — only meaningful when decision is
+    APPROVED; ignored otherwise.
 
     Deliberately re-review-able: approving/rejecting an already-decided
     rule just updates reviewer_user_id/reviewed_at again (audit event
     still records every change) rather than refusing — a reviewer finding
     a past decision wrong needs a way to correct it, not a permanent lock.
     """
-    if decision not in (RuleStatus.APPROVED, RuleStatus.REJECTED):
-        raise ValueError(f"decision must be APPROVED or REJECTED, got {decision}")
+    if decision not in (RuleStatus.APPROVED, RuleStatus.REJECTED, RuleStatus.RETIRED):
+        raise ValueError(f"decision must be APPROVED, REJECTED, or RETIRED, got {decision}")
 
     rule = session.get(ClinicalRule, rule_id)
     if not rule:
         raise ValueError(f"no ClinicalRule with id {rule_id}")
+
+    if decision == RuleStatus.RETIRED and rule.status != RuleStatus.APPROVED:
+        raise ValueError(
+            f"cannot retire a rule that isn't currently approved (status is {rule.status.value})"
+        )
 
     rule.status = decision
     rule.reviewer_user_id = reviewer_user_id
@@ -434,6 +470,20 @@ def review_rule(
 
     session.flush()
     return rule
+
+
+def approved_rules(session, limit: int = 50, offset: int = 0) -> List[ClinicalRule]:
+    """Currently-APPROVED rules, most-recently-reviewed first — without
+    this, review_rule()'s RETIRED decision has no way to be reached
+    through the API: there'd be no listing a reviewer could use to find
+    a rule to retire."""
+    return (
+        session.query(ClinicalRule)
+        .filter(ClinicalRule.status == RuleStatus.APPROVED)
+        .order_by(ClinicalRule.reviewed_at.desc())
+        .offset(offset).limit(limit)
+        .all()
+    )
 
 
 def pending_rules(session, limit: int = 50, offset: int = 0) -> List[ClinicalRule]:

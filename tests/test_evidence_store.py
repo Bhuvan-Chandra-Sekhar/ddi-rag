@@ -68,7 +68,9 @@ def test_search_builds_expected_query_and_returns_dataframe():
     fake_cursor.__enter__.return_value = fake_cursor
     fake_cursor.fetchall.return_value = [
         {"generic_name": "warfarin", "brand_name": "Coumadin", "product_type": "human_prescription_drug",
-         "route": "oral", "section": "drug_interactions", "text": "some fda text", "score": 0.83},
+         "route": "oral", "section": "drug_interactions", "text": "some fda text",
+         "source_dataset": "openfda-2026-01", "chunk_version": "v1",
+         "embedding_model": "embed-english-v3.0", "ingested_at": "2026-01-01T00:00:00Z", "score": 0.83},
     ]
     fake_conn = MagicMock()
     fake_conn.cursor.return_value = fake_cursor
@@ -78,9 +80,11 @@ def test_search_builds_expected_query_and_returns_dataframe():
         result = es.search("warfarin bleeding risk", top_k=5, drug_name="warfarin", section="drug_interactions")
 
     assert list(result.columns) == [
-        "generic_name", "brand_name", "product_type", "route", "section", "text", "score",
+        "generic_name", "brand_name", "product_type", "route", "section", "text",
+        "source_dataset", "chunk_version", "embedding_model", "ingested_at", "score",
     ]
     assert result.iloc[0]["generic_name"] == "warfarin"
+    assert result.iloc[0]["embedding_model"] == "embed-english-v3.0"
 
     executed_sql, executed_params = fake_cursor.execute.call_args.args
     assert "generic_name = %s" in executed_sql
@@ -112,3 +116,29 @@ def test_search_with_no_filters_omits_where_clause():
 
 def test_upsert_chunks_returns_zero_for_empty_dataframe():
     assert es.upsert_chunks(pd.DataFrame()) == 0
+
+
+def test_upsert_chunks_writes_provenance_and_current_embedding_model():
+    chunk_df = pd.DataFrame([
+        {"doc_id": "chunk-1", "generic_name": "warfarin", "brand_name": "Coumadin",
+         "product_type": "human_prescription_drug", "route": "oral",
+         "section": "drug_interactions", "text": "some fda text"},
+    ])
+    fake_cursor = MagicMock()
+    fake_cursor.__enter__.return_value = fake_cursor
+    fake_conn = MagicMock()
+    fake_conn.cursor.return_value = fake_cursor
+
+    with patch.object(es, "embed_texts", return_value=[[0.1, 0.2]]), \
+         patch.object(es, "_get_connection", return_value=fake_conn), \
+         patch.object(es, "COHERE_EMBED_MODEL", "embed-english-v3.0"):
+        total = es.upsert_chunks(chunk_df, source_dataset="openfda-test", chunk_version="v2")
+
+    assert total == 1
+    executed_sql, executed_params = fake_cursor.execute.call_args.args
+    assert "source_dataset" in executed_sql
+    assert "embedding_model" in executed_sql
+    assert "chunk_version" in executed_sql
+    # params order: id, generic_name, brand_name, product_type, route,
+    # section, text, embedding, source_dataset, chunk_version, embedding_model
+    assert executed_params[-3:] == ("openfda-test", "v2", "embed-english-v3.0")
