@@ -108,12 +108,25 @@ init_lookups()
 
 
 # ── Flask error handler ───────────────────────────────────────────────────────
+# Catches every exception that reaches Flask without an app.py/route-level
+# handler already dealing with it. HTTPException (404/405/etc., including
+# Werkzeug's own routing errors) carries a description that's already
+# written for a client to see, so that's returned as-is. Anything else is
+# an unexpected failure — logged in full server-side via log.exception, but
+# the client only ever gets a generic message. Returning str(exception)
+# here used to leak internal detail (DB errors, file paths, library
+# internals) to any caller, including unauthenticated ones — the same class
+# of leak the guest self-check/explain routes were already fixed against
+# (see docs/HAZARD_REGISTER.md H17), just not closed at this app-wide level.
 @flask_app.errorhandler(Exception)
 def handle_exception(e):
     if isinstance(e, HTTPException):
         return {"error": e.description}, e.code
     log.exception("Unhandled exception")
-    return {"error": safe_str(e)}, 500
+    return {
+        "error": "internal_error",
+        "message": "Something went wrong processing this request. Please try again.",
+    }, 500
 
 
 # ── Routes ────────────────────────────────────────────────────────────────────
@@ -262,11 +275,15 @@ def query_api():
                 "answer" : res["answer"],
                 "sources": res["sources"],
             })
-        except Exception as exc:
+        except Exception:
+            # Logged in full server-side; the client only gets a generic
+            # message — str(exc) here used to go straight into a field the
+            # caller reads as the answer, which could leak internal detail
+            # (same class of leak as handle_exception() above).
             log.exception("Processing failed for drug=%s", drug)
             results.append({
                 "drug"   : safe_str(drug or prescription),
-                "answer" : f"Processing error: {safe_str(exc)}",
+                "answer" : "Something went wrong processing this medication. Please try again.",
                 "sources": [],
             })
 

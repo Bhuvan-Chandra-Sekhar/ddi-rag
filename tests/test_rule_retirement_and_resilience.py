@@ -729,3 +729,42 @@ def test_deep_health_check_reports_kill_switch_state():
     with patch("app.KILL_SWITCH_SELF_CHECK", True):
         resp = client.get("/api/health/deep")
     assert resp.get_json()["checks"]["self_check_kill_switch"] == "disabled"
+
+
+# ── Error handling: no route may leak raw exception text to the client ──────
+# Found during the codebase reorg: app.py's app-wide errorhandler(Exception)
+# returned str(exception) directly, and /api/query's per-drug except block
+# put str(exception) straight into the "answer" field a caller reads as
+# real content — the same class of leak H6/H17 already closed for the
+# explanation service and guest self-check specifically, just not closed at
+# these two spots. Both log the real exception server-side via
+# log.exception and now return only a generic message to the caller.
+
+def test_unhandled_exception_returns_generic_message_without_leaking_detail():
+    """/v1/organizations has no route-level try/except, so an unexpected
+    failure (e.g. the database being unreachable) reaches app.py's app-wide
+    errorhandler(Exception) unmodified — that handler must never hand the
+    raw exception text back to the caller."""
+    client = flask_app.test_client()
+    with patch("app.get_session", side_effect=RuntimeError("super secret internal detail")):
+        resp = client.get("/v1/organizations")
+    assert resp.status_code == 500
+    body = resp.get_json()
+    assert "super secret internal detail" not in str(body)
+    assert body["error"] == "internal_error"
+
+
+def test_query_endpoint_never_leaks_raw_exception_text_in_answer_field():
+    """answer_ddi() failing for one detected drug used to put
+    f"Processing error: {exc}" straight into the answer field returned to
+    the caller — if that exception carried internal detail (a DB error, a
+    library's own message), the caller would read it as if it were a real
+    clinical answer."""
+    client = flask_app.test_client()
+    with patch("app.parse_prescription", return_value=["aspirin"]), \
+         patch("app.answer_ddi", side_effect=RuntimeError("super secret internal detail")):
+        resp = client.post("/api/query", json={"prescription": "aspirin"})
+    assert resp.status_code == 200
+    body = resp.get_json()
+    assert "super secret internal detail" not in str(body)
+    assert "Something went wrong" in body["results"][0]["answer"]
