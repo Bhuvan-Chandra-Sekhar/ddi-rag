@@ -1,5 +1,5 @@
 """
-routes_public.py — Unauthenticated "guest self-check" endpoints.
+routes/public.py — Unauthenticated "guest self-check" endpoints.
 
 Lets a patient run the real deterministic rule engine (services/clinical_rules)
 against a medication list they type in themselves, with no account and no
@@ -9,7 +9,7 @@ real prior history has to type it in again each time, same as this session
 (there is no server-side memory to draw on without an account).
 
 This is deliberately a *different*, lower-trust pathway than
-/v1/safety-cases (routes_clinical.py): no pharmacist ever reviews these
+/v1/safety-cases (routes/clinical.py): no pharmacist ever reviews these
 results, so every response must stay honest about that — "not yet
 clinically reviewed" is never allowed to read as "safe". Same governance
 rule as everywhere else in this codebase: the LLM (services/evidence.explain_finding)
@@ -19,7 +19,7 @@ severity or action, here or anywhere else.
 Cost/abuse note: MAX_SELF_CHECK_ITEMS/MAX_ITEM_LEN/MAX_NOTES_LEN (config.py)
 bound the worst case of a single unauthenticated request (RxNorm lookups
 are network calls; each /api/explain call is one Cohere + one Groq call).
-Per-IP rate limiting (rate_limit.py's shared limiter) is applied below —
+Per-IP rate limiting (core/rate_limit.py's shared limiter) is applied below —
 tighter than the app-wide default on /api/explain specifically, since that
 one call is the expensive path (Cohere + Groq every time, vs. self_check's
 DB-only lookups).
@@ -37,14 +37,14 @@ from config import (
 )
 from database import get_session
 from enums import Severity
-from rate_limit import limiter
+from core.rate_limit import limiter
 from services.audit import record_audit_event
 from services.clinical_rules import ddi_coverage_report, evaluate_case
 from services.evidence import ExplanationUnavailable, explain_finding
 from services.medication_identity import resolve_medication_identity
 from services.rag_pipeline import safe_str
 
-log = logging.getLogger("ddi.routes_public")
+log = logging.getLogger("ddi.routes.public")
 
 public_bp = Blueprint("public", __name__)
 

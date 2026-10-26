@@ -1,8 +1,8 @@
 """
-rate_limit.py — Shared Flask-Limiter instance.
+core/rate_limit.py — Shared Flask-Limiter instance.
 
-Defined here, not in app.py, so routes_public.py and routes_clinical.py can
-import and decorate their own routes with it without an app.py <-> routes_*
+Defined here, not in app.py, so routes/public.py and routes/clinical.py can
+import and decorate their own routes with it without an app.py <-> routes.*
 circular import (app.py registers their blueprints, so they can't import
 back from app.py).
 

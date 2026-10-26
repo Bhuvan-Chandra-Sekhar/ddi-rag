@@ -8,10 +8,10 @@ Endpoints:
     POST /api/query           — { prescription: str, top_k?: int }
                                  -> { detected_drugs: list, results: list }
                                  (JWT optional — works for anonymous callers too)
-    POST /api/self-check      — routes_public.py: unauthenticated guest
+    POST /api/self-check      — routes/public.py: unauthenticated guest
                                  medication check, deterministic rule engine,
                                  no persistence (see that module's docstring)
-    POST /api/explain         — routes_public.py: on-demand plain-language
+    POST /api/explain         — routes/public.py: on-demand plain-language
                                  explanation for one /api/self-check finding
 
 This API intentionally does not expose a pharmacy-finder or general-chatbot
@@ -39,28 +39,28 @@ from flask_cors import CORS
 from flask_jwt_extended import get_jwt_identity, jwt_required
 from werkzeug.exceptions import HTTPException
 
-from auth import authenticate_user, configure_jwt, register_user
-from authz import authorized_case, get_caller, require_role
+from core.auth import authenticate_user, configure_jwt, register_user
+from core.authz import authorized_case, get_caller, require_role
 from config import (
     ALLOWED_ORIGINS, DEFAULT_TOP_K, KILL_SWITCH_EXPLAIN, KILL_SWITCH_SELF_CHECK,
     MAX_PRESCRIPTION_LEN, MAX_TOP_K, PORT,
 )
-from rate_limit import limiter
+from core.rate_limit import limiter
 from database import get_session, init_db
 from enums import FindingType, PrescriberDecision, ReviewStatus, Severity, UserRole
 from models import (
     Finding, Intervention, Medication, Patient, PatientCommunication,
     Prescription, SafetyCase, User,
 )
-from prescription_parsing import init_lookups, parse_prescription
+from pipeline.prescription_parsing import init_lookups, parse_prescription
 from services.audit import record_audit_event
 from services.rag_pipeline import answer_ddi, safe_str
 from services.professional_workflow import (
     assess_findings_and_route, case_timeline, create_intervention,
     pharmacist_queue, record_prescriber_response,
 )
-from routes_clinical import clinical_bp
-from routes_public import public_bp
+from routes.clinical import clinical_bp
+from routes.public import public_bp
 
 log = logging.getLogger("ddi.app")
 

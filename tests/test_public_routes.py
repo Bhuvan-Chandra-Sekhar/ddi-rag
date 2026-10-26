@@ -36,7 +36,7 @@ def test_self_check_requires_at_least_one_medication(client):
 
 
 def test_self_check_detects_duplicate_ingredient(client):
-    with patch("routes_public.resolve_medication_identity", side_effect=lambda n: _fake_identity("aspirin")):
+    with patch("routes.public.resolve_medication_identity", side_effect=lambda n: _fake_identity("aspirin")):
         resp = client.post("/api/self-check", json={"medications": ["Aspirin", "aspirin 81mg"]})
     assert resp.status_code == 200
     findings = resp.get_json()["findings"]
@@ -44,7 +44,7 @@ def test_self_check_detects_duplicate_ingredient(client):
 
 
 def test_self_check_detects_allergy_match(client):
-    with patch("routes_public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
+    with patch("routes.public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
         resp = client.post("/api/self-check", json={
             "medications": ["penicillin"], "allergies": ["penicillin"],
         })
@@ -58,7 +58,7 @@ def test_self_check_detects_allergy_match(client):
 
 def test_self_check_caps_medication_count(client):
     names = [f"drug{i}" for i in range(20)]
-    with patch("routes_public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
+    with patch("routes.public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
         resp = client.post("/api/self-check", json={"medications": names})
     assert resp.status_code == 200
     assert len(resp.get_json()["resolved_medications"]) == 8  # MAX_SELF_CHECK_ITEMS
@@ -80,7 +80,7 @@ def test_self_check_surfaces_reported_severity_for_unreviewed_ddi_pair(client):
         ))
         session.flush()
 
-    with patch("routes_public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
+    with patch("routes.public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
         resp = client.post("/api/self-check", json={"medications": ["aspirin", "warfarin"]})
 
     assert resp.status_code == 200
@@ -99,7 +99,7 @@ def test_patient_guidance_never_uses_pharmacy_operational_wording(client):
     ("do not dispense without prescriber confirmation") — that text was
     previously shown to guests verbatim, who aren't dispensing anything.
     patient_guidance must be the patient-facing rewrite, not a passthrough."""
-    with patch("routes_public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
+    with patch("routes.public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
         resp = client.post("/api/self-check", json={
             "medications": ["penicillin"], "allergies": ["penicillin"],
         })
@@ -118,8 +118,8 @@ def test_explain_finds_and_explains_a_real_ddi_finding(client):
         ))
         session.flush()
 
-    with patch("routes_public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)), \
-         patch("routes_public.explain_finding") as mock_explain:
+    with patch("routes.public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)), \
+         patch("routes.public.explain_finding") as mock_explain:
         mock_explain.return_value = {
             "explanation": "plain language text", "citations": [], "evidence_hash": "abc",
             "model_version": "", "prompt_version": "explain-finding-v1",
@@ -140,7 +140,7 @@ def test_explain_rejects_out_of_range_index_instead_of_trusting_client_fields(cl
     just POSTing clinical_effect/severity directly — only finding_index
     into the server's own re-derived list is honored, and an empty
     medication list with no real findings has no valid index at all."""
-    with patch("routes_public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
+    with patch("routes.public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
         resp = client.post("/api/explain", json={
             "medications": ["ibuprofen"],
             "finding_index": 0,

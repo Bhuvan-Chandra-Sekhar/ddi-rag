@@ -53,7 +53,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "ddi_rag"))
 from sklearn.model_selection import train_test_split
 from sqlalchemy import text as sql_text
 
-from data_preprocessing import load_and_clean_data
+from pipeline.data_preprocessing import load_and_clean_data
 from database import get_session
 from services.llm_eval import score_faithfulness
 from services.rag_pipeline import answer_ddi

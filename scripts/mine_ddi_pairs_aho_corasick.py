@@ -7,7 +7,7 @@ Why this replaces Groq extraction: the old scripts/mine_ddi_pairs_from_
 fda_labels.py asked Groq to find every OTHER drug named in a label's free-
 text drug_interactions section and quote a short excerpt. That's really
 just multi-pattern string matching -- and this codebase already has a
-production-grade one: ddi_rag/aho_corasick.py, used by app.py's
+production-grade one: ddi_rag/pipeline/aho_corasick.py, used by
 parse_prescription() to find every known drug name in a text in a single
 O(text_length + matches) pass. Reusing it here means: no LLM cost, no rate
 limits, no paraphrased/hallucination-prone excerpts (this extracts the
@@ -52,7 +52,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "ddi_rag"))
 import pandas as pd
 from sqlalchemy import text as sql_text
 
-from aho_corasick import AhoCorasick, is_word_boundary_match
+from pipeline.aho_corasick import AhoCorasick, is_word_boundary_match
 from database import get_session
 from enums import FindingType, RuleStatus, Severity
 from models import ClinicalRule

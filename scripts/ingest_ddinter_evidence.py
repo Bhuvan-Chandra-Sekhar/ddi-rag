@@ -33,7 +33,7 @@ import pandas as pd
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
 from sqlalchemy import text as sql_text
 
-from data_preprocessing import load_and_clean_data
+from pipeline.data_preprocessing import load_and_clean_data
 from services.evidence_store import init_evidence_store, upsert_chunks
 from services.rag_pipeline import build_chunk_df
 from database import get_session

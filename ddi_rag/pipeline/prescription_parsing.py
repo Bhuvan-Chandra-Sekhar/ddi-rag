@@ -11,7 +11,7 @@ else [None]`). Fixed by actually calling init_lookups() at import time,
 sourced from the live evidence_chunks table rather than the 240MB source
 CSV (which is gitignored and won't exist in a deployed environment).
 
-Matching uses a single-pass Aho-Corasick scan (aho_corasick.py) instead
+Matching uses a single-pass Aho-Corasick scan (pipeline/aho_corasick.py) instead
 of one regex `finditer` call per known drug name — with hundreds of names
 indexed, scanning the text once for every pattern in one pass matters:
 O(text_length + matches) instead of O(n_patterns * text_length).
@@ -22,7 +22,7 @@ from typing import Dict, List, Optional, Tuple
 
 from sqlalchemy import text as sql_text
 
-from aho_corasick import AhoCorasick, is_word_boundary_match
+from pipeline.aho_corasick import AhoCorasick, is_word_boundary_match
 from database import get_session
 
 log = logging.getLogger("ddi.prescription_parsing")

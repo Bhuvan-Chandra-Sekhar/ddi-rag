@@ -2,7 +2,7 @@
 data_preprocessing.py — Load and clean the openFDA DDI dataset.
 
 Usage:
-    from data_preprocessing import load_and_clean_data, clean_text
+    from pipeline.data_preprocessing import load_and_clean_data, clean_text
     df = load_and_clean_data("./data/clean_ddi_dataset.csv")
 
     # Clean a single text value (used by fda_sync.py for live API data):

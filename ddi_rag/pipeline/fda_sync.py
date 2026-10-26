@@ -24,7 +24,7 @@ import requests
 from config import (
     COLLECTION_NAME, OPENFDA_BASE_URL, OPENFDA_PAGE_SIZE, SYNC_HOUR, TEXT_COLS,
 )
-from data_preprocessing import clean_text
+from pipeline.data_preprocessing import clean_text
 
 log = logging.getLogger("ddi.sync")
 

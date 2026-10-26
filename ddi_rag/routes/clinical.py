@@ -1,15 +1,15 @@
 """
-routes_clinical.py — Clinical console API: patients, prescriptions, and the
+routes/clinical.py — Clinical console API: patients, prescriptions, and the
 safety-case detail/action endpoints the pharmacist/prescriber-facing
 frontend (static/clinical/index.html) needs beyond what app.py already
 exposes (queue, findings/assess, interventions, intervention response).
 Also the knowledge-administration workflow (/v1/clinical-rules/*) —
 reviewing candidate ClinicalRule rows and promoting them to APPROVED.
 
-Tenant scoping AND role enforcement both go through authz.py's
+Tenant scoping AND role enforcement both go through core/authz.py's
 authorized_case()/require_role() — 404 (not 403) on a cross-tenant case so
 existence is never leaked, 403 on a same-tenant caller with the wrong
-role. See authz.py's own docstring for why this exists: organization
+role. See core/authz.py's own docstring for why this exists: organization
 membership alone used to be the entire check here, which meant a
 `patient`-role account could call pharmacist-only actions.
 
@@ -28,7 +28,7 @@ from typing import List, Optional
 from flask import Blueprint, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
-from authz import authorized_case, get_caller, require_role
+from core.authz import authorized_case, get_caller, require_role
 from config import GROQ_MODEL, PROTOTYPE_MODE
 from database import get_session
 from enums import (
@@ -56,7 +56,7 @@ from services.safety_case import (
 clinical_bp = Blueprint("clinical", __name__)
 
 # Role groups — see app.py's identical constants for the same rationale;
-# duplicated rather than imported from app.py to avoid a routes_clinical.py
+# duplicated rather than imported from app.py to avoid a routes/clinical.py
 # <-> app.py circular import (app.py registers this blueprint).
 CLINICAL_STAFF    = (UserRole.PHARMACIST, UserRole.PRESCRIBER, UserRole.SAFETY_OFFICER)
 PHARMACIST_REVIEW = (UserRole.PHARMACIST, UserRole.SAFETY_OFFICER)

@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "ddi_rag"))
 
 import pandas as pd
 
-from data_preprocessing import load_and_clean_data
+from pipeline.data_preprocessing import load_and_clean_data
 from services.clinical_rules import ingest_pairs_csv
 from services.evidence_store import init_evidence_store, upsert_chunks
 from services.rag_pipeline import build_chunk_df

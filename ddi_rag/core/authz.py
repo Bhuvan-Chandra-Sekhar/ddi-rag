@@ -1,7 +1,7 @@
 """
-authz.py — Shared authorization: tenant isolation + role enforcement.
+core/authz.py — Shared authorization: tenant isolation + role enforcement.
 
-Before this module existed, app.py and routes_clinical.py each carried
+Before this module existed, app.py and routes/clinical.py each carried
 their own near-identical _authorized_case_or_error()/_authorized_case()
 helper, and BOTH checked only `case.organization_id == user.organization_id`
 — organization membership. Neither checked `user.role` anywhere, and no

@@ -36,7 +36,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "ddi_rag"))
 
-from auth import hash_password
+from core.auth import hash_password
 from database import get_session, init_db
 from enums import UserRole
 from models import Organization, User

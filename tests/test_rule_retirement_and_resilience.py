@@ -41,7 +41,7 @@ from services.clinical_rules import (
     approved_rules, ddi_coverage_report, evaluate_ddi_pairs, review_rule,
 )
 from services.evidence import ExplanationUnavailable
-from rate_limit import limiter
+from core.rate_limit import limiter
 
 
 @pytest.fixture(autouse=True)
@@ -285,11 +285,11 @@ def test_guest_explain_endpoint_returns_503_not_500_on_outage():
             status=RuleStatus.APPROVED, rule_version="v1",
         ))
     client = flask_app.test_client()
-    with mock_patch("routes_public.resolve_medication_identity",
+    with mock_patch("routes.public.resolve_medication_identity",
                      side_effect=lambda n: {"rxcui": None, "ingredients": [n.strip().lower()],
                                              "matched_exactly": False, "identity_confirmed": False,
                                              "resolution_method": "unresolved"}):
-        with mock_patch("routes_public.explain_finding", side_effect=ExplanationUnavailable("down")):
+        with mock_patch("routes.public.explain_finding", side_effect=ExplanationUnavailable("down")):
             resp = client.post("/api/explain", json={
                 "medications": ["outagedrug1", "outagedrug2"], "finding_index": 0,
             })
@@ -341,7 +341,7 @@ def test_clinical_explain_endpoint_returns_503_and_leaves_finding_untouched():
         token = create_access_token(identity=pharmacist_id)
 
     client = flask_app.test_client()
-    with patch("routes_clinical.explain_finding", side_effect=ExplanationUnavailable("down")):
+    with patch("routes.clinical.explain_finding", side_effect=ExplanationUnavailable("down")):
         resp = client.post(
             f"/v1/findings/{finding_id}/explain",
             headers={"Authorization": f"Bearer {token}"},
@@ -366,7 +366,7 @@ def _fake_identity(name):
 
 def test_guest_self_check_writes_an_audit_event():
     client = flask_app.test_client()
-    with patch("routes_public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
+    with patch("routes.public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
         resp = client.post("/api/self-check", json={"medications": ["auditdrug1"]})
     assert resp.status_code == 200
 
@@ -381,7 +381,7 @@ def test_guest_self_check_writes_an_audit_event():
 
 def test_guest_self_check_error_is_audited_and_returns_500_not_a_leak():
     client = flask_app.test_client()
-    with patch("routes_public.resolve_medication_identity", side_effect=RuntimeError("boom")):
+    with patch("routes.public.resolve_medication_identity", side_effect=RuntimeError("boom")):
         resp = client.post("/api/self-check", json={"medications": ["anydrug"]})
     assert resp.status_code == 500
     assert "boom" not in resp.get_json()["error"]
@@ -392,7 +392,7 @@ def test_guest_self_check_error_is_audited_and_returns_500_not_a_leak():
 
 
 def test_login_success_is_audited_with_actor_user_id():
-    from auth import register_user
+    from core.auth import register_user
     suffix = uuid.uuid4().hex[:8]
     with get_session() as session:
         org = Organization(name="Audit Login Hospital")
@@ -481,7 +481,7 @@ def _seed_clinical_staff():
 def test_creating_a_patient_without_acknowledgment_is_refused_in_prototype_mode():
     token = _seed_clinical_staff()
     client = flask_app.test_client()
-    with patch("routes_clinical.PROTOTYPE_MODE", True):
+    with patch("routes.clinical.PROTOTYPE_MODE", True):
         resp = client.post(
             "/v1/patients",
             json={"first_name": "Jane", "last_name": "Doe"},
@@ -494,7 +494,7 @@ def test_creating_a_patient_without_acknowledgment_is_refused_in_prototype_mode(
 def test_creating_a_patient_with_acknowledgment_succeeds_in_prototype_mode():
     token = _seed_clinical_staff()
     client = flask_app.test_client()
-    with patch("routes_clinical.PROTOTYPE_MODE", True):
+    with patch("routes.clinical.PROTOTYPE_MODE", True):
         resp = client.post(
             "/v1/patients",
             json={"first_name": "Jane", "last_name": "Doe", "synthetic_data_acknowledged": True},
@@ -511,7 +511,7 @@ def test_creating_a_patient_with_acknowledgment_succeeds_in_prototype_mode():
 def test_patient_creation_gate_is_off_when_prototype_mode_is_disabled():
     token = _seed_clinical_staff()
     client = flask_app.test_client()
-    with patch("routes_clinical.PROTOTYPE_MODE", False):
+    with patch("routes.clinical.PROTOTYPE_MODE", False):
         resp = client.post(
             "/v1/patients",
             json={"first_name": "Jane", "last_name": "Doe"},
@@ -529,7 +529,7 @@ def test_self_check_survives_database_outage_during_both_the_lookup_and_the_audi
     actually down, that fallback write raised again and crashed past the
     safe response. _try_audit() must swallow that second failure too."""
     client = flask_app.test_client()
-    with patch("routes_public.get_session", side_effect=RuntimeError("database unreachable")):
+    with patch("routes.public.get_session", side_effect=RuntimeError("database unreachable")):
         resp = client.post("/api/self-check", json={"medications": ["anydrug"]})
     assert resp.status_code == 500
     assert "database unreachable" not in resp.get_json()["error"]
@@ -542,7 +542,7 @@ def test_login_survives_database_outage_during_the_audit_write():
     one simulates "the database went down between the successful auth
     check and the audit write" — login() must still return 200, not a 500
     from _try_audit()'s own failure."""
-    from auth import register_user
+    from core.auth import register_user
     suffix = uuid.uuid4().hex[:8]
     with get_session() as session:
         org = Organization(name="Outage Login Hospital")
@@ -595,7 +595,7 @@ def test_self_check_rejects_malformed_medications_with_400_not_a_crash(payload):
 ])
 def test_self_check_never_500s_on_malformed_but_non_empty_input(payload):
     client = flask_app.test_client()
-    with patch("routes_public.resolve_medication_identity",
+    with patch("routes.public.resolve_medication_identity",
                side_effect=lambda n: {"rxcui": None, "ingredients": [n.strip().lower()],
                                        "matched_exactly": False, "identity_confirmed": False,
                                        "resolution_method": "unresolved"}):
@@ -621,11 +621,11 @@ def test_explain_endpoint_never_persists_patient_notes_text_in_audit():
         ))
     client = flask_app.test_client()
     secret_notes = "I have a rare condition called XYZSYNDROME12345"
-    with patch("routes_public.resolve_medication_identity",
+    with patch("routes.public.resolve_medication_identity",
                side_effect=lambda n: {"rxcui": None, "ingredients": [n.strip().lower()],
                                        "matched_exactly": False, "identity_confirmed": False,
                                        "resolution_method": "unresolved"}), \
-         patch("routes_public.explain_finding", return_value={
+         patch("routes.public.explain_finding", return_value={
              "explanation": "ok", "citations": [], "evidence_hash": "h",
          }):
         resp = client.post("/api/explain", json={
@@ -659,7 +659,7 @@ def test_login_failure_audit_never_includes_the_attempted_password():
 
 def test_self_check_kill_switch_returns_503_when_active():
     client = flask_app.test_client()
-    with patch("routes_public.KILL_SWITCH_SELF_CHECK", True):
+    with patch("routes.public.KILL_SWITCH_SELF_CHECK", True):
         resp = client.post("/api/self-check", json={"medications": ["anydrug"]})
     assert resp.status_code == 503
     assert resp.get_json()["error"] == "temporarily_unavailable"
@@ -667,15 +667,15 @@ def test_self_check_kill_switch_returns_503_when_active():
 
 def test_self_check_works_normally_when_kill_switch_is_off():
     client = flask_app.test_client()
-    with patch("routes_public.KILL_SWITCH_SELF_CHECK", False), \
-         patch("routes_public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
+    with patch("routes.public.KILL_SWITCH_SELF_CHECK", False), \
+         patch("routes.public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
         resp = client.post("/api/self-check", json={"medications": ["anydrug"]})
     assert resp.status_code == 200
 
 
 def test_explain_kill_switch_returns_503_when_active():
     client = flask_app.test_client()
-    with patch("routes_public.KILL_SWITCH_EXPLAIN", True):
+    with patch("routes.public.KILL_SWITCH_EXPLAIN", True):
         resp = client.post("/api/explain", json={"medications": ["anydrug"], "finding_index": 0})
     assert resp.status_code == 503
     assert resp.get_json()["error"] == "temporarily_unavailable"
@@ -685,9 +685,9 @@ def test_kill_switches_are_independent_of_each_other():
     """Disabling explain must not also disable self-check, and vice versa
     — an incident with one shouldn't force taking down the other."""
     client = flask_app.test_client()
-    with patch("routes_public.KILL_SWITCH_EXPLAIN", True), \
-         patch("routes_public.KILL_SWITCH_SELF_CHECK", False), \
-         patch("routes_public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
+    with patch("routes.public.KILL_SWITCH_EXPLAIN", True), \
+         patch("routes.public.KILL_SWITCH_SELF_CHECK", False), \
+         patch("routes.public.resolve_medication_identity", side_effect=lambda n: _fake_identity(n)):
         self_check_resp = client.post("/api/self-check", json={"medications": ["anydrug"]})
     assert self_check_resp.status_code == 200
 

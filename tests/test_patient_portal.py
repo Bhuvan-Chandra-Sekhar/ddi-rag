@@ -10,7 +10,7 @@ import pytest
 from flask_jwt_extended import create_access_token
 
 from app import flask_app
-from auth import authenticate_user, register_user
+from core.auth import authenticate_user, register_user
 from database import get_session, init_db
 from enums import DeliveryChannel, PrescriptionStatus, SafetyCaseState
 from models import (
