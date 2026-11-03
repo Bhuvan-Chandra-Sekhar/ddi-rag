@@ -8,6 +8,12 @@ import tailwindcss from '@tailwindcss/vite';
 // static/patient/index.html (Tailwind Play CDN).
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  test: {
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.js',
+    clearMocks: true,
+    restoreMocks: true,
+  },
   base: '/static/patient-app/',
   build: { outDir: '../ddi_rag/static/patient-app', emptyOutDir: true },
   server: { proxy: { '/api': 'http://127.0.0.1:5000', '/v1': 'http://127.0.0.1:5000' } },
