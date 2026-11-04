@@ -1,0 +1,17 @@
+{
+  "_note": "Test-only identities for the throwaway SQLite database that e2e/serve_test_app.py creates and deletes on every run. Never valid anywhere else.",
+  "organization": "E2E Community Health",
+  "otherOrganization": "E2E Riverside Clinic",
+  "patient": {
+    "email": "alex.rivera@e2e.test",
+    "password": "e2e-patient-pass-1",
+    "firstName": "Alex",
+    "lastName": "Rivera",
+    "fullName": "Alex Rivera"
+  },
+  "pharmacist": {
+    "email": "pat.pharmacist@e2e.test",
+    "password": "e2e-staff-pass-1",
+    "fullName": "Pat Pharmacist"
+  }
+}

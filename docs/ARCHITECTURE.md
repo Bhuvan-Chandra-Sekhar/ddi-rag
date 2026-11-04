@@ -157,3 +157,31 @@ change, not after.
 `/api/health` (not `/api/health/deep`) is Render's own restart trigger —
 it must never depend on the database, or a transient DB blip causes an
 unnecessary process restart. See `docs/INCIDENT_RUNBOOK.md`.
+
+## Testing
+
+Four layers, each catching what the one below it cannot. All four run in
+CI (`.github/workflows/ci.yml`); `ci-passed` is the single check to
+require before merging or deploying.
+
+| Layer | Command | What it proves |
+|---|---|---|
+| Backend | `python -m pytest tests` | Rules, authorization, audit, resilience, and `tests/test_frontend_contract.py` — every field the React app reads exists in the real API response, and the frontend's state/severity/role lists equal the backend enums |
+| Frontend unit | `npm run test:coverage` (in `frontend-patient/`) | Components and flows with `fetch` faked. Fails below the coverage floor in `vite.config.js` (branches matter most; stricter per-file floors on the screens that decide what a patient is told) |
+| Browser | `npm run e2e` | Real React bundle, real Flask, real JWTs, real rule engine, isolated seeded SQLite. Quick-check journeys, auth, the clinical hand-off, deploy/static serving, axe WCAG scans, keyboard/focus, the homepage scroll animation, phone layout |
+| Contract mutation check | rename a field in `app.py`, run pytest | Proves the contract tests can fail |
+
+`npm run e2e` rebuilds the bundle first (it writes to
+`ddi_rag/static/patient-app/`, which is tracked in git). It starts
+`frontend-patient/e2e/serve_test_app.py`, which fakes only calls that would
+leave the machine (RxNorm, Cohere, Groq) and refuses to start unless it is
+on its own throwaway database. The `/__e2e__/*` control routes it adds
+exist only in that launcher.
+
+Accessibility: `e2e/a11y.spec.js` keeps a `KNOWN_VIOLATIONS` list that is
+currently empty. A new violation fails the build; a listed one that stops
+failing also fails, so the list can only shrink.
+
+The animation test asserts scroll-driven state and geometry and attaches
+screenshots to the Playwright report; it does not compare pixels, because
+anti-aliasing differs between operating systems.

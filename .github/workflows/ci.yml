@@ -1,0 +1,109 @@
+name: CI
+
+# Runs on every push to the main branches and every pull request. The last
+# job, `ci-passed`, is the single check to require:
+#   - GitHub: Settings > Branches > branch protection > require "ci-passed"
+#   - Render: service Settings > Build & Deploy > Auto-Deploy >
+#     "After CI Checks Pass" (Render only deploys once this workflow is green)
+# Neither setting can be changed from this file; both are one-time clicks.
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r requirements.txt
+      # Includes the frontend/backend contract tests (tests/test_frontend_contract.py).
+      - run: python -m pytest tests -q
+
+  frontend:
+    name: Frontend unit tests, coverage and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend-patient
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend-patient/package-lock.json
+      - run: npm ci
+      # Fails if any coverage threshold in vite.config.js is not met.
+      - run: npm run test:coverage
+      # The same build Render runs; catches anything that compiles in tests but not in Vite.
+      - run: npm run build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-coverage
+          path: frontend-patient/coverage
+          if-no-files-found: ignore
+
+  e2e:
+    name: Browser tests (real React + real Flask)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: frontend-patient
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: pip install -r ../requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend-patient/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # Builds the bundle first so the browser tests run the current source,
+      # then starts Flask on an isolated, freshly seeded SQLite database.
+      - run: npm run e2e
+        env:
+          CI: 'true'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: |
+            frontend-patient/playwright-report
+            frontend-patient/test-results
+          if-no-files-found: ignore
+
+  ci-passed:
+    name: ci-passed
+    needs: [backend, frontend, e2e]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every job to have succeeded
+        run: |
+          echo "backend=${{ needs.backend.result }} frontend=${{ needs.frontend.result }} e2e=${{ needs.e2e.result }}"
+          [ "${{ needs.backend.result }}" = "success" ] && \
+          [ "${{ needs.frontend.result }}" = "success" ] && \
+          [ "${{ needs.e2e.result }}" = "success" ]
