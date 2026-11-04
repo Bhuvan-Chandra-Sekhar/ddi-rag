@@ -78,7 +78,13 @@ def _try_audit(**kwargs) -> None:
         log.exception("Failed to record audit event (action=%s)", kwargs.get("action"))
 
 
-flask_app = Flask("ddi")
+# "ddi" is not an importable module, so Flask cannot derive a root path from
+# it and falls back to the current working directory — the bundled frontend
+# under /static/ then only resolved when the process happened to start inside
+# ddi_rag/ (as `gunicorn --chdir ddi_rag` does), and 404ed every JS/CSS asset
+# from anywhere else. Anchoring the folder to this file removes that
+# dependency on where the server was launched from.
+flask_app = Flask("ddi", static_folder=str(Path(__file__).resolve().parent / "static"))
 # Restricted to known origins (config.ALLOWED_ORIGINS) rather than the
 # previous default of allowing any site — see config.py's comment. Lower
 # severity than it sounds (JWT bearer tokens in headers, not cookies, so

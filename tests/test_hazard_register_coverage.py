@@ -41,6 +41,11 @@ def test_no_unsafe_absolute_claims_in_frontend_copy():
     hits = []
     for pattern in _SCAN_GLOBS:
         for path in REPO_ROOT.glob(pattern):
+            # Frontend tests are not user-facing copy, and the wording
+            # tests legitimately name these phrases in negative assertions
+            # ("the page must never say 'safe to take'").
+            if "src/test/" in path.as_posix():
+                continue
             text = path.read_text(encoding="utf-8", errors="ignore").lower()
             for phrase in _BANNED_PHRASES:
                 if phrase in text:
