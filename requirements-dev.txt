@@ -1,0 +1,11 @@
+# Everything needed to run the backend test suite (and the browser tests'
+# Flask launcher) on a clean machine. Kept separate from requirements.txt so
+# Render's production build, which installs only that file, does not pull in
+# test tooling.
+#
+# Install: pip install -r requirements-dev.txt
+# Run:     python -m pytest tests -q
+
+-r requirements.txt
+
+pytest>=8
