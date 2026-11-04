@@ -1,13 +1,18 @@
-import { useEffect, useState } from 'react';
-import { api, setToken, setUser } from '../api.js';
+import { useEffect, useRef, useState } from 'react';
+import { api, setConsoleSession, setToken, setUser } from '../api.js';
 import InlineAlert from '../components/InlineAlert.jsx';
 
 function LoginForm({ onError, onSuccess, mode }) {
   const [submitting, setSubmitting] = useState(false);
   const [fields, setFields] = useState({ email: '', password: '' });
+  // `submitting` is state, so two submits in the same tick (double-click,
+  // Enter + click) would both see it as false. A ref closes that gap.
+  const inFlight = useRef(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (inFlight.current) return;
+    inFlight.current = true;
     onError('');
     setSubmitting(true);
     try {
@@ -15,12 +20,17 @@ function LoginForm({ onError, onSuccess, mode }) {
       if (mode === 'clinician' && !['pharmacist', 'prescriber', 'safety_officer', 'administrator'].includes(data.user?.role)) {
         throw new Error('This account does not have clinical console access.');
       }
-      setToken(data.access_token);
-      setUser(data.user);
+      if (mode === 'clinician') {
+        setConsoleSession(data.access_token, data.user);
+      } else {
+        setToken(data.access_token);
+        setUser(data.user);
+      }
       onSuccess(data.user);
     } catch (err) {
       onError(err.message);
       setSubmitting(false);
+      inFlight.current = false;
     }
   };
 
@@ -53,6 +63,7 @@ function RegisterForm({ onError, onSuccess }) {
   const [submitting, setSubmitting] = useState(false);
   const [orgs, setOrgs] = useState(null);
   const [fields, setFields] = useState({ first_name: '', last_name: '', organization_id: '', email: '', password: '' });
+  const inFlight = useRef(false);
 
   useEffect(() => {
     api('/v1/organizations')
@@ -70,6 +81,8 @@ function RegisterForm({ onError, onSuccess }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (inFlight.current) return;
+    inFlight.current = true;
     onError('');
     setSubmitting(true);
     try {
@@ -82,13 +95,25 @@ function RegisterForm({ onError, onSuccess }) {
           organization_id: fields.organization_id,
         }),
       });
+    } catch (err) {
+      onError(err.message);
+      setSubmitting(false);
+      inFlight.current = false;
+      return;
+    }
+    // The account now exists. If the automatic sign-in fails, say so
+    // plainly — repeating "Create account" would only fail with
+    // "already registered", and the raw login error alone ("Invalid
+    // credentials") would read as though registration itself failed.
+    try {
       const data = await api('/api/auth/login', { method: 'POST', body: JSON.stringify({ email: fields.email, password: fields.password }) });
       setToken(data.access_token);
       setUser(data.user);
       onSuccess(data.user);
     } catch (err) {
-      onError(err.message);
+      onError(`Your account was created, but signing in failed (${err.message}). Please use Sign in.`);
       setSubmitting(false);
+      inFlight.current = false;
     }
   };
 
@@ -129,37 +154,73 @@ function RegisterForm({ onError, onSuccess }) {
 }
 
 // Ported from renderAuth() — existing login/register flow, reskinned.
+const TAB_LABELS = { login: 'Sign in', register: 'Create account' };
+
 export default function Auth({ onAuthenticated, onSkip, mode = 'patient' }) {
   const [tab, setTab] = useState('login');
   const [error, setError] = useState('');
+  const tabRefs = useRef({});
+  const tabs = mode === 'clinician' ? ['login'] : ['login', 'register'];
+
+  const selectTab = (next, { focus = false } = {}) => {
+    setError('');
+    setTab(next);
+    if (focus && tabRefs.current[next]) tabRefs.current[next].focus();
+  };
+
+  // WAI-ARIA tabs pattern: arrow keys move between tabs, Home/End jump to
+  // the ends, and only the selected tab is in the Tab order.
+  const handleTabKeyDown = (e) => {
+    const index = tabs.indexOf(tab);
+    let next = null;
+    if (e.key === 'ArrowRight') next = tabs[(index + 1) % tabs.length];
+    else if (e.key === 'ArrowLeft') next = tabs[(index - 1 + tabs.length) % tabs.length];
+    else if (e.key === 'Home') next = tabs[0];
+    else if (e.key === 'End') next = tabs[tabs.length - 1];
+    if (next) {
+      e.preventDefault();
+      selectTab(next, { focus: true });
+    }
+  };
 
   return (
     <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-10">
       <div className="reveal max-w-sm mx-auto">
         <p className="label-tag mb-3" style={{ color: 'var(--accent)' }}>{mode === 'clinician' ? 'Clinical console' : 'Patient account'}</p>
         <h1 className="font-display text-subheading mb-6" style={{ color: 'var(--ink)' }}>Welcome back</h1>
-        <div className="flex gap-1 p-1 rounded-full mb-7 text-[13px] font-medium" style={{ background: 'var(--line-soft)' }}>
-          <button
-            onClick={() => { setError(''); setTab('login'); }}
-            className="flex-1 py-2 rounded-full transition-colors"
-            style={{ background: tab === 'login' ? 'var(--paper-raised)' : 'transparent', color: tab === 'login' ? 'var(--ink)' : 'var(--ink-soft)' }}
-          >
-            Sign in
-          </button>
-          {mode !== 'clinician' && <button
-            onClick={() => { setError(''); setTab('register'); }}
-            className="flex-1 py-2 rounded-full transition-colors"
-            style={{ background: tab === 'register' ? 'var(--paper-raised)' : 'transparent', color: tab === 'register' ? 'var(--ink)' : 'var(--ink-soft)' }}
-          >
-            Create account
-          </button>}
+        <div
+          role="tablist"
+          aria-label="Account"
+          onKeyDown={handleTabKeyDown}
+          className="flex gap-1 p-1 rounded-full mb-7 text-[13px] font-medium"
+          style={{ background: 'var(--line-soft)' }}
+        >
+          {tabs.map((key) => (
+            <button
+              key={key}
+              type="button"
+              role="tab"
+              id={`auth-tab-${key}`}
+              aria-selected={tab === key}
+              aria-controls={`auth-panel-${key}`}
+              tabIndex={tab === key ? 0 : -1}
+              ref={(el) => { tabRefs.current[key] = el; }}
+              onClick={() => selectTab(key)}
+              className="flex-1 py-2 rounded-full transition-colors"
+              style={{ background: tab === key ? 'var(--paper-raised)' : 'transparent', color: tab === key ? 'var(--ink)' : 'var(--ink-soft)' }}
+            >
+              {TAB_LABELS[key]}
+            </button>
+          ))}
         </div>
 
-        {tab === 'login' ? (
-          <LoginForm onError={setError} onSuccess={onAuthenticated} mode={mode} />
-        ) : (
-          <RegisterForm onError={setError} onSuccess={onAuthenticated} />
-        )}
+        <div role="tabpanel" id={`auth-panel-${tab}`} aria-labelledby={`auth-tab-${tab}`}>
+          {tab === 'login' ? (
+            <LoginForm onError={setError} onSuccess={onAuthenticated} mode={mode} />
+          ) : (
+            <RegisterForm onError={setError} onSuccess={onAuthenticated} />
+          )}
+        </div>
 
         {error && <InlineAlert className="mt-4">{error}</InlineAlert>}
 

@@ -10,8 +10,12 @@ export default function DrugInfoPanel({ med }) {
 
   useEffect(() => {
     let cancelled = false;
+    // Aborting (not just ignoring) the superseded request stops the
+    // network work too — switching quickly between drug chips otherwise
+    // leaves every earlier lookup running to completion.
+    const controller = new AbortController();
     setState({ status: 'loading' });
-    api('/api/query', { method: 'POST', body: JSON.stringify({ prescription: med.input, top_k: 3 }) })
+    api('/api/query', { method: 'POST', signal: controller.signal, body: JSON.stringify({ prescription: med.input, top_k: 3 }) })
       .then((data) => {
         if (cancelled) return;
         // An empty detected_drugs means the typed name wasn't recognized
@@ -27,7 +31,7 @@ export default function DrugInfoPanel({ med }) {
         setState({ status: 'ok', answer: (first && first.answer) || 'No information found.' });
       })
       .catch((err) => !cancelled && setState({ status: 'error', message: err.message }));
-    return () => { cancelled = true; };
+    return () => { cancelled = true; controller.abort(); };
   }, [med.input]);
 
   if (state.status === 'loading') {

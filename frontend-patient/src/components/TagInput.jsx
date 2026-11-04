@@ -1,4 +1,4 @@
-import { forwardRef, useId, useImperativeHandle, useState } from 'react';
+import { forwardRef, useId, useImperativeHandle, useRef, useState } from 'react';
 
 // Controlled version of the old tagInputHtml()/wireTagInput() pair — same
 // behavior (Enter or comma commits, click removes, whole pill is the
@@ -7,21 +7,39 @@ import { forwardRef, useId, useImperativeHandle, useState } from 'react';
 // handler can commit text a user typed but never pressed Enter/Add on —
 // the original read straight from the DOM input for this; refs are the
 // React equivalent of that same "grab whatever's still sitting there".
-const TagInput = forwardRef(function TagInput({ label, placeholder, items, onChange, canAdd = () => true }, ref) {
-  const [draft, setDraft] = useState('');
-  const inputId = useId();
+const DEFAULT_LIMIT_MESSAGE = "You've reached the limit. Remove one to add another.";
 
+const TagInput = forwardRef(function TagInput(
+  { label, placeholder, items, onChange, canAdd = () => true, limitMessage = DEFAULT_LIMIT_MESSAGE },
+  ref
+) {
+  const [draft, setDraft] = useState('');
+  const [notice, setNotice] = useState('');
+  const inputId = useId();
+  const noticeId = `${inputId}-notice`;
+  // A ref, not state: the form's submit handler reads this in the same
+  // tick as flush(), before any re-render could update state.
+  const refusedRef = useRef(false);
+
+  // A refused add must say so: silently ignoring the entry reads as "it was
+  // added" or "the button is broken", and on submit it would quietly drop
+  // a medication from the check.
   const commit = () => {
     const v = draft.trim();
-    if (v && canAdd()) {
-      onChange([...items, v]);
-      setDraft('');
-      return [...items, v];
+    refusedRef.current = false;
+    if (!v) return items;
+    if (!canAdd()) {
+      refusedRef.current = true;
+      setNotice(limitMessage);
+      return items;
     }
-    return items;
+    setNotice('');
+    onChange([...items, v]);
+    setDraft('');
+    return [...items, v];
   };
 
-  useImperativeHandle(ref, () => ({ flush: commit }));
+  useImperativeHandle(ref, () => ({ flush: commit, lastCommitRefused: () => refusedRef.current }));
 
   return (
     <div>
@@ -35,7 +53,8 @@ const TagInput = forwardRef(function TagInput({ label, placeholder, items, onCha
           autoComplete="off"
           placeholder={placeholder}
           value={draft}
-          onChange={(e) => setDraft(e.target.value)}
+          aria-describedby={notice ? noticeId : undefined}
+          onChange={(e) => { setDraft(e.target.value); if (notice) setNotice(''); }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ',') {
               e.preventDefault();
@@ -54,6 +73,11 @@ const TagInput = forwardRef(function TagInput({ label, placeholder, items, onCha
           Add
         </button>
       </div>
+      {notice && (
+        <p id={noticeId} role="status" className="text-[12.5px] font-medium mb-2" style={{ color: 'var(--caution)' }}>
+          {notice}
+        </p>
+      )}
       <div className="flex flex-wrap gap-2 min-h-[2px]">
         {items.map((v, i) => (
           <button
@@ -61,7 +85,7 @@ const TagInput = forwardRef(function TagInput({ label, placeholder, items, onCha
             type="button"
             title={`Remove ${v}`}
             aria-label={`Remove ${v}`}
-            onClick={() => onChange(items.filter((_, idx) => idx !== i))}
+            onClick={() => { setNotice(''); onChange(items.filter((_, idx) => idx !== i)); }}
             className="chip chip-remove inline-flex items-center gap-1.5 text-[12.5px] font-medium pl-3 pr-2.5 py-1 rounded-full"
           >
             {v}

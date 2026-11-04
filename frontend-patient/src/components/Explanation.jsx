@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { api, mdLite } from '../api.js';
 import InlineAlert from './InlineAlert.jsx';
 
@@ -9,11 +9,19 @@ import InlineAlert from './InlineAlert.jsx';
 // "should fetch" are the same moment either way.
 export default function Explanation({ findingIndex, inputs }) {
   const [state, setState] = useState({ status: 'loading', explanation: '', citations: [] });
+  const controllerRef = useRef(null);
 
+  // Each call supersedes the previous one: the older request is aborted,
+  // and a late response from it is ignored, so a rapid retry (or leaving
+  // the page) can never overwrite newer state or leave work running.
   const load = () => {
+    if (controllerRef.current) controllerRef.current.abort();
+    const controller = new AbortController();
+    controllerRef.current = controller;
     setState({ status: 'loading', explanation: '', citations: [] });
     api('/api/explain', {
       method: 'POST',
+      signal: controller.signal,
       body: JSON.stringify({
         medications: inputs.medications,
         allergies: inputs.allergies,
@@ -21,17 +29,26 @@ export default function Explanation({ findingIndex, inputs }) {
         patient_notes: inputs.notes,
       }),
     })
-      .then((data) => setState({ status: 'ok', explanation: data.explanation, citations: data.citations || [] }))
-      .catch((err) => setState({ status: 'error', message: err.message }));
+      .then((data) => {
+        if (controller.signal.aborted) return;
+        setState({ status: 'ok', explanation: data.explanation, citations: data.citations || [] });
+      })
+      .catch((err) => {
+        if (controller.signal.aborted) return;
+        setState({ status: 'error', message: err.message });
+      });
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(load, []);
+  useEffect(() => {
+    load();
+    return () => { if (controllerRef.current) controllerRef.current.abort(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (state.status === 'loading') {
     return (
-      <div className="flex items-center gap-2 text-[12.5px]" style={{ color: 'var(--ink-soft)' }}>
-        <span className="spinner w-3.5 h-3.5" />Working out what this means for you…
+      <div role="status" className="flex items-center gap-2 text-[12.5px]" style={{ color: 'var(--ink-soft)' }}>
+        <span className="spinner w-3.5 h-3.5" aria-hidden="true" />Working out what this means for you…
       </div>
     );
   }

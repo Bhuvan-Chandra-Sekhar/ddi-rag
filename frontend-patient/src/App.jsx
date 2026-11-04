@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
 import InlineAlert from './components/InlineAlert.jsx';
@@ -18,6 +19,23 @@ function AppShell() {
     nav, handleSubmitCheck, handleScanDone, handleScanError,
     handleSignOut, handleAuthenticated, handleStartOver, handleCheckAnother,
   } = useAppState();
+
+  // This is a single-page app, so changing view never reloads the page and
+  // the browser does not move focus. The button that was just clicked is
+  // removed from the page and focus falls back to <body>, which leaves a
+  // keyboard or screen-reader user at the top with no sign anything
+  // happened. Move focus to the new view's heading (or its <main>) instead.
+  const firstRender = useRef(true);
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    const target = document.querySelector('main h1') || document.querySelector('main');
+    if (!target) return;
+    if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+    target.focus({ preventScroll: true });
+  }, [view]);
 
   return (
     <div className="min-h-screen flex flex-col">

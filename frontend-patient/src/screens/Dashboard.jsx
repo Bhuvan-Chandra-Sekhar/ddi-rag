@@ -13,12 +13,14 @@ function CaseCard({ c, i }) {
 
   return (
     <div className="card card-shadow rounded-2xl p-5 reveal" style={{ animationDelay: `${i * 70}ms` }}>
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div>
+      {/* flex-wrap + no nowrap: a long status ("Your pharmacist is reviewing
+          this") used to push the whole card past the edge of a phone. */}
+      <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2 mb-3">
+        <div className="min-w-0">
           <p className="field-label mb-1" style={{ color: 'var(--ink-faint)' }}>{dateStr}</p>
           <h3 className="font-display text-heading-xs">{c.medication}</h3>
         </div>
-        <span className="field-label inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full whitespace-nowrap" style={{ background: meta.bg, color: meta.fg }}>
+        <span className="field-label inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full max-w-full" style={{ background: meta.bg, color: meta.fg }}>
           <span className="w-1.5 h-1.5 rounded-full" style={{ background: meta.dot }} />{meta.label}
         </span>
       </div>
@@ -57,7 +59,10 @@ export default function Dashboard({ onSessionExpired }) {
     api('/v1/my/cases')
       .then((data) => setState({ status: 'ok', cases: data.cases || [] }))
       .catch((err) => {
-        if (err.message.includes('401') || err.message.toLowerCase().includes('token')) {
+        // 401: expired or missing token. 422: flask-jwt-extended's answer
+        // to a malformed or wrongly signed one. Either way the session is
+        // unusable and the only way forward is to sign in again.
+        if (err.message.includes('401') || err.message.includes('422') || err.message.toLowerCase().includes('token')) {
           onSessionExpired();
         } else {
           setState({ status: 'error', message: err.message });
@@ -88,7 +93,7 @@ export default function Dashboard({ onSessionExpired }) {
               </p>
             </div>
           )}
-          {state.status === 'ok' && state.cases.map((c, i) => <CaseCard key={c.id} c={c} i={i} />)}
+          {state.status === 'ok' && state.cases.map((c, i) => <CaseCard key={c.case_id} c={c} i={i} />)}
         </div>
       </div>
     </main>

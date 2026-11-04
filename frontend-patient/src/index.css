@@ -101,6 +101,10 @@ html { scroll-behavior: smooth; }
 button, a { -webkit-tap-highlight-color: transparent; }
 button { cursor: pointer; }
 button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
+/* App.jsx moves focus to the new view's heading/<main> after navigation so
+   assistive tech follows along. That focus is programmatic, not a control
+   the person tabbed to, so it gets no ring. */
+[tabindex="-1"]:focus { outline: none; }
 .site-header { background: var(--paper); }
 .header-inner { max-width: 1280px; margin: auto; padding: 30px 36px; display: flex; justify-content: space-between; gap: 24px; align-items: center; }
 .brand-mark { width: 18px; height: 20px; background: var(--primary); clip-path: polygon(50% 0,100% 100%,0 75%); transition: transform .4s; }
@@ -163,7 +167,7 @@ main:not(.home-page) { animation: enter-stage .5s cubic-bezier(.16,1,.3,1) both;
   --paper-raised: #fbf9fd;
   --ink: #221827;
   --ink-soft: #655b69;
-  --ink-faint: #827687;
+  --ink-faint: #756a7a; /* was #827687 (3.8:1 on --paper); this is 4.5:1, the WCAG AA minimum for text */
   --primary: #392544;
   --primary-tint: #5a3b67;
   --accent: #6b527c;
@@ -171,10 +175,10 @@ main:not(.home-page) { animation: enter-stage .5s cubic-bezier(.16,1,.3,1) both;
   --line: rgba(43,29,50,.22);
   --line-soft: rgba(43,29,50,.1);
   --critical: #a93248;
-  --major: #a65c39;
-  --caution: #9a7027;
+  --major: #995534; /* was #a65c39 (4.0:1 as a badge on its tint); 4.5:1 is the WCAG AA minimum */
+  --caution: #886323; /* was #9a7027 (3.9:1 on --paper); 4.5:1 is the WCAG AA minimum for text, also as a badge on its own tint */
   --informational: #4c638c;
-  --unknown: #796398;
+  --unknown: #735e90; /* was #796398 (4.2:1 as a badge on its tint); 4.5:1 is the WCAG AA minimum */
   --safe: #397359;
 }
 body { background:var(--paper); color:var(--ink); }

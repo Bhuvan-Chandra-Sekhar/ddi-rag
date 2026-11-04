@@ -41,7 +41,7 @@ export default function Scanning({ medications, allergies, onDone, onError }) {
   return (
     <main className="flex-1 w-full max-w-3xl mx-auto px-6 py-10">
       <div className="reveal max-w-lg mx-auto text-center py-16">
-        <div className="scan-track card card-shadow rounded-2xl p-10 mb-6">
+        <div className="scan-track card card-shadow rounded-2xl p-10 mb-6" role="status" aria-live="polite">
           <div className="scan-bar" />
           <p className="font-display text-[22px] mb-2" style={{ color: 'var(--primary)' }}>Reading the evidence</p>
           <p className="text-[13px]" style={{ color: 'var(--ink-soft)' }}>{PHRASES[phraseIdx]}</p>

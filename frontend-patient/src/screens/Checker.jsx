@@ -27,6 +27,13 @@ export default function Checker({ draft, setDraft, onSubmit }) {
     };
     setDraft(nextDraft);
 
+    // Text typed into a list field but refused at the limit must not be
+    // silently dropped while the check proceeds without it.
+    if (currentRef.current?.lastCommitRefused() || allergyRef.current?.lastCommitRefused()) {
+      setError('One of your entries was not added because the list is full. Remove an item or clear the field to continue.');
+      return;
+    }
+
     if ((nextDraft.checking ? 1 : 0) + nextDraft.current.length > MAX_MEDS_TOTAL) {
       setError(`Check up to ${MAX_MEDS_TOTAL} medications at a time. Remove one to continue.`);
       return;
@@ -62,6 +69,7 @@ export default function Checker({ draft, setDraft, onSubmit }) {
             placeholder="e.g. warfarin"
             items={draft.current}
             canAdd={totalMedsCanAdd}
+            limitMessage={`You can check up to ${MAX_MEDS_TOTAL} medications at a time. Remove one to add another.`}
             onChange={(items) => setDraft((d) => ({ ...d, current: items }))}
           />
           <TagInput
@@ -70,6 +78,7 @@ export default function Checker({ draft, setDraft, onSubmit }) {
             placeholder="e.g. penicillin"
             items={draft.allergies}
             canAdd={() => draft.allergies.length < MAX_MEDS_TOTAL}
+            limitMessage={`You can list up to ${MAX_MEDS_TOTAL} allergies at a time. Remove one to add another.`}
             onChange={(items) => setDraft((d) => ({ ...d, allergies: items }))}
           />
           <details>
